@@ -19,13 +19,59 @@ class StudentController extends Controller
         // $department_access = Session::get('department_access');
                   //->whereIn('student_department', $department_access)
         // 获取数据
-        $students = DB::table('student')
+        $db_students = DB::table('student')
                       ->join('department', 'student.student_department', '=', 'department.department_id')
                       ->join('grade', 'student.student_grade', '=', 'grade.grade_id')
                       ->where('student_is_available', 1)
                       ->orderBy('student_department', 'asc')
                       ->orderBy('student_grade', 'asc')
                       ->get();
+        $students = array();
+        foreach($db_students as $db_student){
+            $temp = array();
+            $temp['student_id']=$db_student->student_id;
+            $temp['department_name']=$db_student->department_name;
+            $temp['student_gender']=$db_student->student_gender;
+            $temp['student_name']=$db_student->student_name;
+            $temp['grade_name']=$db_student->grade_name;
+            // 获取所在班级
+            $temp['classes'] = array();
+            $classes = DB::table('member')
+                         ->join('class', 'class.class_id', '=', 'member.member_class')
+                         ->join('grade', 'grade.grade_id', '=', 'class.class_grade')
+                         ->join('subject', 'subject.subject_id', '=', 'class.class_subject')
+                         ->where('member_student', $db_student->student_id)
+                         ->get();
+            foreach($classes as $class){
+                $class_temp = array();
+                $class_temp['class_id'] = $class->class_id;
+                $class_temp['class_name'] = $class->class_name;
+                $class_temp['grade_name'] = $class->grade_name;
+                $class_temp['subject_name'] = $class->subject_name;
+                $temp['classes'][] = $class_temp;
+            }
+            // 获取剩余课时
+            $temp['hours'] = array();
+            $hours = DB::table('hour')
+                         ->join('course', 'hour.hour_course', '=', 'course.course_id')
+                         ->where('hour_student', $db_student->student_id)
+                         ->get();
+            foreach($hours as $hour){
+                $hour_temp = array();
+                $hour_temp['course_name'] = $hour->course_name;
+                $hour_temp['hour_remain'] = $hour->hour_remain;
+                $hour_temp['hour_used'] = $hour->hour_used;
+                $temp['hours'][] = $hour_temp;
+            }
+            // 获取最近上课记录
+            /* TODO */
+            // 获取晚托状态
+            $temp['student_daycare'] = "";
+            if(DB::table('daycare_record')->where('daycare_record_student', $db_student->student_id)->where('daycare_record_is_refunded', '=',  0)->where('daycare_record_start', '<=',  date('Y-m-d'))->where('daycare_record_end', '>=',  date('Y-m-d'))->exists()){
+                $temp['student_daycare']="1";
+            }
+            $students[]=$temp;
+        }
         // 获取校区、年级信息(筛选)
         //$filter_departments = DB::table('department')->where('department_status', 1)->whereIn('department_id', $department_access)->orderBy('department_id', 'asc')->get();
         //$filter_grades = DB::table('grade')->where('grade_status', 1)->orderBy('grade_id', 'asc')->get();
@@ -130,6 +176,7 @@ class StudentController extends Controller
             $student_ids[]=decode($request_ids, 'student_id');
         }
         // 更新学生可用状态
+        DB::beginTransaction();
         try{
             foreach ($student_ids as $student_id){
                 DB::table('student')
@@ -137,25 +184,31 @@ class StudentController extends Controller
                   ->update(['student_is_available' => 0,
                             'student_modified_user' => Session::get('user_id'),
                             'student_modified_time' => date('Y-m-d H:i:s')]);
+                // 更新班级人数
+                $members = DB::table('member')
+                             ->where('member_student', $student_id)
+                             ->get();
+                foreach($members as $member){
+                    DB::table('class')
+                      ->where('class_id', $member->member_class)
+                      ->decrement('class_current_num');
+                }
                 // 从班级成员中删除该学生
-                /*
                 DB::table('member')
                   ->where('member_student', $student_id)
                   ->delete();
-                */
-                // 更新班级人数
-                /* TODO */
-
             }
         }
         // 捕获异常
         catch(Exception $e){
+            DB::rollBack();
             return redirect("/education/student")
                    ->with(['notify' => true,
                          'type' => 'danger',
                          'title' => '学生删除失败',
                          'message' => '学生删除失败，错误码:204']);
         }
+        DB::commit();
         // 返回课程列表
         return redirect("/education/student")
                ->with(['notify' => true,
@@ -177,7 +230,10 @@ class StudentController extends Controller
                      ->where('student_id', $student_id)
                      ->first();
         // 获取学生已有课时
-        /* TODO */
+        $hours = DB::table('hour')
+                   ->join('course', 'hour.hour_course', '=', 'course.course_id')
+                   ->where('hour_student', $student_id)
+                   ->get();
 
         // 获取可购买课程信息
         // 相同年级课程
@@ -203,9 +259,10 @@ class StudentController extends Controller
                                ->orderBy('course_id', 'desc')
                                ->get();
         return view('education/student/studentPaymentCreate', ['student' => $student,
-                                                        'course_same_grade' => $course_same_grade,
-                                                        'course_all_grade' => $course_all_grade,
-                                                        'course_diff_grade' => $course_diff_grade]);
+                                                               'hours' => $hours,
+                                                               'course_same_grade' => $course_same_grade,
+                                                               'course_all_grade' => $course_all_grade,
+                                                               'course_diff_grade' => $course_diff_grade]);
     }
 
     public function studentPaymentStore(Request $request){
@@ -252,8 +309,7 @@ class StudentController extends Controller
                      'payment_method' => $payment_method,
                      'payment_remark' => $payment_remark,
                      'payment_date' => $payment_date,
-                     'payment_create_user' => Session::get('user_id'),
-                     'payment_modified_user' => Session::get('user_id')]
+                     'payment_create_user' => Session::get('user_id')]
                 );
                 // 更新Hour表
                 if(DB::table('hour')->where('hour_course', $payment_course)->where('hour_student', $payment_student)->exists()){
@@ -300,11 +356,146 @@ class StudentController extends Controller
                          'message' => '购课添加失败，错误码:333']);
         }
         DB::commit();
-
         return redirect("/education/student")
                ->with(['notify' => true,
                      'type' => 'success',
                      'title' => '购课添加成功',
                      'message' => '购课添加成功']);
+    }
+
+    public function studentDaycareCreate(Request $request){
+        // 检查登录状态
+        if(!Session::has('login')){
+            return loginExpired(); // 未登录，返回登陆视图
+        }
+        // 获取学生信息
+        $student_id = decode($request->input('id'), 'student_id');
+        $student = DB::table('student')
+                     ->join('department', 'student.student_department', '=', 'department.department_id')
+                     ->join('grade', 'student.student_grade', '=', 'grade.grade_id')
+                     ->where('student_id', $student_id)
+                     ->first();
+        // 获取学生已有晚托
+        $daycares = DB::table('daycare_record')
+                   ->join('daycare', 'daycare_record.daycare_record_daycare', '=', 'daycare.daycare_id')
+                   ->where('daycare_record_student', $student_id)
+                   ->orderBy('daycare_record_is_refunded', 'asc')
+                   ->orderBy('daycare_record_start', 'desc')
+                   ->get();
+
+        // 获取可购买课程信息
+        // 相同年级课程
+        $daycare_same_grade = DB::table('daycare')
+                               ->join('grade', 'daycare.daycare_grade', '=', 'grade.grade_id')
+                               ->where('daycare_grade', $student->student_grade)
+                               ->orderBy('daycare_id', 'desc')
+                               ->get();
+        // 全年级课程
+        $daycare_all_grade = DB::table('daycare')
+                              ->leftJoin('grade', 'daycare.daycare_grade', '=', 'grade.grade_id')
+                              ->where('daycare_grade', 0)
+                              ->orderBy('daycare_id', 'desc')
+                              ->get();
+        // 全年级课程
+        $daycare_diff_grade = DB::table('daycare')
+                               ->join('grade', 'daycare.daycare_grade', '=', 'grade.grade_id')
+                               ->where([
+                                   ['daycare_grade', '<>', $student->student_grade],
+                                   ['daycare_grade', '<>', 0],
+                               ])
+                               ->orderBy('daycare_grade', 'asc')
+                               ->orderBy('daycare_id', 'desc')
+                               ->get();
+        return view('education/student/studentDaycareCreate', ['student' => $student,
+                                                               'daycares' => $daycares,
+                                                               'daycare_same_grade' => $daycare_same_grade,
+                                                               'daycare_all_grade' => $daycare_all_grade,
+                                                               'daycare_diff_grade' => $daycare_diff_grade]);
+    }
+
+
+    public function studentDaycareStore(Request $request){
+        // 检查登录状态
+        if(!Session::has('login')){
+            return loginExpired(); // 未登录，返回登陆视图
+        }
+        // 获取表单信息
+        $daycare_record_student = $request->input("daycare_record_student");
+        $daycare_record_daycare = $request->input("daycare_record_daycare");
+        $daycare_record_start = $request->input("daycare_record_start");
+        $daycare_record_daycare_unit_price = round((float)$request->input("daycare_record_daycare_unit_price"), 2);
+        $daycare_record_month = round((float)$request->input("daycare_record_month"), 1);
+        $daycare_record_discount_percentage = round((float)$request->input("daycare_record_discount_percentage"), 0);
+        $daycare_record_discount_amount = round((float)$request->input("daycare_record_discount_amount"), 2);
+        $daycare_record_method = $request->input("daycare_record_method");
+        $daycare_record_date = $request->input("daycare_record_date");
+        $daycare_record_remark = $request->input("daycare_record_remark");
+        // 计算原价、折扣总价、总价
+        $daycare_record_original_price = round($daycare_record_daycare_unit_price*$daycare_record_month, 2);
+        $daycare_record_total_price = round( ($daycare_record_daycare_unit_price*$daycare_record_month*(100-$daycare_record_discount_percentage)/100-$daycare_record_discount_amount), 2);
+        $daycare_record_discount_total = $daycare_record_original_price - $daycare_record_total_price;
+        // 计算晚托结束时间
+        $daycare_day_num = 30*$daycare_record_month;
+        $daycare_record_end = date('Y-m-d', strtotime ("+{$daycare_day_num} day", strtotime($daycare_record_start)));
+
+        // 判断是否有冲突晚托
+        $daycare_record_exist_1 = DB::table('daycare_record')
+                                    ->where('daycare_record_student', $daycare_record_student)
+                                    ->where('daycare_record_is_refunded', 0)
+                                    ->where('daycare_record_start', '>=', $daycare_record_start)
+                                    ->where('daycare_record_start', '<=', $daycare_record_end)
+                                    ->exists();
+        $daycare_record_exist_2 = DB::table('daycare_record')
+                                    ->where('daycare_record_student', $daycare_record_student)
+                                    ->where('daycare_record_is_refunded', 0)
+                                    ->where('daycare_record_end', '>=', $daycare_record_start)
+                                    ->where('daycare_record_end', '<=', $daycare_record_end)
+                                    ->exists();
+        if($daycare_record_exist_1||$daycare_record_exist_2){
+            return redirect("/education/student/daycare/create?id=".encode($daycare_record_student, 'student_id'))
+                   ->with(['notify' => true,
+                         'type' => 'danger',
+                         'title' => '购晚托添加失败',
+                         'message' => '学生在所选时间段已有晚托，错误码:333']);
+        }
+
+        DB::beginTransaction();
+        // 插入数据库
+        try{
+            // 插入Daycare_record表
+            DB::table('daycare_record')->insert(
+                ['daycare_record_daycare' => $daycare_record_daycare,
+                 'daycare_record_daycare_unit_price' => $daycare_record_daycare_unit_price,
+                 'daycare_record_student' => $daycare_record_student,
+                 'daycare_record_month' => $daycare_record_month,
+                 'daycare_record_original_price' => $daycare_record_original_price,
+                 'daycare_record_discount_percentage' => $daycare_record_discount_percentage,
+                 'daycare_record_discount_amount' => $daycare_record_discount_amount,
+                 'daycare_record_discount_total' => $daycare_record_discount_total,
+                 'daycare_record_total_price' => $daycare_record_total_price,
+                 'daycare_record_method' => $daycare_record_method,
+                 'daycare_record_remark' => $daycare_record_remark,
+                 'daycare_record_date' => $daycare_record_date,
+                 'daycare_record_start' => $daycare_record_start,
+                 'daycare_record_end' => $daycare_record_end,
+                 'daycare_record_create_user' => Session::get('user_id')]
+            );
+        }
+        // 捕获异常
+        catch(Exception $e){
+            DB::rollBack();
+            // 返回购课界面
+            return redirect("/education/student/daycare/create?id=".encode($daycare_record_student, 'student_id'))
+                   ->with(['notify' => true,
+                         'type' => 'danger',
+                         'title' => '购晚托添加失败',
+                         'message' => '购晚托添加失败，错误码:333']);
+        }
+        DB::commit();
+        return redirect("/education/student")
+               ->with(['notify' => true,
+                     'type' => 'success',
+                     'title' => '购晚托添加成功',
+                     'message' => '购晚托添加成功']);
     }
 }

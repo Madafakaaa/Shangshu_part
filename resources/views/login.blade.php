@@ -41,7 +41,7 @@
                     <i class="ni ni-circle-08 text-primary"></i>
                   </span>
                 </div>
-                <input type="text" name="input1" class="form-control" placeholder="用户名..." autocomplete="off" maxlength="10">
+                <input type="text" name="input1" class="form-control" placeholder="用户名..." maxlength="10">
               </div>
               <div class="input-group">
                 <div class="input-group-prepend">
@@ -49,7 +49,7 @@
                     <i class="ni ni-key-25 text-primary"></i>
                   </span>
                 </div>
-                <input type="password" name="input2" class="form-control" placeholder="密码..." autocomplete="off" maxlength="20">
+                <input type="password" name="input2" class="form-control" placeholder="密码..." maxlength="20">
               </div>
               <br>
               <div class="input-group" style="margin-top:10%;">

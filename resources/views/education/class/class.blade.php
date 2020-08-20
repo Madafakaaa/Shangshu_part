@@ -19,7 +19,7 @@
         <span class="btn-inner--icon"><i class="fas fa-user-edit"></i></span>
         <span class="btn-inner--text">添加班级</span>
       </a>
-      <button class="btn btn-sm btn-outline-danger btn-round btn-icon" data-toggle="tooltip" data-original-title="批量删除" onclick="batchDeleteConfirm('/education/class/delete', '删除后班级将转为离校班级，且从所在班级中退出。是否确认批量删除所选班级？？')">
+      <button class="btn btn-sm btn-outline-danger btn-round btn-icon" data-toggle="tooltip" data-original-title="批量删除" onclick="batchConfirm('/education/class/delete', 'delete-button', '删除后班级将无法进行上课点名。是否确认批量删除所选班级？')">
         <span class="btn-inner--icon"><i class="fas fa-trash"></i></span>
         <span class="btn-inner--text">批量删除</span>
       </button>
@@ -39,7 +39,7 @@
                 <th style='width:80px;'>教师</th>
                 <th style='width:40px;'>年级</th>
                 <th style='width:40px;'>科目</th>
-                <th style='width:80px;'>人数</th>
+                <th style='width:100px;'>人数</th>
                 <th style='width:80px;'>已上课</th>
                 <th style='width:200px;'>操作管理</th>
               </tr>
@@ -59,12 +59,12 @@
                   [ {{ $class['class_id'] }} ]
                   <a href="/class?id={{encode($class['class_id'], 'class_id')}}">{{ $class['class_name'] }}</a>
                 </td>
-                <td>{{ $class['user_name'] }}</td>
+                <td><a href="/user?id={{encode($class['user_id'], 'user_id')}}">{{ $class['user_name'] }}</a></td>
                 <td>{{ $class['grade_name'] }}</td>
                 <td>{{ $class['subject_name'] }}</td>
                 <td>
                   {{ $class['class_current_num'] }} / {{ $class['class_max_num'] }} 人
-                  <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modal-{{$loop->iteration}}-1">查看</button>
+                  <button type="button" class="btn btn-outline-primary btn-sm" data-toggle="modal" data-target="#modal-{{$loop->iteration}}-1">查看</button>
                   <div class="modal fade" id="modal-{{$loop->iteration}}-1" tabindex="-1" role="dialog" aria-labelledby="modal-default" aria-hidden="true">
                     <div class="modal-dialog modal- modal-dialog-centered modal-" role="document">
                       <div class="modal-content">
@@ -119,7 +119,7 @@
                 </td>
                 <td>
                   {{ $class['class_attended_num'] }} 节
-                  <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modal-{{$loop->iteration}}-2">查看</button>
+                  <button type="button" class="btn btn-outline-primary btn-sm" data-toggle="modal" data-target="#modal-{{$loop->iteration}}-2">查看</button>
                   <div class="modal fade" id="modal-{{$loop->iteration}}-2" tabindex="-1" role="dialog" aria-labelledby="modal-default" aria-hidden="true">
                     <div class="modal-dialog modal- modal-dialog-centered modal-" role="document">
                       <div class="modal-content">
@@ -170,9 +170,11 @@
                 <td>
                   @if($class['class_current_num']>0)
                     <a href="/education/class/lesson/create?id={{encode($class['class_id'], 'class_id')}}"><button type="button" class="btn btn-warning btn-sm">点名</button></a>
+                  @else
+                    <a href="#"><button type="button" class="btn btn-warning btn-sm" disabled>点名</button></a>
                   @endif
                   <a href="/class?id={{encode($class['class_id'], 'class_id')}}"><button type="button" class="btn btn-primary btn-sm">详情</button></a>
-                  <button type="button" class="btn btn-outline-danger btn-sm delete-button" id='delete_button_{{$loop->iteration}}' onclick="deleteConfirm('delete_button_{{$loop->iteration}}', '/education/class/delete?id={{encode($class['class_id'], 'class_id')}}', '删除后班级将转为离校班级，且从所在班级中退出。是否确认删除所选班级？')">删除</button>
+                  <button type="button" class="btn btn-outline-danger btn-sm delete-button" id='delete_button_{{$loop->iteration}}' onclick="buttonConfirm('delete_button_{{$loop->iteration}}', '/education/class/delete?id={{encode($class['class_id'], 'class_id')}}', '删除后班级将无法进行上课点名。是否确认删除所选班级？')">删除</button>
                 </td>
               </tr>
               @endforeach

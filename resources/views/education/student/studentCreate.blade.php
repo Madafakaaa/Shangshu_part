@@ -41,7 +41,7 @@
               <div class="col-6">
                 <div class="form-group">
                   <label class="form-control-label">学生性别<span style="color:red">*</span></label>
-                  <select class="form-control" name="input_student_gender" data-toggle="select" required>
+                  <select class="form-control" name="input_student_gender" data-toggle="selectNoFilter" required>
                     <option value=''>请选择性别...</option>
                     <option value='男'>男</option>
                     <option value='女'>女</option>
@@ -51,7 +51,7 @@
               <div class="col-6">
                 <div class="form-group">
                   <label class="form-control-label">学生年级<span style="color:red">*</span></label>
-                  <select class="form-control" name="input_student_grade" data-toggle="select" required>
+                  <select class="form-control" name="input_student_grade" data-toggle="selectNoFilter" required>
                     <option value=''>请选择学生年级...</option>
                     @foreach ($grades as $grade)
                       <option value="{{ $grade->grade_id }}">{{ $grade->grade_name }}</option>

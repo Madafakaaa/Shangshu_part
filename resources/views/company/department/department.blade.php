@@ -28,18 +28,19 @@
           <table class="table table-hover datatable-basic text-center table-bordered">
             <thead class="thead-light">
               <tr>
-                <th style='width:120px;'>校区</th>
-                <th style='width:120px;'>操作管理</th>
+                <th style='width:40px;'>序号</th>
+                <th style='width:200px;'>校区</th>
+                <th style='width:100px;'>操作管理</th>
               </tr>
             </thead>
             <tbody>
               @foreach ($departments as $department)
               <tr>
-                </td>
+                <td>{{ $loop->iteration }}</td>
                 <td>{{ $department->department_name }}</td>
                 <td>
                   <a href='/company/department/edit?id={{encode($department->department_id, 'department_id')}}'><button type="button" class="btn btn-primary btn-sm">修改</button></a>
-                  <button type="button" class="btn btn-outline-danger btn-sm delete-button" id='delete_button_{{$loop->iteration}}' onclick="deleteConfirm('delete_button_{{$loop->iteration}}', '/company/department/delete?id={{encode($department->department_id, 'department_id')}}', '确认删除校区？')">删除</button>
+                  <button type="button" class="btn btn-outline-danger btn-sm delete-button" id='delete_button_{{$loop->iteration}}' onclick="buttonConfirm('delete_button_{{$loop->iteration}}', '/company/department/delete?id={{encode($department->department_id, 'department_id')}}', '确认删除校区？')">删除</button>
                 </td>
               </tr>
               @endforeach

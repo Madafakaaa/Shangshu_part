@@ -24,7 +24,7 @@ class LessonController extends Controller
                         ->join('department', 'class.class_department', '=', 'department.department_id')
                         ->join('grade', 'class.class_grade', '=', 'grade.grade_id')
                         ->join('subject', 'class.class_subject', '=', 'subject.subject_id')
-                        ->join('user', 'lesson.lesson_teacher', '=', 'user.user_id')
+                        ->leftJoin('user', 'lesson.lesson_review_user', '=', 'user.user_id')
                         ->orderBy('lesson_date', 'desc')
                         ->orderBy('lesson_start', 'desc')
                         ->get();
@@ -36,8 +36,8 @@ class LessonController extends Controller
             $temp['department_name']=$db_lesson->department_name;
             $temp['class_id']=$db_lesson->class_id;
             $temp['class_name']=$db_lesson->class_name;
-            $temp['user_id']=$db_lesson->user_id;
-            $temp['user_name']=$db_lesson->user_name;
+            $temp['review_user_id']=$db_lesson->user_id;
+            $temp['review_user_name']=$db_lesson->user_name;
             $temp['grade_name']=$db_lesson->grade_name;
             $temp['subject_name']=$db_lesson->subject_name;
             $temp['lesson_date']=$db_lesson->lesson_date;
@@ -45,7 +45,20 @@ class LessonController extends Controller
             $temp['lesson_attended_num']=$db_lesson->lesson_attended_num;
             $temp['lesson_leave_num']=$db_lesson->lesson_leave_num;
             $temp['lesson_absence_num']=$db_lesson->lesson_absence_num;
-
+            $temp['lesson_document']=$db_lesson->lesson_document;
+            // 获取创建者信息
+            $temp_teacher = DB::table('user')
+                                  ->where('user_id', $db_lesson->lesson_teacher)
+                                  ->first();
+            $temp['teacher_id'] = $temp_teacher->user_id;
+            $temp['teacher_name'] = $temp_teacher->user_name;
+            // 获取创建者信息
+            $temp_create_user = DB::table('user')
+                                  ->where('user_id', $db_lesson->lesson_create_user)
+                                  ->first();
+            $temp['create_user_id']=$temp_create_user->user_id;
+            $temp['create_user_name']=$temp_create_user->user_name;
+            // 获取上课成员
             $temp['participants'] = array();
             $participants = DB::table('participant')
                              ->join('student', 'student.student_id', '=', 'participant.participant_student')
@@ -59,6 +72,8 @@ class LessonController extends Controller
                 $participant_temp['student_name'] = $participant->student_name;
                 $participant_temp['grade_name'] = $participant->grade_name;
                 $participant_temp['course_name'] = $participant->course_name;
+                $participant_temp['participant_amount'] = $participant->participant_amount;
+                $participant_temp['participant_attend_status'] = $participant->participant_attend_status;
                 $temp['participants'][] = $participant_temp;
             }
             $lessons[]=$temp;
@@ -70,6 +85,33 @@ class LessonController extends Controller
 
         // 返回列表视图
         return view('education/lesson/lesson', ['lessons' => $lessons]);
+    }
+
+    public function lessonDocument(Request $request){
+        // 检查登录状态
+        if(!Session::has('login')){
+            return loginExpired(); // 未登录，返回登陆视图
+        }
+        // 获取教案id
+        $document_id = decode($request->input('id'), 'document_id');
+        // 获取教案数据信息
+        $document = DB::table('document')->where('document_id', $document_id)->first();
+        // 获取文件名和路径
+        $file_path = "files/document/".$document->document_path;
+        $file_name = $document->document_name;
+        // 下载文件
+        if (file_exists($file_path)) {// 文件存在
+            // 更新文件下载次数
+            DB::table('document')->where('document_id', $document_id)->increment('document_downloaded_num');
+            // 返回文件
+            return response()->download($file_path, $file_name ,$headers = ['Content-Type'=>'application/zip;charset=utf-8']);
+        }else{ // 文件不存在
+            return redirect("/education/lesson")
+                   ->with(['notify' => true,
+                         'type' => 'danger',
+                         'title' => '档案下载失败',
+                         'message' => '档案文件已删除，错误码:403']);
+        }
     }
 
     public function lessonDelete(Request $request){
@@ -87,38 +129,148 @@ class LessonController extends Controller
         }else{
             $lesson_ids[]=decode($request_ids, 'lesson_id');
         }
-        // 更新班级可用状态
-        try{
-            foreach ($lesson_ids as $lesson_id){
+        // 删除上课记录
+        foreach ($lesson_ids as $lesson_id){
+            DB::beginTransaction();
+            try{
+                // 获取上课信息
+                $lesson =  DB::table('lesson')
+                             ->where('lesson_id', $lesson_id)
+                             ->first();
+                // 获取上课成员信息
+                $participants =  DB::table('participant')
+                                   ->where('participant_lesson', $lesson_id)
+                                   ->get();
+                // 更新学生课时
+                foreach($participants as $participant){
+                    // 减少已用课时
+                    DB::table('hour')
+                      ->where('hour_course', $participant->participant_course)
+                      ->where('hour_student', $participant->participant_student)
+                      ->decrement('hour_used', $participant->participant_amount);
+                    // 增加剩余课时
+                    DB::table('hour')
+                      ->where('hour_course', $participant->participant_course)
+                      ->where('hour_student', $participant->participant_student)
+                      ->increment('hour_remain', $participant->participant_amount);
+                }
+                // 获取教案文件、信息
+                $document =  DB::table('document')
+                               ->where('document_id', $lesson->lesson_document)
+                               ->first();
+
+                $document_path = "files/document/".$document->document_path;
+                // 删除教案数据
+                DB::table('document')
+                  ->where('document_id', $lesson->lesson_document)
+                  ->delete();
+                // 删除上课记录信息
                 DB::table('lesson')
                   ->where('lesson_id', $lesson_id)
-                  ->update(['lesson_is_available' => 0,
-                            'lesson_modified_user' => Session::get('user_id'),
-                            'lesson_modified_time' => date('Y-m-d H:i:s')]);
-                // 从班级成员中删除该班级
-                /*
-                DB::table('member')
-                  ->where('member_lesson', $lesson_id)
                   ->delete();
-                */
-                // 从课程安排中删除该班级
-                /* TODO */
+                // 更新班级上课记录数量
+                DB::table('class')
+                  ->where('class_id', $lesson->lesson_class)
+                  ->decrement('class_attended_num');
+                // 删除教案文件
+                if (file_exists($document_path)) {
+                    unlink($document_path);
+                }
             }
-        }
-        // 捕获异常
-        catch(Exception $e){
-            return redirect("/education/lesson")
-                   ->with(['notify' => true,
-                         'type' => 'danger',
-                         'title' => '班级删除失败',
-                         'message' => '班级删除失败，错误码:204']);
+            // 捕获异常
+            catch(Exception $e){
+                DB::rollBack();
+                return redirect("/education/lesson")
+                       ->with(['notify' => true,
+                             'type' => 'danger',
+                             'title' => '上课记录删除失败',
+                             'message' => '上课记删除失败，错误码:204']);
+            }
+            DB::commit();
         }
         // 返回课程列表
         return redirect("/education/lesson")
                ->with(['notify' => true,
                        'type' => 'success',
-                       'title' => '班级删除成功',
-                       'message' => '班级删除成功!']);
+                       'title' => '上课记删除成功',
+                       'message' => '上课记删除成功!']);
+    }
+
+    public function lessonReviewAll(Request $request){
+        // 检查登录状态
+        if(!Session::has('login')){
+            return loginExpired(); // 未登录，返回登陆视图
+        }
+        // 复核上课记录
+        DB::beginTransaction();
+        try{
+            // 更新可复核班级上课记录复核信息
+            DB::table('lesson')
+              ->whereNull('lesson_review_user')
+              ->where('lesson_create_user', '<>', Session::get('user_id'))
+              ->update(['lesson_review_user' => Session::get('user_id'),
+                        'lesson_review_time' => date('Y-m-d H:i:s')]);
+        }
+        // 捕获异常
+        catch(Exception $e){
+            DB::rollBack();
+            return redirect("/education/lesson")
+                   ->with(['notify' => true,
+                         'type' => 'danger',
+                         'title' => '可复核上课记录复核失败',
+                         'message' => '可复核上课记复核失败，错误码:204']);
+        }
+        DB::commit();
+        // 返回课程列表
+        return redirect("/education/lesson")
+               ->with(['notify' => true,
+                       'type' => 'success',
+                       'title' => '全部可复核上课记录复核成功',
+                       'message' => '全部可复核上课记录复核成功!']);
+    }
+
+    public function lessonReview(Request $request){
+        // 检查登录状态
+        if(!Session::has('login')){
+            return loginExpired(); // 未登录，返回登陆视图
+        }
+        // 获取lesson_id
+        $request_ids=$request->input('id');
+        $lesson_ids = array();
+        if(is_array($request_ids)){
+            foreach ($request_ids as $request_id) {
+                $lesson_ids[]=decode($request_id, 'lesson_id');
+            }
+        }else{
+            $lesson_ids[]=decode($request_ids, 'lesson_id');
+        }
+        // 复核上课记录
+        DB::beginTransaction();
+        try{
+            foreach ($lesson_ids as $lesson_id){
+                // 更新班级上课记录复核信息
+                DB::table('lesson')
+                  ->where('lesson_id', $lesson_id)
+                  ->update(['lesson_review_user' => Session::get('user_id'),
+                            'lesson_review_time' => date('Y-m-d H:i:s')]);
+            }
+        }
+        // 捕获异常
+        catch(Exception $e){
+            DB::rollBack();
+            return redirect("/education/lesson")
+                   ->with(['notify' => true,
+                         'type' => 'danger',
+                         'title' => '上课记录复核失败',
+                         'message' => '上课记复核失败，错误码:204']);
+        }
+        DB::commit();
+        // 返回课程列表
+        return redirect("/education/lesson")
+               ->with(['notify' => true,
+                       'type' => 'success',
+                       'title' => '上课记录复核成功',
+                       'message' => '上课记录复核成功!']);
     }
 
 }

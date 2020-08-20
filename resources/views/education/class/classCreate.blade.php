@@ -41,7 +41,7 @@
               <div class="col-6">
                 <div class="form-group">
                   <label class="form-control-label">班级年级<span style="color:red">*</span></label>
-                  <select class="form-control" name="input_class_grade" data-toggle="select" required>
+                  <select class="form-control" name="input_class_grade" data-toggle="selectNoFilter" required>
                     <option value=''>请选择班级年级...</option>
                     @foreach ($grades as $grade)
                       <option value="{{ $grade->grade_id }}">{{ $grade->grade_name }}</option>
@@ -52,7 +52,7 @@
               <div class="col-6">
                 <div class="form-group">
                   <label class="form-control-label">班级科目<span style="color:red">*</span></label>
-                  <select class="form-control" name="input_class_subject" data-toggle="select" required>
+                  <select class="form-control" name="input_class_subject" data-toggle="selectNoFilter" required>
                     <option value=''>请选择班级科目...</option>
                     @foreach ($subjects as $subject)
                       <option value="{{ $subject->subject_id }}">{{ $subject->subject_name }}</option>
@@ -76,7 +76,7 @@
               <div class="col-6">
                 <div class="form-group">
                   <label class="form-control-label">最大人数<span style="color:red">*</span></label>
-                  <input class="form-control" type="text" name="input_class_max_num" value="6" placeholder="请输入班级姓名..." autocomplete='off' min="0" max="99" required>
+                  <input class="form-control" type="text" name="input_class_max_num" value="6" placeholder="请输入班级姓名..." autocomplete='off' min="0" max="6" required>
                 </div>
               </div>
             </div>

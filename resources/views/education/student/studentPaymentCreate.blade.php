@@ -1,12 +1,13 @@
 @extends('main')
 
 @section('nav')
-<h2 class="text-white d-inline-block mb-0">学生管理</h2>
+<h2 class="text-white d-inline-block mb-0">购买课时</h2>
 <nav aria-label="breadcrumb" class="d-none d-inline-block ml-4">
   <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
     <li class="breadcrumb-item"><a href="/home"><i class="fas fa-home"></i></a></li>
     <li class="breadcrumb-item active">教务中心</li>
-    <li class="breadcrumb-item active">学生管理</li>
+    <li class="breadcrumb-item"><a href="/education/student">学生管理</a></li>
+    <li class="breadcrumb-item active">购买课时</li>
   </ol>
 </nav>
 @endsection
@@ -52,7 +53,27 @@
           <div class="card-header">
             <h4 class="mb-0">已购课程</h4>
           </div>
-          <div class="card-body p-0">
+          <div class="card-body" style="height:180px; overflow:auto;">
+            <ul class="list-group list-group-flush list my--3">
+              @foreach ($hours as $hour)
+                <li class="list-group-item px-0">
+                  <div class="row align-items-center">
+                    <div class="col">
+                      <small>课程:</small>
+                      <h5 class="mb-0">{{ $hour->course_name }}</h5>
+                    </div>
+                    <div class="col">
+                      <small>剩余</small>
+                      <h5 class="mb-0">{{ $hour->hour_remain }} 课时</h5>
+                    </div>
+                    <div class="col">
+                      <small>已用</small>
+                      <h5 class="mb-0">{{ $hour->hour_used }} 课时</h5>
+                    </div>
+                  </div>
+                </li>
+              @endforeach
+            </ul>
           </div>
         </div>
       </div>

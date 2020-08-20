@@ -53,6 +53,12 @@
                   <span class="nav-link-text">课程设置</span>
                 </a>
               </li>
+              <li class="nav-item">
+                <a href="/company/daycare" class="nav-link" id="companyDaycare">
+                  <i class="fa fa-shield-alt text-green"></i>
+                  <span class="nav-link-text">晚托设置</span>
+                </a>
+              </li>
             </ul>
           </div>
         </li>
@@ -65,19 +71,25 @@
             <ul class="nav nav-sm flex-column">
               <li class="nav-item">
                 <a href="/education/student" class="nav-link" id="educationStudent">
-                  <i class="ni ni-single-02 text-warning"></i>
+                  <i class="fa fa-user text-warning"></i>
                   <span class="nav-link-text">学生管理</span>
                 </a>
               </li>
               <li class="nav-item">
                 <a href="/education/hour" class="nav-link" id="educationHour">
-                  <i class="ni ni-single-copy-04 text-warning"></i>
+                  <i class="fa fa-user-clock text-warning"></i>
                   <span class="nav-link-text">学生课时</span>
                 </a>
               </li>
               <li class="nav-item">
+                <a href="/education/daycare" class="nav-link" id="educationDaycare">
+                  <i class="fa fa-user-shield text-warning"></i>
+                  <span class="nav-link-text">学生晚托</span>
+                </a>
+              </li>
+              <li class="nav-item">
                 <a href="/education/class" class="nav-link" id="educationClass">
-                  <i class="ni ni-circle-08 text-warning"></i>
+                  <i class="fa fa-users text-warning"></i>
                   <span class="nav-link-text">班级管理</span>
                 </a>
               </li>
@@ -97,7 +109,13 @@
               <li class="nav-item">
                 <a href="/education/payment" class="nav-link" id="educationPayment">
                   <i class="ni ni-money-coins text-warning"></i>
-                  <span class="nav-link-text">购课记录</span>
+                  <span class="nav-link-text">课时购买记录</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="/education/daycareRecord" class="nav-link" id="educationDaycareRecord">
+                  <i class="ni ni-money-coins text-warning"></i>
+                  <span class="nav-link-text">晚托缴费记录</span>
                 </a>
               </li>
               <!-- <li class="nav-item">

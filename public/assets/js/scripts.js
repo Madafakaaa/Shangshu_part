@@ -99,7 +99,7 @@ function navbarActive(id){
     document.getElementById(id).setAttribute("class", "collapse show");
 }
 
-function deleteConfirm(button_id, url, msg) {
+function buttonConfirm(button_id, url, msg) {
     // Disable button first
     $('#'+button_id).attr("disabled", true);
     // Confirmation
@@ -111,9 +111,9 @@ function deleteConfirm(button_id, url, msg) {
     }
 }
 
-function batchDeleteConfirm(url, msg) {
+function batchConfirm(url, className, msg) {
     // Disable button first
-    $('.delete-button').attr("disabled", true);
+    $('.'+className).attr("disabled", true);
     // Confirmation
     var result = confirm(msg);
     if (result == true) {
@@ -125,7 +125,7 @@ function batchDeleteConfirm(url, msg) {
         }
         if(check_val.length<=0){
             alert("请至少勾选一行数据！");
-            $('.delete-button').attr("disabled", false);
+            $('.'+className).attr("disabled", false);
         }else{
             url += "?";
             for(var i=0;i<check_val.length;i++){
@@ -134,7 +134,7 @@ function batchDeleteConfirm(url, msg) {
             window.location.href=url;
         }
     } else {
-        $('.delete-button').attr("disabled", false);
+        $('.'+className).attr("disabled", false);
     }
 }
 

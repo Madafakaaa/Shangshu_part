@@ -34,6 +34,7 @@ class ClassController extends Controller
             $temp['department_name']=$db_class->department_name;
             $temp['class_id']=$db_class->class_id;
             $temp['class_name']=$db_class->class_name;
+            $temp['user_id']=$db_class->user_id;
             $temp['user_name']=$db_class->user_name;
             $temp['grade_name']=$db_class->grade_name;
             $temp['subject_name']=$db_class->subject_name;
@@ -190,31 +191,31 @@ class ClassController extends Controller
             $class_ids[]=decode($request_ids, 'class_id');
         }
         // 更新班级可用状态
+        DB::beginTransaction();
         try{
             foreach ($class_ids as $class_id){
+                // 更新班级信息：人数，状态，修改信息
                 DB::table('class')
                   ->where('class_id', $class_id)
                   ->update(['class_is_available' => 0,
                             'class_modified_user' => Session::get('user_id'),
                             'class_modified_time' => date('Y-m-d H:i:s')]);
                 // 从班级成员中删除该班级
-                /*
-                DB::table('member')
-                  ->where('member_class', $class_id)
-                  ->delete();
-                */
-                // 从课程安排中删除该班级
+                // DB::table('member')->where('member_class', $class_id)->delete();
+                // 从课程表中删除该班级
                 /* TODO */
             }
         }
         // 捕获异常
         catch(Exception $e){
+            DB::rollBack();
             return redirect("/education/class")
                    ->with(['notify' => true,
                          'type' => 'danger',
                          'title' => '班级删除失败',
                          'message' => '班级删除失败，错误码:204']);
         }
+        DB::commit();
         // 返回课程列表
         return redirect("/education/class")
                ->with(['notify' => true,
@@ -299,6 +300,23 @@ class ClassController extends Controller
                            'title' => '班级点名失败',
                            'message' => '班级内没有学生，错误码:326']);
         }
+
+        // 判断老师是否有冲突
+        $teacher_lesson_exist = DB::table('participant')
+                                  ->join('lesson', 'participant.participant_lesson', 'lesson.lesson_id')
+                                  ->where('lesson_teacher', $lesson_teacher)
+                                  ->where('lesson_date', $lesson_date)
+                                  ->where('lesson_start', $lesson_start)
+                                  ->exists();
+        if($teacher_lesson_exist){
+            // 返回
+            return redirect("/education/class/lesson/create?id=".encode($lesson_class, 'class_id'))
+                   ->with(['notify' => true,
+                         'type' => 'danger',
+                         'title' => '课程点名失败',
+                         'message' => "教师在此时间段已有上课记录！"]);
+        }
+
         // 获取上课人数
         $lesson_student_num = $class->class_current_num;
 
@@ -372,6 +390,24 @@ class ClassController extends Controller
                 $participant_student = $request->input('input_student_id_'.$i);
                 $participant_attend_status = $request->input('input_student_status_'.$i);
                 if($participant_attend_status==1){ // 正常（计课时）
+                    // 判断学生是否有课程冲突
+                    if(
+                       DB::table('participant')
+                       ->join('lesson', 'participant.participant_lesson', 'lesson.lesson_id')
+                       ->where('participant_student', $participant_student)
+                       ->where('lesson_date', $lesson_date)
+                       ->where('lesson_start', $lesson_start)
+                       ->exists()
+                      )
+                    {
+                        DB::rollBack();
+                        // 返回第一步
+                        return redirect("/education/class/lesson/create?id=".encode($lesson_class, 'class_id'))
+                               ->with(['notify' => true,
+                                     'type' => 'danger',
+                                     'title' => '课程点名失败',
+                                     'message' => "学生在此时间段已有上课记录，学号：{$participant_student}"]);
+                    }
                     $participant_course = $request->input('input_student_course_'.$i);
                     $participant_amount = $request->input('input_student_amount_'.$i);
                     $lesson_attended_num = $lesson_attended_num + 1; // 增加正常上课人数
@@ -412,15 +448,17 @@ class ClassController extends Controller
               ->update(['lesson_attended_num' => $lesson_attended_num,
                         'lesson_leave_num' => $lesson_leave_num,
                         'lesson_absence_num' => $lesson_absence_num]);
-            // 更新班级信息
+            // 更新班级上课记录数量
             DB::table('class')
               ->where('class_id', $lesson_class)
               ->increment('class_attended_num');
+
         }
         // 捕获异常
         catch(Exception $e){
             DB::rollBack();
             // 返回第一步
+            return $e;
             return redirect("/education/class/lesson/create?id=".encode($lesson_class, 'class_id'))
                    ->with(['notify' => true,
                          'type' => 'danger',
@@ -437,5 +475,6 @@ class ClassController extends Controller
                        'title' => '课程点名成功',
                        'message' => '课程点名成功']);
     }
+
 
 }

@@ -34,7 +34,7 @@
               <div class="col-6">
                 <div class="form-group">
                   <label class="form-control-label">性别<span style="color:red">*</span></label>
-                  <select class="form-control" name="input_user_gender" data-toggle="select" required>
+                  <select class="form-control" name="input_user_gender" data-toggle="selectNoFilter" required>
                     <option value=''>请选择性别...</option>
                     <option value='男'>男</option>
                     <option value='女'>女</option>
@@ -46,7 +46,7 @@
               <div class="col-6">
                 <div class="form-group">
                   <label class="form-control-label">校区<span style="color:red">*</span></label>
-                  <select class="form-control" name="input_user_department" data-toggle="select" required>
+                  <select class="form-control" name="input_user_department" data-toggle="selectNoFilter" required>
                     <option value=''>请选择校区...</option>
                     @foreach ($departments as $department)
                       <option value="{{ $department->department_id }}">{{ $department->department_name }}</option>

@@ -2679,6 +2679,26 @@ var Select2 = (function() {
 	}
 })();
 
+var Select2NoFilter = (function() {
+  // Variables
+  var $select = $('[data-toggle="selectNoFilter"]');
+
+  // Methods
+  function init($this) {
+    $this.select2({
+      minimumResultsForSearch: -1
+    });
+  }
+
+  // Events
+  if ($select.length) {
+    // Init selects
+    $select.each(function() {
+      init($(this));
+    });
+  }
+})();
+
 var Select2Multi = (function() {
     //
     // Variables
@@ -2689,12 +2709,6 @@ var Select2Multi = (function() {
     // Methods
     //
     function init($this) {
-        // var options = {
-        // tag: true,
-        // dropdownParent: $this.closest('.modal').length ? $this.closest('.modal') : $(document.body),
-        // minimumResultsForSearch: $this.data('minimum-results-for-search'),
-        // templateResult: formatAvatar
-        // };
         $this.select2({
             tags: true,
             multiple: true,

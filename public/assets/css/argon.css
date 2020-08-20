@@ -24016,6 +24016,7 @@ textarea[resize='horizontal']
     font-weight: 400;
     white-space: nowrap;
     vertical-align:middle;
+    overflow: hidden;
 }
 
 .table.align-items-center td,

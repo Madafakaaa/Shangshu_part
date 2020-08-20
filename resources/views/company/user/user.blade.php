@@ -28,6 +28,7 @@
           <table class="table table-hover datatable-basic text-center table-bordered">
             <thead class="thead-light">
               <tr>
+                <th style='width:40px;'>序号</th>
                 <th style='width:100px;'>姓名</th>
                 <th style='width:100px;'>账号</th>
                 <th style='width:100px;'>校区</th>
@@ -37,6 +38,7 @@
             <tbody>
               @foreach ($users as $user)
               <tr>
+                <td>{{ $loop->iteration }}</td>
                 <td>
                   <a href="/user?id={{encode($user->user_id,'user_id')}}">{{ $user->user_name }}</a>&nbsp;
                   @if($user->user_gender=="男")
@@ -48,8 +50,9 @@
                 <td>{{ $user->user_id }}</td>
                 <td>{{ $user->department_name }}</td>
                 <td>
+                  <a href='/user?id={{encode($user->user_id, 'user_id')}}'><button type="button" class="btn btn-primary btn-sm">详情</button></a>
                   <a href='/company/user/access?id={{encode($user->user_id, 'user_id')}}'><button type="button" class="btn btn-primary btn-sm">权限</button></a>
-                  <button type="button" class="btn btn-outline-danger btn-sm delete-button" id='delete_button_{{$loop->iteration}}' onclick="deleteConfirm('delete_button_{{$loop->iteration}}', '/company/user/delete?id={{encode($user->user_id, 'user_id')}}', '确认删除用户？')">删除</button>
+                  <button type="button" class="btn btn-outline-danger btn-sm delete-button" id='delete_button_{{$loop->iteration}}' onclick="buttonConfirm('delete_button_{{$loop->iteration}}', '/company/user/delete?id={{encode($user->user_id, 'user_id')}}', '确认删除用户？')">删除</button>
                 </td>
               </tr>
               @endforeach

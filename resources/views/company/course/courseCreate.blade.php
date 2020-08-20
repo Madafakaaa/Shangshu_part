@@ -40,7 +40,7 @@
               <div class="col-6">
                 <div class="form-group">
                   <label class="form-control-label">课程类型<span style="color:red">*</span></label>
-                  <select class="form-control" name="input_course_type" data-toggle="select" required>
+                  <select class="form-control" name="input_course_type" data-toggle="selectNoFilter" required>
                     <option value='1'>1人班</option>
                     <option value='2'>2人班</option>
                     <option value='3'>3-6人班</option>
@@ -50,7 +50,7 @@
               <div class="col-6">
                 <div class="form-group">
                   <label class="form-control-label">开课季度<span style="color:red">*</span></label>
-                  <select class="form-control" name="input_course_quarter" data-toggle="select" required>
+                  <select class="form-control" name="input_course_quarter" data-toggle="selectNoFilter" required>
                     <option value='全年'>全年</option>
                     <option value='春季'>春季</option>
                     <option value='暑假'>暑假</option>
@@ -62,7 +62,7 @@
               <div class="col-6">
                 <div class="form-group">
                   <label class="form-control-label">课程年级<span style="color:red">*</span></label>
-                  <select class="form-control" name="input_course_grade" data-toggle="select" required>
+                  <select class="form-control" name="input_course_grade" data-toggle="selectNoFilter" required>
                     <option value='0'>全年级</option>
                     @foreach ($grades as $grade)
                       <option value="{{ $grade->grade_id }}">{{ $grade->grade_name }}</option>

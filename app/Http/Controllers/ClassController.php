@@ -37,18 +37,108 @@ class ClassController extends Controller
                   ->where('member.member_class', $class_id)
                   ->get();
 
-        // 获取学生信息
-        $students = DB::table('student')
-                      ->join('grade', 'student.student_grade', '=', 'grade.grade_id')
-                      ->where('student_department', $class->class_department)
-                      ->where('student_is_available', 1)
-                      ->orderBy('student_id', 'asc')
-                      ->get();
+        // 生成已有学生ID数组
+        $member_student_ids = array();
+        foreach($members as $member){
+            $member_student_ids[] = $member->member_student;
+        }
 
+        // 获取可添加学生信息
+        $same_grade_students = DB::table('student')
+                                 ->join('grade', 'student.student_grade', '=', 'grade.grade_id')
+                                 ->where('student_department', $class->class_department)
+                                 ->where('student_grade', $class->class_grade)
+                                 ->where('student_is_available', 1)
+                                 ->whereNotIn('student_id', $member_student_ids)
+                                 ->orderBy('student_id', 'asc')
+                                 ->get();
+        $diff_grade_students = DB::table('student')
+                                 ->join('grade', 'student.student_grade', '=', 'grade.grade_id')
+                                 ->where('student_department', $class->class_department)
+                                 ->where('student_grade', '!=', $class->class_grade)
+                                 ->where('student_is_available', 1)
+                                 ->whereNotIn('student_id', $member_student_ids)
+                                 ->orderBy('student_grade', 'asc')
+                                 ->orderBy('student_id', 'asc')
+                                 ->get();
 
+        // 获取上课记录
+        $db_lessons = DB::table('lesson')
+                        ->join('class', 'lesson.lesson_class', '=', 'class.class_id')
+                        ->join('grade', 'class.class_grade', '=', 'grade.grade_id')
+                        ->join('subject', 'class.class_subject', '=', 'subject.subject_id')
+                        ->join('user', 'lesson.lesson_teacher', '=', 'user.user_id')
+                        ->where('lesson_class', $class_id)
+                        ->orderBy('lesson_date', 'desc')
+                        ->orderBy('lesson_start', 'desc')
+                        ->get();
+
+        $lessons = array();
+        foreach($db_lessons as $db_lesson){
+            $temp=array();
+            $temp['lesson_id']=$db_lesson->lesson_id;
+            $temp['class_id']=$db_lesson->class_id;
+            $temp['class_name']=$db_lesson->class_name;
+            $temp['teacher_id']=$db_lesson->user_id;
+            $temp['teacher_name']=$db_lesson->user_name;
+            $temp['grade_name']=$db_lesson->grade_name;
+            $temp['subject_name']=$db_lesson->subject_name;
+            $temp['lesson_date']=$db_lesson->lesson_date;
+            $temp['lesson_start']=$db_lesson->lesson_start;
+            $temp['lesson_attended_num']=$db_lesson->lesson_attended_num;
+            $temp['lesson_leave_num']=$db_lesson->lesson_leave_num;
+            $temp['lesson_absence_num']=$db_lesson->lesson_absence_num;
+            $temp['lesson_document']=$db_lesson->lesson_document;
+            // 获取创建者信息
+            $temp_create_user = DB::table('user')
+                                  ->where('user_id', $db_lesson->lesson_create_user)
+                                  ->first();
+            $temp['create_user_id']=$temp_create_user->user_id;
+            $temp['create_user_name']=$temp_create_user->user_name;
+            // 获取上课成员
+            $temp['participants'] = array();
+            $participants = DB::table('participant')
+                             ->join('student', 'student.student_id', '=', 'participant.participant_student')
+                             ->join('grade', 'grade.grade_id', '=', 'student.student_grade')
+                             ->leftJoin('course', 'course.course_id', '=', 'participant.participant_course')
+                             ->where('participant_lesson', $db_lesson->lesson_id)
+                             ->get();
+            foreach($participants as $participant){
+                $participant_temp = array();
+                $participant_temp['student_id'] = $participant->student_id;
+                $participant_temp['student_name'] = $participant->student_name;
+                $participant_temp['grade_name'] = $participant->grade_name;
+                $participant_temp['course_name'] = $participant->course_name;
+                $participant_temp['participant_amount'] = $participant->participant_amount;
+                $participant_temp['participant_attend_status'] = $participant->participant_attend_status;
+                $temp['participants'][] = $participant_temp;
+            }
+            $lessons[]=$temp;
+        }
+
+        // 获取年级信息
+        $grades = DB::table('grade')->orderBy('grade_id', 'asc')->get();
+        $subjects = DB::table('subject')->orderBy('subject_id', 'asc')->get();
+        $users = DB::table('user')
+                   ->join('department', 'user.user_department', '=', 'department.department_id')
+                   ->where('user_department', Session::get('user_department'))
+                   ->where('user_is_available', 1)
+                   ->get();
+        $other_department_users = DB::table('user')
+                   ->join('department', 'user.user_department', '=', 'department.department_id')
+                   ->where('user_department', '!=',Session::get('user_department'))
+                   ->where('user_is_available', 1)
+                   ->orderBy('user_department', 'asc')
+                   ->get();
         return view('class/class', ['class' => $class,
-                                    'students' => $students,
-                                    'members' => $members]);
+                                    'same_grade_students' => $same_grade_students,
+                                    'diff_grade_students' => $diff_grade_students,
+                                    'members' => $members,
+                                    'lessons' => $lessons,
+                                    'grades' => $grades,
+                                    'subjects' => $subjects,
+                                    'users' => $users,
+                                    'other_department_users' => $other_department_users]);
     }
 
     /**
@@ -164,23 +254,18 @@ class ClassController extends Controller
      * @param  $request->input('input6'): 备注
      * @param  int  $class_id
      */
-    public function update(Request $request){
+    public function classUpdate(Request $request){
         // 检查登录状态
         if(!Session::has('login')){
             return loginExpired(); // 未登录，返回登陆视图
         }
-        $class_id = decode($request->input('id'), 'class_id');
          // 获取表单输入
-        $class_name = $request->input('input1');
-        $class_grade = $request->input('input2');
-        $class_subject = $request->input('input3');
-        $class_teacher = $request->input('input4');
-        $class_max_num = $request->input('input5');
-        if($request->filled('input6')) {
-            $class_remark = $request->input('input6');
-        }else{
-            $class_remark = '无';
-        }
+        $class_id = $request->input('input_class_id');
+        $class_name = $request->input('input_class_name');
+        $class_grade = $request->input('input_class_grade');
+        $class_subject = $request->input('input_class_subject');
+        $class_teacher = $request->input('input_class_teacher');
+        $class_max_num = $request->input('input_class_max_num');
         // 更新数据库
         try{
             DB::table('class')
@@ -190,7 +275,8 @@ class ClassController extends Controller
                         'class_subject' => $class_subject,
                         'class_teacher' => $class_teacher,
                         'class_max_num' => $class_max_num,
-                        'class_remark' => $class_remark]);
+                        'class_modified_user' => Session::get('user_id'),
+                        'class_modified_time' => date('Y-m-d H:i:s')]);
         }
         // 捕获异常
         catch(Exception $e){
@@ -204,7 +290,7 @@ class ClassController extends Controller
                ->with(['notify' => true,
                          'type' => 'success',
                          'title' => '班级修改成功',
-                         'message' => '班级修改成功，班级名称: '.$class_name]);
+                         'message' => '班级修改成功!']);
     }
 
 }

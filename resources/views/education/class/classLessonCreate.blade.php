@@ -1,13 +1,13 @@
 @extends('main')
 
 @section('nav')
-<h2 class="text-white d-inline-block mb-0">班级点名</h2>
+<h2 class="text-white d-inline-block mb-0">上课点名</h2>
 <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
   <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
     <li class="breadcrumb-item"><a href="/home"><i class="fas fa-home"></i></a></li>
     <li class="breadcrumb-item active">教学中心</li>
     <li class="breadcrumb-item"><a href="/education/class">班级管理</a></li>
-    <li class="breadcrumb-item active">班级点名</li>
+    <li class="breadcrumb-item active">上课点名</li>
   </ol>
 </nav>
 @endsection
@@ -20,7 +20,7 @@
         <form action="/education/class/lesson/store" method="post" enctype="multipart/form-data" id="form1" name="form1" onsubmit="submitButtonDisable('submitButton1')">
           @csrf
           <div class="card-header">
-            <h3 class="mb-0">班级点名</h3>
+            <h3 class="mb-0">上课点名</h3>
           </div>
           <!-- Card body -->
           <div class="card-body">
@@ -180,7 +180,7 @@
                 </div>
                 <div class="col-4 px-2 mb-2">
                   <div class="form-group mb-1">
-                    <select class="form-control form-control-sm" name="input_student_amount_{{ $loop->iteration }}" id="input_student_amount_{{ $loop->iteration }}" required>
+                    <select class="form-control form-control-sm" name="input_student_amount_{{ $loop->iteration }}" id="input_student_amount_{{ $loop->iteration }}" required data-toggle="selectNoFilter">
                       <option value='1' selected>1 课时</option>
                       <option value='2'>2 课时</option>
                       <option value='3'>3 课时</option>
@@ -210,9 +210,9 @@
 
 @section('sidebar_status')
 <script>
-  linkActive('link-operation');
-  navbarActive('navbar-operation');
-  linkActive('operationSchedule');
+  linkActive('link-education');
+  navbarActive('navbar-education');
+  linkActive('operationClass');
 
   function disableInput(a){
     if($("input[name='input_student_status_"+a+"']:checked").val()==2){

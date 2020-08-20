@@ -33,6 +33,20 @@ Route::get('/company/course', 'Company\CourseController@course');
     Route::get('/company/course/delete', 'Company\CourseController@courseDelete');
     // 恢复课程
     Route::get('/company/course/restore', 'Company\CourseController@courseRestore');
+// 晚托设置
+Route::get('/company/daycare', 'Company\DaycareController@daycare');
+    // 添加晚托
+    Route::get('/company/daycare/create', 'Company\DaycareController@daycareCreate');
+    // 保存晚托
+    Route::post('/company/daycare/store', 'Company\DaycareController@daycareStore');
+    // 修改晚托
+    Route::get('/company/daycare/edit', 'Company\DaycareController@daycareEdit');
+    // 更新晚托
+    Route::post('/company/daycare/update', 'Company\DaycareController@daycareUpdate');
+    // 删除晚托
+    Route::get('/company/daycare/delete', 'Company\DaycareController@daycareDelete');
+    // 恢复晚托
+    Route::get('/company/daycare/restore', 'Company\DaycareController@daycareRestore');
 // 用户管理
 Route::get('/company/user', 'Company\UserController@user');
     // 添加用户
@@ -58,14 +72,26 @@ Route::get('/education/student', 'Education\StudentController@student');
     Route::get('/education/student/create/success', 'Education\StudentController@studentCreateSuccess');
     // 学生删除(转为离校)
     Route::get('/education/student/delete', 'Education\StudentController@studentDelete');
-    // 学生购课
+    // 学生购课时
     Route::get('/education/student/payment/create', 'Education\StudentController@studentPaymentCreate');
-    // 保存购课
+    // 保存购课时
     Route::post('/education/student/payment/store', 'Education\StudentController@studentPaymentStore');
-    // 学生购课成功
+    // 学生购课时成功
     Route::get('/education/student/payment/create/success', 'Education\StudentController@studentPaymentCreateSuccess');
+    // 学生购晚托
+    Route::get('/education/student/daycare/create', 'Education\StudentController@studentDaycareCreate');
+    // 保存购晚托
+    Route::post('/education/student/daycare/store', 'Education\StudentController@studentDaycareStore');
+    // 学生购晚托成功
+    Route::get('/education/student/daycare/create/success', 'Education\StudentController@studentDaycareCreateSuccess');
 // 学生课时
 Route::get('/education/hour', 'Education\HourController@hour');
+    // 课时退费
+    Route::get('/education/hour/refund/create', 'Education\HourController@hourRefundCreate');
+// 学生晚托
+Route::get('/education/daycare', 'Education\DaycareController@daycare');
+    // 晚托退费
+    Route::get('/education/daycare/refund/create', 'Education\DaycareController@daycareRefundCreate');
 // 班级管理
 Route::get('/education/class', 'Education\ClassController@class');
     // 添加班级
@@ -82,21 +108,50 @@ Route::get('/education/class', 'Education\ClassController@class');
     Route::post('/education/class/lesson/store', 'Education\ClassController@classLessonStore');
 // 上课记录
 Route::get('/education/lesson', 'Education\LessonController@lesson');
+    // 复核上课记录
+    Route::get('/education/lesson/review', 'Education\LessonController@lessonReview');
+    // 复核全部上课记录
+    Route::get('/education/lesson/review/all', 'Education\LessonController@lessonReviewAll');
+    // 下载上课教案
+    Route::get('/education/lesson/document', 'Education\LessonController@lessonDocument');
+    // 删除上课记录
+    Route::get('/education/lesson/delete', 'Education\LessonController@lessonDelete');
 // 购课记录
 Route::get('/education/payment', 'Education\PaymentController@payment');
+    // 复核上课记录
+    Route::get('/education/payment/review', 'Education\PaymentController@paymentReview');
+    // 复核全部上课记录
+    Route::get('/education/payment/review/all', 'Education\PaymentController@paymentReviewAll');
+    // 删除购课记录
+    Route::get('/education/payment/delete', 'Education\PaymentController@paymentDelete');
+// 晚托记录
+Route::get('/education/daycareRecord', 'Education\DaycareRecordController@daycareRecord');
+    // 复核晚托记录
+    Route::get('/education/daycareRecord/review', 'Education\DaycareRecordController@daycareRecordReview');
+    // 复核全部晚托记录
+    Route::get('/education/daycareRecord/review/all', 'Education\DaycareRecordController@daycareRecordReviewAll');
+    // 删除晚托记录
+    Route::get('/education/daycareRecord/delete', 'Education\DaycareRecordController@daycareRecordDelete');
 
 
-// 财务中心 ********************************************************************************
-// 课时缴费
-Route::get('/finance/payment', 'Finance\PaymentController@payment');
-    // 购课删除(转为离校)
-    Route::get('/finance/payment/delete', 'Finance\PaymentController@paymentDelete');
 
-
-
+// 学生详情
+Route::get('/student', 'StudentController@student');
+    // 添加班级
+    Route::get('/student/member/add', 'StudentController@studentMemberAdd');
+    // 删除班级
+    Route::get('/student/member/delete', 'StudentController@studentMemberDelete');
+    // 修改学生信息
+    Route::post('/student/update', 'StudentController@studentUpdate');
 // 班级详情
 Route::get('/class', 'ClassController@class');
     // 添加成员
     Route::get('/class/member/add', 'ClassController@classMemberAdd');
     // 删除成员
     Route::get('/class/member/delete', 'ClassController@classMemberDelete');
+    // 修改班级信息
+    Route::post('/class/update', 'ClassController@classUpdate');
+// 用户详情
+Route::get('/user', 'UserController@user');
+    // 修改用户信息
+    Route::post('/user/update', 'UserController@userUpdate');
