@@ -183,7 +183,7 @@
                       {{ date('m-d', strtotime($lesson['lesson_date'])) }} {{ dateToDay($lesson['lesson_date']) }} | {{ date('H:i', strtotime($lesson['lesson_start'])) }}
                     </td>
                     <td>
-                      <a href='/education/lesson/document?id={{encode($lesson['lesson_document'], 'document_id')}}'><button type="button" class="btn btn-primary btn-sm">下载教案</button></a>
+                      <a href='/file/document/download?id={{encode($lesson['lesson_document'], 'document_id')}}'><button type="button" class="btn btn-primary btn-sm">下载教案</button></a>
                     </td>
                   </tr>
                   @endforeach

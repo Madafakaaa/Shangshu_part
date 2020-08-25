@@ -20,6 +20,17 @@ class StudentController extends Controller
         if(!Session::has('login')){
             return loginExpired(); // 未登录，返回登陆视图
         }
+        // 检测用户权限
+        if(!DB::table('user_access')
+           ->join('access', 'user_access.user_access_access', '=', 'access.access_id')
+           ->where('user_access_user', Session::get('user_id'))
+           ->where('access_url', '/student')
+           ->exists()){
+           return back()->with(['notify' => true,
+                                'type' => 'danger',
+                                'title' => '访问失败',
+                                'message' => '您的账户没有访问权限']);
+        }
         $student_id = decode($request->input('id'), 'student_id');
         // 获取数据信息
         $student = DB::table('student')

@@ -15,17 +15,43 @@ class StudentController extends Controller
         if(!Session::has('login')){
             return loginExpired(); // 未登录，返回登陆视图
         }
+        // 检测用户权限
+        if(!DB::table('user_access')
+           ->join('access', 'user_access.user_access_access', '=', 'access.access_id')
+           ->where('user_access_user', Session::get('user_id'))
+           ->where('access_url', '/education/student')
+           ->exists()){
+           return back()->with(['notify' => true,
+                                'type' => 'danger',
+                                'title' => '访问失败',
+                                'message' => '您的账户没有访问权限']);
+        }
         // 获取用户校区权限
-        // $department_access = Session::get('department_access');
-                  //->whereIn('student_department', $department_access)
+        $department_access = Session::get('department_access');
         // 获取数据
         $db_students = DB::table('student')
                       ->join('department', 'student.student_department', '=', 'department.department_id')
                       ->join('grade', 'student.student_grade', '=', 'grade.grade_id')
                       ->where('student_is_available', 1)
-                      ->orderBy('student_department', 'asc')
-                      ->orderBy('student_grade', 'asc')
-                      ->get();
+                      ->whereIn('student_department', $department_access);
+        // 搜索条件
+        $filters = array(
+                        "filter_department" => null,
+                        "filter_grade" => null
+                    );
+        // 校区
+        if ($request->filled('filter_department')) {
+            $db_students = $db_students->where('student_department', '=', $request->input("filter_department"));
+            $filters['filter_department']=$request->input("filter_department");
+        }
+        // 年级
+        if ($request->filled('filter_grade')) {
+            $db_students = $db_students->where('student_grade', '=', $request->input('filter_grade'));
+            $filters['filter_grade']=$request->input("filter_grade");
+        }
+        $db_students = $db_students->orderBy('student_department', 'asc')
+                                   ->orderBy('student_grade', 'asc')
+                                   ->get();
         $students = array();
         foreach($db_students as $db_student){
             $temp = array();
@@ -73,16 +99,30 @@ class StudentController extends Controller
             $students[]=$temp;
         }
         // 获取校区、年级信息(筛选)
-        //$filter_departments = DB::table('department')->where('department_status', 1)->whereIn('department_id', $department_access)->orderBy('department_id', 'asc')->get();
-        //$filter_grades = DB::table('grade')->where('grade_status', 1)->orderBy('grade_id', 'asc')->get();
+        $filter_departments = DB::table('department')->where('department_is_available', 1)->whereIn('department_id', $department_access)->orderBy('department_id', 'asc')->get();
+        $filter_grades = DB::table('grade')->orderBy('grade_id', 'asc')->get();
         // 返回列表视图
-        return view('education/student/student', ['students' => $students]);
+        return view('education/student/student', ['students' => $students,
+                                                  'filters' => $filters,
+                                                  'filter_departments' => $filter_departments,
+                                                  'filter_grades' => $filter_grades]);
     }
 
     public function studentCreate(){
         // 检查登录状态
         if(!Session::has('login')){
             return loginExpired(); // 未登录，返回登陆视图
+        }
+        // 检测用户权限
+        if(!DB::table('user_access')
+           ->join('access', 'user_access.user_access_access', '=', 'access.access_id')
+           ->where('user_access_user', Session::get('user_id'))
+           ->where('access_url', '/education/student/create')
+           ->exists()){
+           return back()->with(['notify' => true,
+                                'type' => 'danger',
+                                'title' => '访问失败',
+                                'message' => '您的账户没有访问权限']);
         }
         // 获取年级信息
         $grades = DB::table('grade')->orderBy('grade_id', 'asc')->get();
@@ -165,6 +205,17 @@ class StudentController extends Controller
         if(!Session::has('login')){
             return loginExpired(); // 未登录，返回登陆视图
         }
+        // 检测用户权限
+        if(!DB::table('user_access')
+           ->join('access', 'user_access.user_access_access', '=', 'access.access_id')
+           ->where('user_access_user', Session::get('user_id'))
+           ->where('access_url', '/education/student/delete')
+           ->exists()){
+           return back()->with(['notify' => true,
+                                'type' => 'danger',
+                                'title' => '访问失败',
+                                'message' => '您的账户没有访问权限']);
+        }
         // 获取student_id
         $request_ids=$request->input('id');
         $student_ids = array();
@@ -221,6 +272,17 @@ class StudentController extends Controller
         // 检查登录状态
         if(!Session::has('login')){
             return loginExpired(); // 未登录，返回登陆视图
+        }
+        // 检测用户权限
+        if(!DB::table('user_access')
+           ->join('access', 'user_access.user_access_access', '=', 'access.access_id')
+           ->where('user_access_user', Session::get('user_id'))
+           ->where('access_url', '/education/student/payment/create')
+           ->exists()){
+           return back()->with(['notify' => true,
+                                'type' => 'danger',
+                                'title' => '访问失败',
+                                'message' => '您的账户没有访问权限']);
         }
         // 获取学生信息
         $student_id = decode($request->input('id'), 'student_id');
@@ -321,8 +383,8 @@ class StudentController extends Controller
                     $prev_hour_used = $hour->hour_used;
                     $prev_hour_unit_price = $hour->hour_unit_price;
 
-                    $total_value = ($prev_hour_remain+$prev_hour_used)*$prev_hour_unit_price+$payment_hour*$hour_unit_price;
-                    $total_hour = $prev_hour_remain+$prev_hour_used+$payment_hour;
+                    $total_value = ($prev_hour_remain)*$prev_hour_unit_price+$payment_hour*$hour_unit_price;
+                    $total_hour = $prev_hour_remain+$payment_hour;
                     if($total_hour!=0){
                         $new_hour_unit_price = $total_value/$total_hour;
                     }else{
@@ -367,6 +429,17 @@ class StudentController extends Controller
         // 检查登录状态
         if(!Session::has('login')){
             return loginExpired(); // 未登录，返回登陆视图
+        }
+        // 检测用户权限
+        if(!DB::table('user_access')
+           ->join('access', 'user_access.user_access_access', '=', 'access.access_id')
+           ->where('user_access_user', Session::get('user_id'))
+           ->where('access_url', '/education/student/daycare/create')
+           ->exists()){
+           return back()->with(['notify' => true,
+                                'type' => 'danger',
+                                'title' => '访问失败',
+                                'message' => '您的账户没有访问权限']);
         }
         // 获取学生信息
         $student_id = decode($request->input('id'), 'student_id');

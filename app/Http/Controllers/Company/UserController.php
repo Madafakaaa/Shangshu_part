@@ -25,10 +25,23 @@ class UserController extends Controller
         if(!Session::has('login')){
             return loginExpired(); // 未登录，返回登陆视图
         }
+        // 检测用户权限
+        if(!DB::table('user_access')
+           ->join('access', 'user_access.user_access_access', '=', 'access.access_id')
+           ->where('user_access_user', Session::get('user_id'))
+           ->where('access_url', '/company/user')
+           ->exists()){
+           return back()->with(['notify' => true,
+                                'type' => 'danger',
+                                'title' => '访问失败',
+                                'message' => '您的账户没有访问权限']);
+        }
 
         // 获取数据
         $users = DB::table('user')
                    ->join('department', 'user.user_department', '=', 'department.department_id')
+                   ->join('teacher_type', 'user.user_teacher_type', '=', 'teacher_type.teacher_type_id')
+                   ->join('position', 'user.user_position', '=', 'position.position_id')
                    ->where('user_is_available', 1)
                    ->orderBy('user_department', 'asc')
                    ->get();
@@ -52,12 +65,29 @@ class UserController extends Controller
         if(!Session::has('login')){
             return loginExpired(); // 未登录，返回登陆视图
         }
-        // 获取年级、科目、用户信息
+        // 检测用户权限
+        if(!DB::table('user_access')
+           ->join('access', 'user_access.user_access_access', '=', 'access.access_id')
+           ->where('user_access_user', Session::get('user_id'))
+           ->where('access_url', '/company/user/create')
+           ->exists()){
+           return back()->with(['notify' => true,
+                                'type' => 'danger',
+                                'title' => '访问失败',
+                                'message' => '您的账户没有访问权限']);
+        }
+        // 获取校区、教师评级信息
         $departments = DB::table('department')
                          ->where('department_is_available', 1)
                          ->orderBy('department_id', 'asc')
                          ->get();
-        return view('company/user/userCreate', ['departments' => $departments]);
+        $teacher_types = DB::table('teacher_type')
+                         ->orderBy('teacher_type_id', 'asc')
+                         ->get();
+        $positions = DB::table('position')
+                         ->orderBy('position_id', 'asc')
+                         ->get();
+        return view('company/user/userCreate', ['departments' => $departments, 'teacher_types' => $teacher_types, 'positions' => $positions]);
     }
 
     /**
@@ -65,13 +95,6 @@ class UserController extends Controller
      * URL: POST /company/user/create
      * @param  Request  $request
      * @param  $request->input('input1'): 用户姓名
-     * @param  $request->input('input2'): 用户性别
-     * @param  $request->input('input3'): 用户校区
-     * @param  $request->input('input4'): 用户岗位
-     * @param  $request->input('input5'): 入职日期
-     * @param  $request->input('input6'): 是否可以跨校区上课
-     * @param  $request->input('input7'): 用户手机
-     * @param  $request->input('input8'): 用户微信
      */
     public function userStore(Request $request){
         // 检查登录状态
@@ -85,6 +108,19 @@ class UserController extends Controller
         $user_gender = $request->input('input_user_gender');
         $user_department = $request->input('input_user_department');
         $user_birthday = $request->input('input_user_birthday');
+        $user_teacher_type = $request->input('input_user_teacher_type');
+        $user_position = $request->input('input_user_position');
+        $user_salary_basic = $request->input('input_user_salary_basic');
+        $user_salary_housing = $request->input('input_user_salary_housing');
+        $user_salary_pension = $request->input('input_user_salary_pension');
+        $user_salary_medical = $request->input('input_user_salary_medical');
+        $user_salary_unemployment = $request->input('input_user_salary_unemployment');
+        $user_salary_provident = $request->input('input_user_salary_provident');
+        $user_salary_children = $request->input('input_user_salary_children');
+        $user_salary_elderly = $request->input('input_user_salary_elderly');
+        $user_salary_performance = $request->input('input_user_salary_performance');
+        $user_salary_commission = $request->input('input_user_salary_commission');
+        $user_salary_method = $request->input('input_user_salary_method');
         // 插入数据库
         try{
             DB::table('user')->insert(
@@ -93,6 +129,19 @@ class UserController extends Controller
                  'user_gender' => $user_gender,
                  'user_department' => $user_department,
                  'user_birthday' => $user_birthday,
+                 'user_teacher_type' => $user_teacher_type,
+                 'user_position' => $user_position,
+                 'user_salary_basic' => $user_salary_basic,
+                 'user_salary_housing' => $user_salary_housing,
+                 'user_salary_pension' => $user_salary_pension,
+                 'user_salary_medical' => $user_salary_medical,
+                 'user_salary_unemployment' => $user_salary_unemployment,
+                 'user_salary_provident' => $user_salary_provident,
+                 'user_salary_children' => $user_salary_children,
+                 'user_salary_elderly' => $user_salary_elderly,
+                 'user_salary_performance' => $user_salary_performance,
+                 'user_salary_commission' => $user_salary_commission,
+                 'user_salary_method' => $user_salary_method,
                  'user_create_user' => Session::get('user_id'),
                  'user_modified_user' => Session::get('user_id')]
             );
@@ -113,6 +162,107 @@ class UserController extends Controller
                        'message' => '用户添加成功']);
     }
 
+    public function userEdit(Request $request){
+        // 检查登录状态
+        if(!Session::has('login')){
+            return loginExpired(); // 未登录，返回登陆视图
+        }
+        // 检测用户权限
+        if(!DB::table('user_access')
+           ->join('access', 'user_access.user_access_access', '=', 'access.access_id')
+           ->where('user_access_user', Session::get('user_id'))
+           ->where('access_url', '/company/user/edit')
+           ->exists()){
+           return back()->with(['notify' => true,
+                                'type' => 'danger',
+                                'title' => '访问失败',
+                                'message' => '您的账户没有访问权限']);
+        }
+        // 获取id
+        $user_id = decode($request->input('id'), 'user_id');
+        // 获取用户信息
+        $user = DB::table('user')
+                  ->where('user_id', $user_id)
+                  ->first();
+        // 获取校区、教师评级信息
+        $departments = DB::table('department')
+                         ->where('department_is_available', 1)
+                         ->orderBy('department_id', 'asc')
+                         ->get();
+        $teacher_types = DB::table('teacher_type')
+                         ->orderBy('teacher_type_id', 'asc')
+                         ->get();
+        $positions = DB::table('position')
+                         ->orderBy('position_id', 'asc')
+                         ->get();
+        return view('company/user/userEdit', ['user' => $user, 'departments' => $departments, 'teacher_types' => $teacher_types, 'positions' => $positions]);
+    }
+
+    public function userUpdate(Request $request){
+        // 检查登录状态
+        if(!Session::has('login')){
+            return loginExpired(); // 未登录，返回登陆视图
+        }
+        // 获取id
+        $user_id = $request->input('user_id');
+        // 获取表单输入
+        $user_name = $request->input('input_user_name');
+        $user_gender = $request->input('input_user_gender');
+        $user_department = $request->input('input_user_department');
+        $user_birthday = $request->input('input_user_birthday');
+        $user_teacher_type = $request->input('input_user_teacher_type');
+        $user_position = $request->input('input_user_position');
+        $user_salary_basic = $request->input('input_user_salary_basic');
+        $user_salary_housing = $request->input('input_user_salary_housing');
+        $user_salary_pension = $request->input('input_user_salary_pension');
+        $user_salary_medical = $request->input('input_user_salary_medical');
+        $user_salary_unemployment = $request->input('input_user_salary_unemployment');
+        $user_salary_provident = $request->input('input_user_salary_provident');
+        $user_salary_children = $request->input('input_user_salary_children');
+        $user_salary_elderly = $request->input('input_user_salary_elderly');
+        $user_salary_performance = $request->input('input_user_salary_performance');
+        $user_salary_commission = $request->input('input_user_salary_commission');
+        $user_salary_method = $request->input('input_user_salary_method');
+        // 插入数据库
+        try{
+            DB::table('user')
+              ->where('user_id', $user_id)
+              ->update(['user_name' => $user_name,
+                        'user_gender' => $user_gender,
+                        'user_department' => $user_department,
+                        'user_birthday' => $user_birthday,
+                        'user_teacher_type' => $user_teacher_type,
+                        'user_position' => $user_position,
+                        'user_salary_basic' => $user_salary_basic,
+                        'user_salary_housing' => $user_salary_housing,
+                        'user_salary_pension' => $user_salary_pension,
+                        'user_salary_medical' => $user_salary_medical,
+                        'user_salary_unemployment' => $user_salary_unemployment,
+                        'user_salary_provident' => $user_salary_provident,
+                        'user_salary_children' => $user_salary_children,
+                        'user_salary_elderly' => $user_salary_elderly,
+                        'user_salary_performance' => $user_salary_performance,
+                        'user_salary_commission' => $user_salary_commission,
+                        'user_salary_method' => $user_salary_method,
+                        'user_modified_user' => Session::get('user_id'),
+                        'user_modified_time' => date('Y-m-d H:i:s')]);
+        }
+        // 捕获异常
+        catch(Exception $e){
+            return redirect("/company/user/edit?id=".encode($user_id, 'user_id'))
+                   ->with(['notify' => true,
+                           'type' => 'danger',
+                           'title' => '用户添加失败',
+                           'message' => '用户添加失败，错误码:113']);
+        }
+        // 返回用户列表
+        return redirect("/company/user")
+               ->with(['notify' => true,
+                       'type' => 'success',
+                       'title' => '用户添加成功',
+                       'message' => '用户添加成功']);
+    }
+
     /**
      * 删除用户
      * URL: DELETE /company/user/{id}
@@ -122,6 +272,17 @@ class UserController extends Controller
         // 检查登录状态
         if(!Session::has('login')){
             return loginExpired(); // 未登录，返回登陆视图
+        }
+        // 检测用户权限
+        if(!DB::table('user_access')
+           ->join('access', 'user_access.user_access_access', '=', 'access.access_id')
+           ->where('user_access_user', Session::get('user_id'))
+           ->where('access_url', '/company/user/delete')
+           ->exists()){
+           return back()->with(['notify' => true,
+                                'type' => 'danger',
+                                'title' => '访问失败',
+                                'message' => '您的账户没有访问权限']);
         }
         // 获取user_id
         $user_id = decode($request->input('id'), 'user_id');
@@ -165,12 +326,12 @@ class UserController extends Controller
         $user = DB::table('user')
                   ->join('department', 'user.user_department', '=', 'department.department_id')
                   ->join('position', 'user.user_position', '=', 'position.position_id')
-                  ->join('section', 'position.position_section', '=', 'section.section_id')
+                  ->join('teacher_type', 'user.user_teacher_type', '=', 'teacher_type.teacher_type_id')
                   ->where('user_id', $user_id)
                   ->first();
         // 获取全部校区
         $departments = DB::table('department')
-                          ->where('department_status', 1)
+                          ->where('department_is_available', 1)
                           ->orderBy('department_id', 'asc')
                           ->get();
         $department_array = array();
@@ -185,31 +346,39 @@ class UserController extends Controller
             $department_array[$user_department->user_department_department][2]=1;
         }
         // 获取全部页面种类及其页面
-        $page_categories = $users = DB::table('page')->select('page_category')->distinct()->get();
-        $categories = array();
-        $pages = array();
-        foreach($page_categories AS $page_category){
-            $temp = array($page_category->page_category);
-            $page_array = array();
-            $temp_pages = DB::table('page')->where('page_category', $page_category->page_category)->get();
-            foreach($temp_pages AS $temp_page){
-                $page_array[$temp_page->page_id] = array($temp_page->page_id, $temp_page->page_name);
-                $pages[$temp_page->page_id] = array($temp_page->page_id, $temp_page->page_name, 0);
+        $accesses = array();
+        $db_access_categories = DB::table('access')->select('access_category')->distinct()->get();
+        foreach($db_access_categories as $db_access_category){
+            $db_access_pages = DB::table('access')
+                                 ->select('access_page')
+                                 ->where('access_category', $db_access_category->access_category)
+                                 ->distinct()
+                                 ->get();
+            foreach($db_access_pages as $db_access_page){
+                $db_access_features = DB::table('access')
+                                        ->where('access_category', $db_access_category->access_category)
+                                        ->where('access_page', $db_access_page->access_page)
+                                        ->get();
+                foreach($db_access_features as $db_access_feature){
+                    $temp = array();
+                    $temp['access_id']=$db_access_feature->access_id;
+                    $temp['access_feature']=$db_access_feature->access_feature;
+                    $accesses[$db_access_category->access_category][$db_access_page->access_page][] = $temp;
+                }
             }
-            $temp[] = $page_array;
-            $categories[] = $temp;
         }
         // 获取用户页面权限
-        $user_pages = DB::table('user_page')
-                        ->where('user_page_user', $user_id)
-                        ->get();
-        foreach($user_pages AS $user_page){
-            $pages[$user_page->user_page_page][2] = 1;
+        $user_accesses = array();
+        $db_user_accesses = DB::table('user_access')
+                              ->where('user_access_user', $user_id)
+                              ->get();
+        foreach($db_user_accesses AS $db_user_access){
+            $user_accesses[] = $db_user_access->user_access_access;
         }
         return view('company/user/userAccess', ['user' => $user,
-                                            'department_array' => $department_array,
-                                            'categories' => $categories,
-                                            'pages' => $pages]);
+                                                'department_array' => $department_array,
+                                                'accesses' => $accesses,
+                                                'user_accesses' => $user_accesses]);
     }
 
     /**
@@ -225,11 +394,10 @@ class UserController extends Controller
         if(!Session::has('login')){
             return loginExpired(); // 未登录，返回登陆视图
         }
-        // 获取user_id
-        $user_id = decode($request->input('id'), 'user_id');
         // 获取表单输入
+        $user_id = $request->input('user_id');
+        $accesses = $request->input('accesses');
         $departments = $request->input('departments');
-        $pages = $request->input('pages');
         // 更新数据库
         DB::beginTransaction();
         try{
@@ -237,8 +405,8 @@ class UserController extends Controller
             DB::table('user_department')
               ->where('user_department_user', $user_id)
               ->delete();
-            DB::table('user_page')
-              ->where('user_page_user', $user_id)
+            DB::table('user_access')
+              ->where('user_access_user', $user_id)
               ->delete();
             if($departments!=NULL){
                 // 添加校区权限
@@ -249,12 +417,12 @@ class UserController extends Controller
                     );
                 }
             }
-            if($pages!=NULL){
+            if($accesses!=NULL){
                 // 添加页面权限
-                foreach($pages as $page){
-                    DB::table('user_page')->insert(
-                        ['user_page_user' => $user_id,
-                         'user_page_page' => $page]
+                foreach($accesses as $access){
+                    DB::table('user_access')->insert(
+                        ['user_access_user' => $user_id,
+                         'user_access_access' => $access]
                     );
                 }
             }
@@ -269,7 +437,7 @@ class UserController extends Controller
                            'message' => '用户权限修改失败，错误码:114']);
         }
         DB::commit();
-        return redirect("/company/user/access?id=".encode($user_id, 'user_id'))
+        return redirect("/company/user")
                ->with(['notify' => true,
                        'type' => 'success',
                        'title' => '用户权限修改成功',

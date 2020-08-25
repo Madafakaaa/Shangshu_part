@@ -15,9 +15,19 @@ class ClassController extends Controller
         if(!Session::has('login')){
             return loginExpired(); // 未登录，返回登陆视图
         }
+        // 检测用户权限
+        if(!DB::table('user_access')
+           ->join('access', 'user_access.user_access_access', '=', 'access.access_id')
+           ->where('user_access_user', Session::get('user_id'))
+           ->where('access_url', '/education/class')
+           ->exists()){
+           return back()->with(['notify' => true,
+                                'type' => 'danger',
+                                'title' => '访问失败',
+                                'message' => '您的账户没有访问权限']);
+        }
         // 获取用户校区权限
-        // $department_access = Session::get('department_access');
-                  //->whereIn('class_department', $department_access)
+        $department_access = Session::get('department_access');
         // 获取数据
         $db_classes = DB::table('class')
                         ->join('department', 'class.class_department', '=', 'department.department_id')
@@ -25,9 +35,32 @@ class ClassController extends Controller
                         ->join('subject', 'class.class_subject', '=', 'subject.subject_id')
                         ->join('user', 'class.class_teacher', '=', 'user.user_id')
                         ->where('class_is_available', 1)
-                        ->orderBy('class_department', 'asc')
-                        ->orderBy('class_grade', 'asc')
-                        ->get();
+                        ->whereIn('class_department', $department_access);
+        // 搜索条件
+        $filters = array(
+                        "filter_department" => null,
+                        "filter_grade" => null,
+                        "filter_subject" => null
+                    );
+        // 校区
+        if ($request->filled('filter_department')) {
+            $db_classes = $db_classes->where('class_department', '=', $request->input("filter_department"));
+            $filters['filter_department']=$request->input("filter_department");
+        }
+        // 年级
+        if ($request->filled('filter_grade')) {
+            $db_classes = $db_classes->where('class_grade', '=', $request->input('filter_grade'));
+            $filters['filter_grade']=$request->input("filter_grade");
+        }
+        // 科目
+        if ($request->filled('filter_subject')) {
+            $db_classes = $db_classes->where('class_subject', '=', $request->input('filter_subject'));
+            $filters['filter_subject']=$request->input("filter_subject");
+        }
+        $db_classes = $db_classes->orderBy('class_department', 'asc')
+                                 ->orderBy('class_grade', 'asc')
+                                 ->get();
+
         $classes = array();
         foreach($db_classes as $db_class){
             $temp=array();
@@ -78,16 +111,32 @@ class ClassController extends Controller
         }
 
         // 获取校区、年级信息(筛选)
-        //$filter_departments = DB::table('department')->where('department_status', 1)->whereIn('department_id', $department_access)->orderBy('department_id', 'asc')->get();
-        //$filter_grades = DB::table('grade')->where('grade_status', 1)->orderBy('grade_id', 'asc')->get();
+        $filter_departments = DB::table('department')->where('department_is_available', 1)->whereIn('department_id', $department_access)->orderBy('department_id', 'asc')->get();
+        $filter_grades = DB::table('grade')->orderBy('grade_id', 'asc')->get();
+        $filter_subjects = DB::table('subject')->orderBy('subject_id', 'asc')->get();
         // 返回列表视图
-        return view('education/class/class', ['classes' => $classes]);
+        return view('education/class/class', ['classes' => $classes,
+                                              'filters' => $filters,
+                                              'filter_departments' => $filter_departments,
+                                              'filter_grades' => $filter_grades,
+                                              'filter_subjects' => $filter_subjects]);
     }
 
     public function classCreate(){
         // 检查登录状态
         if(!Session::has('login')){
             return loginExpired(); // 未登录，返回登陆视图
+        }
+        // 检测用户权限
+        if(!DB::table('user_access')
+           ->join('access', 'user_access.user_access_access', '=', 'access.access_id')
+           ->where('user_access_user', Session::get('user_id'))
+           ->where('access_url', '/education/class/create')
+           ->exists()){
+           return back()->with(['notify' => true,
+                                'type' => 'danger',
+                                'title' => '访问失败',
+                                'message' => '您的账户没有访问权限']);
         }
         // 获取年级信息
         $grades = DB::table('grade')->orderBy('grade_id', 'asc')->get();
@@ -190,6 +239,17 @@ class ClassController extends Controller
         }else{
             $class_ids[]=decode($request_ids, 'class_id');
         }
+        // 检测用户权限
+        if(!DB::table('user_access')
+           ->join('access', 'user_access.user_access_access', '=', 'access.access_id')
+           ->where('user_access_user', Session::get('user_id'))
+           ->where('access_url', '/education/class/delete')
+           ->exists()){
+           return back()->with(['notify' => true,
+                                'type' => 'danger',
+                                'title' => '访问失败',
+                                'message' => '您的账户没有访问权限']);
+        }
         // 更新班级可用状态
         DB::beginTransaction();
         try{
@@ -233,6 +293,17 @@ class ClassController extends Controller
         // 检查登录状态
         if(!Session::has('login')){
             return loginExpired(); // 未登录，返回登陆视图
+        }
+        // 检测用户权限
+        if(!DB::table('user_access')
+           ->join('access', 'user_access.user_access_access', '=', 'access.access_id')
+           ->where('user_access_user', Session::get('user_id'))
+           ->where('access_url', '/education/class/lesson/create')
+           ->exists()){
+           return back()->with(['notify' => true,
+                                'type' => 'danger',
+                                'title' => '访问失败',
+                                'message' => '您的账户没有访问权限']);
         }
         $class_id = decode($request->input('id'), 'class_id');
         // 获取班级信息
@@ -386,6 +457,9 @@ class ClassController extends Controller
                                'lesson_document' => $document_id,
                                'lesson_create_user' => Session::get('user_id')]
                           );
+            // 消耗课时价值
+            $lesson_hour_price = 0;
+            // 扣除学生课时
             for($i=1;$i<=$lesson_student_num;$i++){
                 $participant_student = $request->input('input_student_id_'.$i);
                 $participant_attend_status = $request->input('input_student_status_'.$i);
@@ -432,6 +506,13 @@ class ClassController extends Controller
                       ->where('hour_course', $participant_course)
                       ->where('hour_student', $participant_student)
                       ->increment('hour_used', $participant_amount);
+                    // 增加消耗课时价值
+                    $hour_unit_price = DB::table('hour')
+                                         ->where('hour_course', $participant_course)
+                                         ->where('hour_student', $participant_student)
+                                         ->first()
+                                         ->hour_unit_price;
+                    $lesson_hour_price += $hour_unit_price * $participant_amount;
                 }
                 // 添加上课成员表
                 DB::table('participant')->insert(
@@ -443,22 +524,34 @@ class ClassController extends Controller
                      'participant_create_user' => Session::get('user_id')]
                 );
             }
+            // 获取教师提成
+            $lesson_teacher_fee = 0;
+            if($lesson_attended_num!=0){
+                $lesson_teacher_fee = DB::table('deduction')
+                                        ->join('user', 'user.user_teacher_type', 'deduction.deduction_teacher_type')
+                                        ->where('user_id', $lesson_teacher)
+                                        ->where('deduction_grade', $class->class_grade)
+                                        ->where('deduction_student_num', $lesson_attended_num)
+                                        ->first()
+                                        ->deduction_fee;
+            }
+            // 完善上课记录
             DB::table('lesson')
               ->where('lesson_id', $lesson_id)
-              ->update(['lesson_attended_num' => $lesson_attended_num,
+              ->update(['lesson_hour_price' => $lesson_hour_price,
+                        'lesson_teacher_fee' => $lesson_teacher_fee,
+                        'lesson_attended_num' => $lesson_attended_num,
                         'lesson_leave_num' => $lesson_leave_num,
                         'lesson_absence_num' => $lesson_absence_num]);
             // 更新班级上课记录数量
             DB::table('class')
               ->where('class_id', $lesson_class)
               ->increment('class_attended_num');
-
         }
         // 捕获异常
         catch(Exception $e){
             DB::rollBack();
             // 返回第一步
-            return $e;
             return redirect("/education/class/lesson/create?id=".encode($lesson_class, 'class_id'))
                    ->with(['notify' => true,
                          'type' => 'danger',

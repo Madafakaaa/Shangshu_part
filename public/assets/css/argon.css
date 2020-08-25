@@ -1972,7 +1972,7 @@ pre code
 }
 .table thead th
 {
-    vertical-align: bottom;
+    vertical-align: middle;
 
     border-bottom: 2px solid #e9ecef;
 }
@@ -21650,8 +21650,8 @@ textarea[resize='horizontal']
 }
 .navbar-vertical .navbar-nav .nav-link
 {
-    font-size: .875rem;
-    font-weight: 500;
+    font-size: .9rem;
+    font-weight: 600;
 
     padding-right: 1rem;
     padding-left: 1rem;
@@ -21677,7 +21677,8 @@ textarea[resize='horizontal']
 }
 .navbar-vertical .navbar-nav .nav-sm .nav-link
 {
-    font-size: .8125rem;
+    font-size: 0.9rem;
+    font-weight: 600;
 }
 .navbar-vertical .navbar-nav .nav-link
 {

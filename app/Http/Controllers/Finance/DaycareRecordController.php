@@ -1,5 +1,5 @@
 <?php
-namespace App\Http\Controllers\Education;
+namespace App\Http\Controllers\Finance;
 
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\DB;
@@ -15,9 +15,20 @@ class DaycareRecordController extends Controller
         if(!Session::has('login')){
             return loginExpired(); // 未登录，返回登陆视图
         }
+        // 检测用户权限
+        if(!DB::table('user_access')
+           ->join('access', 'user_access.user_access_access', '=', 'access.access_id')
+           ->where('user_access_user', Session::get('user_id'))
+           ->where('access_url', '/finance/daycareRecord')
+           ->exists()){
+           return back()->with(['notify' => true,
+                                'type' => 'danger',
+                                'title' => '访问失败',
+                                'message' => '您的账户没有访问权限']);
+        }
         // 获取用户校区权限
-        // $department_access = Session::get('department_access');
-                  //->whereIn('student_department', $department_access)
+        $department_access = Session::get('department_access');
+
         // 获取数据
         $db_daycare_records = DB::table('daycare_record')
                                 ->join('student', 'daycare_record.daycare_record_student', '=', 'student.student_id')
@@ -25,9 +36,25 @@ class DaycareRecordController extends Controller
                                 ->join('grade', 'student.student_grade', '=', 'grade.grade_id')
                                 ->join('daycare', 'daycare_record.daycare_record_daycare', '=', 'daycare.daycare_id')
                                 ->leftJoin('user', 'daycare_record.daycare_record_review_user', '=', 'user.user_id')
-                                ->orderBy('daycare_record_date', 'desc')
-                                ->orderBy('daycare_record_id', 'desc')
-                                ->get();
+                                ->whereIn('student_department', $department_access);
+        // 搜索条件
+        $filters = array(
+                        "filter_department" => null,
+                        "filter_grade" => null
+                    );
+        // 校区
+        if ($request->filled('filter_department')) {
+            $db_daycare_records = $db_daycare_records->where('student_department', '=', $request->input("filter_department"));
+            $filters['filter_department']=$request->input("filter_department");
+        }
+        // 年级
+        if ($request->filled('filter_grade')) {
+            $db_daycare_records = $db_daycare_records->where('student_grade', '=', $request->input('filter_grade'));
+            $filters['filter_grade']=$request->input("filter_grade");
+        }
+        $db_daycare_records = $db_daycare_records->orderBy('daycare_record_date', 'desc')
+                                                 ->orderBy('daycare_record_id', 'desc')
+                                                 ->get();
         $daycare_records = array();
         foreach($db_daycare_records as $db_daycare_record){
             $temp = array();
@@ -54,16 +81,30 @@ class DaycareRecordController extends Controller
             $daycare_records[] = $temp;
         }
         // 获取校区、年级信息(筛选)
-        //$filter_departments = DB::table('department')->where('department_status', 1)->whereIn('department_id', $department_access)->orderBy('department_id', 'asc')->get();
-        //$filter_grades = DB::table('grade')->where('grade_status', 1)->orderBy('grade_id', 'asc')->get();
+        $filter_departments = DB::table('department')->where('department_is_available', 1)->whereIn('department_id', $department_access)->orderBy('department_id', 'asc')->get();
+        $filter_grades = DB::table('grade')->orderBy('grade_id', 'asc')->get();
         // 返回列表视图
-        return view('education/daycareRecord/daycareRecord', ['daycare_records' => $daycare_records]);
+        return view('finance/daycareRecord/daycareRecord', ['daycare_records' => $daycare_records,
+                                                             'filters' => $filters,
+                                                             'filter_departments' => $filter_departments,
+                                                             'filter_grades' => $filter_grades]);
     }
 
     public function daycareRecordDelete(Request $request){
         // 检查登录状态
         if(!Session::has('login')){
             return loginExpired(); // 未登录，返回登陆视图
+        }
+        // 检测用户权限
+        if(!DB::table('user_access')
+           ->join('access', 'user_access.user_access_access', '=', 'access.access_id')
+           ->where('user_access_user', Session::get('user_id'))
+           ->where('access_url', '/finance/daycareRecord/delete')
+           ->exists()){
+           return back()->with(['notify' => true,
+                                'type' => 'danger',
+                                'title' => '访问失败',
+                                'message' => '您的账户没有访问权限']);
         }
         // 获取daycare_record_id
         $request_ids=$request->input('id');
@@ -88,7 +129,7 @@ class DaycareRecordController extends Controller
         // 捕获异常
         catch(Exception $e){
             DB::rollBack();
-            return redirect("/education/daycareRecord")
+            return redirect("/finance/daycareRecord")
                    ->with(['notify' => true,
                          'type' => 'danger',
                          'title' => '晚托记录删除失败',
@@ -96,7 +137,7 @@ class DaycareRecordController extends Controller
         }
         DB::commit();
         // 返回课程列表
-        return redirect("/education/daycareRecord")
+        return redirect("/finance/daycareRecord")
                ->with(['notify' => true,
                        'type' => 'success',
                        'title' => '晚托记录删除成功',
@@ -107,6 +148,17 @@ class DaycareRecordController extends Controller
         // 检查登录状态
         if(!Session::has('login')){
             return loginExpired(); // 未登录，返回登陆视图
+        }
+        // 检测用户权限
+        if(!DB::table('user_access')
+           ->join('access', 'user_access.user_access_access', '=', 'access.access_id')
+           ->where('user_access_user', Session::get('user_id'))
+           ->where('access_url', '/finance/daycareRecord/review')
+           ->exists()){
+           return back()->with(['notify' => true,
+                                'type' => 'danger',
+                                'title' => '访问失败',
+                                'message' => '您的账户没有访问权限']);
         }
         // 复核晚托记录
         DB::beginTransaction();
@@ -121,7 +173,7 @@ class DaycareRecordController extends Controller
         // 捕获异常
         catch(Exception $e){
             DB::rollBack();
-            return redirect("/education/daycareRecord")
+            return redirect("/finance/daycareRecord")
                    ->with(['notify' => true,
                          'type' => 'danger',
                          'title' => '可复核晚托记录复核失败',
@@ -129,7 +181,7 @@ class DaycareRecordController extends Controller
         }
         DB::commit();
         // 返回课程列表
-        return redirect("/education/daycareRecord")
+        return redirect("/finance/daycareRecord")
                ->with(['notify' => true,
                        'type' => 'success',
                        'title' => '全部可复核晚托记录复核成功',
@@ -140,6 +192,17 @@ class DaycareRecordController extends Controller
         // 检查登录状态
         if(!Session::has('login')){
             return loginExpired(); // 未登录，返回登陆视图
+        }
+        // 检测用户权限
+        if(!DB::table('user_access')
+           ->join('access', 'user_access.user_access_access', '=', 'access.access_id')
+           ->where('user_access_user', Session::get('user_id'))
+           ->where('access_url', '/finance/daycareRecord/review')
+           ->exists()){
+           return back()->with(['notify' => true,
+                                'type' => 'danger',
+                                'title' => '访问失败',
+                                'message' => '您的账户没有访问权限']);
         }
         // 获取daycare_record_id
         $request_ids=$request->input('id');
@@ -165,7 +228,7 @@ class DaycareRecordController extends Controller
         // 捕获异常
         catch(Exception $e){
             DB::rollBack();
-            return redirect("/education/daycareRecord")
+            return redirect("/finance/daycareRecord")
                    ->with(['notify' => true,
                          'type' => 'danger',
                          'title' => '晚托记录复核失败',
@@ -173,7 +236,7 @@ class DaycareRecordController extends Controller
         }
         DB::commit();
         // 返回课程列表
-        return redirect("/education/daycareRecord")
+        return redirect("/finance/daycareRecord")
                ->with(['notify' => true,
                        'type' => 'success',
                        'title' => '晚托记录复核成功',

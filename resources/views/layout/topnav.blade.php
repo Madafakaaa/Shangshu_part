@@ -86,10 +86,18 @@
               <i class="ni ni-square-pin text-green"></i>
               <span>{{ Session::get('user_department_name') }}</span>
             </a>
+            <a href="#!" class="dropdown-item">
+              <i class="fa fa-sitemap text-green"></i>
+              <span>{{ Session::get('user_position_name') }}</span>
+            </a>
+            <a href="#!" class="dropdown-item">
+              <i class="fa fa-user-tag text-green"></i>
+              <span>{{ Session::get('user_teacher_type_name') }}</span>
+            </a>
             <div class="dropdown-divider"></div>
             <a href="/exit" class="dropdown-item">
               <i class="ni ni-user-run text-red"></i>
-              <span>退出系统</span>
+              <span class="text-red">退出系统</span>
             </a>
           </div>
         </li>

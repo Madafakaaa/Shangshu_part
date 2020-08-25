@@ -32,7 +32,9 @@
                 <th style='width:100px;'>姓名</th>
                 <th style='width:100px;'>账号</th>
                 <th style='width:100px;'>校区</th>
-                <th style='width:100px;'>操作管理</th>
+                <th style='width:100px;'>级别</th>
+                <th style='width:100px;'>教师评级</th>
+                <th style='width:200px;' class="text-left">操作管理</th>
               </tr>
             </thead>
             <tbody>
@@ -49,9 +51,12 @@
                 </td>
                 <td>{{ $user->user_id }}</td>
                 <td>{{ $user->department_name }}</td>
-                <td>
+                <td>{{ $user->position_name }}</td>
+                <td>{{ $user->teacher_type_name }}</td>
+                <td class="text-left">
                   <a href='/user?id={{encode($user->user_id, 'user_id')}}'><button type="button" class="btn btn-primary btn-sm">详情</button></a>
-                  <a href='/company/user/access?id={{encode($user->user_id, 'user_id')}}'><button type="button" class="btn btn-primary btn-sm">权限</button></a>
+                  <a href='/company/user/edit?id={{encode($user->user_id, 'user_id')}}'><button type="button" class="btn btn-primary btn-sm">基本设置</button></a>
+                  <a href='/company/user/access?id={{encode($user->user_id, 'user_id')}}'><button type="button" class="btn btn-primary btn-sm">权限设置</button></a>
                   <button type="button" class="btn btn-outline-danger btn-sm delete-button" id='delete_button_{{$loop->iteration}}' onclick="buttonConfirm('delete_button_{{$loop->iteration}}', '/company/user/delete?id={{encode($user->user_id, 'user_id')}}', '确认删除用户？')">删除</button>
                 </td>
               </tr>

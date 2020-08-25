@@ -15,9 +15,19 @@ class LessonController extends Controller
         if(!Session::has('login')){
             return loginExpired(); // 未登录，返回登陆视图
         }
+        // 检测用户权限
+        if(!DB::table('user_access')
+           ->join('access', 'user_access.user_access_access', '=', 'access.access_id')
+           ->where('user_access_user', Session::get('user_id'))
+           ->where('access_url', '/education/lesson')
+           ->exists()){
+           return back()->with(['notify' => true,
+                                'type' => 'danger',
+                                'title' => '访问失败',
+                                'message' => '您的账户没有访问权限']);
+        }
         // 获取用户校区权限
-        // $department_access = Session::get('department_access');
-                  //->whereIn('lesson_department', $department_access)
+        $department_access = Session::get('department_access');
         // 获取数据
         $db_lessons = DB::table('lesson')
                         ->join('class', 'lesson.lesson_class', '=', 'class.class_id')
@@ -25,9 +35,31 @@ class LessonController extends Controller
                         ->join('grade', 'class.class_grade', '=', 'grade.grade_id')
                         ->join('subject', 'class.class_subject', '=', 'subject.subject_id')
                         ->leftJoin('user', 'lesson.lesson_review_user', '=', 'user.user_id')
-                        ->orderBy('lesson_date', 'desc')
-                        ->orderBy('lesson_start', 'desc')
-                        ->get();
+                        ->whereIn('class_department', $department_access);
+        // 搜索条件
+        $filters = array(
+                        "filter_department" => null,
+                        "filter_grade" => null,
+                        "filter_subject" => null
+                    );
+        // 校区
+        if ($request->filled('filter_department')) {
+            $db_lessons = $db_lessons->where('class_department', '=', $request->input("filter_department"));
+            $filters['filter_department']=$request->input("filter_department");
+        }
+        // 年级
+        if ($request->filled('filter_grade')) {
+            $db_lessons = $db_lessons->where('class_grade', '=', $request->input('filter_grade'));
+            $filters['filter_grade']=$request->input("filter_grade");
+        }
+        // 科目
+        if ($request->filled('filter_subject')) {
+            $db_lessons = $db_lessons->where('class_subject', '=', $request->input('filter_subject'));
+            $filters['filter_subject']=$request->input("filter_subject");
+        }
+        $db_lessons = $db_lessons->orderBy('lesson_date', 'desc')
+                                 ->orderBy('lesson_start', 'desc')
+                                 ->get();
 
         $lessons = array();
         foreach($db_lessons as $db_lesson){
@@ -80,44 +112,33 @@ class LessonController extends Controller
         }
 
         // 获取校区、年级信息(筛选)
-        //$filter_departments = DB::table('department')->where('department_status', 1)->whereIn('department_id', $department_access)->orderBy('department_id', 'asc')->get();
-        //$filter_grades = DB::table('grade')->where('grade_status', 1)->orderBy('grade_id', 'asc')->get();
+        $filter_departments = DB::table('department')->where('department_is_available', 1)->whereIn('department_id', $department_access)->orderBy('department_id', 'asc')->get();
+        $filter_grades = DB::table('grade')->orderBy('grade_id', 'asc')->get();
+        $filter_subjects = DB::table('subject')->orderBy('subject_id', 'asc')->get();
 
         // 返回列表视图
-        return view('education/lesson/lesson', ['lessons' => $lessons]);
-    }
-
-    public function lessonDocument(Request $request){
-        // 检查登录状态
-        if(!Session::has('login')){
-            return loginExpired(); // 未登录，返回登陆视图
-        }
-        // 获取教案id
-        $document_id = decode($request->input('id'), 'document_id');
-        // 获取教案数据信息
-        $document = DB::table('document')->where('document_id', $document_id)->first();
-        // 获取文件名和路径
-        $file_path = "files/document/".$document->document_path;
-        $file_name = $document->document_name;
-        // 下载文件
-        if (file_exists($file_path)) {// 文件存在
-            // 更新文件下载次数
-            DB::table('document')->where('document_id', $document_id)->increment('document_downloaded_num');
-            // 返回文件
-            return response()->download($file_path, $file_name ,$headers = ['Content-Type'=>'application/zip;charset=utf-8']);
-        }else{ // 文件不存在
-            return redirect("/education/lesson")
-                   ->with(['notify' => true,
-                         'type' => 'danger',
-                         'title' => '档案下载失败',
-                         'message' => '档案文件已删除，错误码:403']);
-        }
+        return view('education/lesson/lesson', ['lessons' => $lessons,
+                                               'filters' => $filters,
+                                               'filter_departments' => $filter_departments,
+                                               'filter_grades' => $filter_grades,
+                                               'filter_subjects' => $filter_subjects]);
     }
 
     public function lessonDelete(Request $request){
         // 检查登录状态
         if(!Session::has('login')){
             return loginExpired(); // 未登录，返回登陆视图
+        }
+        // 检测用户权限
+        if(!DB::table('user_access')
+           ->join('access', 'user_access.user_access_access', '=', 'access.access_id')
+           ->where('user_access_user', Session::get('user_id'))
+           ->where('access_url', '/education/lesson/delete')
+           ->exists()){
+           return back()->with(['notify' => true,
+                                'type' => 'danger',
+                                'title' => '访问失败',
+                                'message' => '您的账户没有访问权限']);
         }
         // 获取lesson_id
         $request_ids=$request->input('id');
@@ -201,6 +222,17 @@ class LessonController extends Controller
         if(!Session::has('login')){
             return loginExpired(); // 未登录，返回登陆视图
         }
+        // 检测用户权限
+        if(!DB::table('user_access')
+           ->join('access', 'user_access.user_access_access', '=', 'access.access_id')
+           ->where('user_access_user', Session::get('user_id'))
+           ->where('access_url', '/education/lesson/review')
+           ->exists()){
+           return back()->with(['notify' => true,
+                                'type' => 'danger',
+                                'title' => '访问失败',
+                                'message' => '您的账户没有访问权限']);
+        }
         // 复核上课记录
         DB::beginTransaction();
         try{
@@ -233,6 +265,17 @@ class LessonController extends Controller
         // 检查登录状态
         if(!Session::has('login')){
             return loginExpired(); // 未登录，返回登陆视图
+        }
+        // 检测用户权限
+        if(!DB::table('user_access')
+           ->join('access', 'user_access.user_access_access', '=', 'access.access_id')
+           ->where('user_access_user', Session::get('user_id'))
+           ->where('access_url', '/education/lesson/review')
+           ->exists()){
+           return back()->with(['notify' => true,
+                                'type' => 'danger',
+                                'title' => '访问失败',
+                                'message' => '您的账户没有访问权限']);
         }
         // 获取lesson_id
         $request_ids=$request->input('id');

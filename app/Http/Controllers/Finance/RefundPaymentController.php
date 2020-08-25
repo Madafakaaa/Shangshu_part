@@ -1,5 +1,5 @@
 <?php
-namespace App\Http\Controllers\Education;
+namespace App\Http\Controllers\Finance;
 
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\DB;
@@ -7,63 +7,106 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Exception;
 
-class PaymentController extends Controller
+class RefundPaymentController extends Controller
 {
 
-    public function payment(Request $request){
+    public function refundPayment(Request $request){
         // 检查登录状态
         if(!Session::has('login')){
             return loginExpired(); // 未登录，返回登陆视图
         }
+        // 检测用户权限
+        if(!DB::table('user_access')
+           ->join('access', 'user_access.user_access_access', '=', 'access.access_id')
+           ->where('user_access_user', Session::get('user_id'))
+           ->where('access_url', '/finance/refund/payment')
+           ->exists()){
+           return back()->with(['notify' => true,
+                                'type' => 'danger',
+                                'title' => '访问失败',
+                                'message' => '您的账户没有访问权限']);
+        }
         // 获取用户校区权限
-        // $department_access = Session::get('department_access');
-                  //->whereIn('student_department', $department_access)
+        $department_access = Session::get('department_access');
+
         // 获取数据
-        $db_payments = DB::table('payment')
-                        ->join('student', 'payment.payment_student', '=', 'student.student_id')
+        $db_hour_refunds = DB::table('hour_refund')
+                        ->join('student', 'hour_refund.hour_refund_student', '=', 'student.student_id')
                         ->join('department', 'student.student_department', '=', 'department.department_id')
                         ->join('grade', 'student.student_grade', '=', 'grade.grade_id')
-                        ->join('course', 'payment.payment_course', '=', 'course.course_id')
-                        ->leftJoin('user', 'payment.payment_review_user', '=', 'user.user_id')
-                        ->orderBy('payment_date', 'desc')
-                        ->orderBy('payment_id', 'desc')
-                        ->get();
-        $payments = array();
-        foreach($db_payments as $db_payment){
+                        ->join('course', 'hour_refund.hour_refund_course', '=', 'course.course_id')
+                        ->leftJoin('user', 'hour_refund.hour_refund_reviewed_user', '=', 'user.user_id')
+                        ->whereIn('student_department', $department_access);
+        // 搜索条件
+        $filters = array(
+                        "filter_department" => null,
+                        "filter_grade" => null
+                    );
+        // 校区
+        if ($request->filled('filter_department')) {
+            $db_hour_refunds = $db_hour_refunds->where('student_department', '=', $request->input("filter_department"));
+            $filters['filter_department']=$request->input("filter_department");
+        }
+        // 年级
+        if ($request->filled('filter_grade')) {
+            $db_hour_refunds = $db_hour_refunds->where('student_grade', '=', $request->input('filter_grade'));
+            $filters['filter_grade']=$request->input("filter_grade");
+        }
+        $db_hour_refunds = $db_hour_refunds->orderBy('hour_refund_date', 'desc')
+                                            ->orderBy('hour_refund_id', 'desc')
+                                            ->get();
+        $hour_refunds = array();
+        foreach($db_hour_refunds as $db_hour_refund){
             $temp = array();
-            $temp['department_name'] = $db_payment->department_name;
-            $temp['student_id'] = $db_payment->student_id;
-            $temp['student_name'] = $db_payment->student_name;
-            $temp['student_gender'] = $db_payment->student_gender;
-            $temp['grade_name'] = $db_payment->grade_name;
-            $temp['course_name'] = $db_payment->course_name;
-            $temp['payment_hour'] = $db_payment->payment_hour;
-            $temp['payment_discount_total'] = $db_payment->payment_discount_total;
-            $temp['payment_extra'] = $db_payment->payment_extra;
-            $temp['payment_total_price'] = $db_payment->payment_total_price;
-            $temp['payment_date'] = $db_payment->payment_date;
-            $temp['review_user_id'] = $db_payment->user_id;
-            $temp['review_user_name'] = $db_payment->user_name;
-            $temp['payment_id'] = $db_payment->payment_id;
+            $temp['department_name'] = $db_hour_refund->department_name;
+            $temp['student_id'] = $db_hour_refund->student_id;
+            $temp['student_name'] = $db_hour_refund->student_name;
+            $temp['student_gender'] = $db_hour_refund->student_gender;
+            $temp['grade_name'] = $db_hour_refund->grade_name;
+            $temp['course_name'] = $db_hour_refund->course_name;
+            $temp['hour_refund_amount'] = $db_hour_refund->hour_refund_amount;
+            $temp['hour_refund_value'] = $db_hour_refund->hour_refund_value;
+            $temp['hour_refund_fee'] = $db_hour_refund->hour_refund_fee;
+            $temp['hour_refund_date'] = $db_hour_refund->hour_refund_date;
+            $temp['hour_refund_method'] = $db_hour_refund->hour_refund_method;
+            $temp['hour_refund_remark'] = $db_hour_refund->hour_refund_remark;
+            $temp['hour_refund_reviewed_status'] = $db_hour_refund->hour_refund_reviewed_status;
+            $temp['review_user_id'] = $db_hour_refund->user_id;
+            $temp['review_user_name'] = $db_hour_refund->user_name;
+            $temp['hour_refund_id'] = $db_hour_refund->hour_refund_id;
             // 获取登记用户
             $temp_create_user = DB::table('user')
-                                  ->where('user_id', $db_payment->payment_create_user)
+                                  ->where('user_id', $db_hour_refund->hour_refund_create_user)
                                   ->first();
             $temp['create_user_id'] = $temp_create_user->user_id;
             $temp['create_user_name'] = $temp_create_user->user_name;
-            $payments[] = $temp;
+            $hour_refunds[] = $temp;
         }
         // 获取校区、年级信息(筛选)
-        //$filter_departments = DB::table('department')->where('department_status', 1)->whereIn('department_id', $department_access)->orderBy('department_id', 'asc')->get();
-        //$filter_grades = DB::table('grade')->where('grade_status', 1)->orderBy('grade_id', 'asc')->get();
+        $filter_departments = DB::table('department')->where('department_is_available', 1)->whereIn('department_id', $department_access)->orderBy('department_id', 'asc')->get();
+        $filter_grades = DB::table('grade')->orderBy('grade_id', 'asc')->get();
         // 返回列表视图
-        return view('education/payment/payment', ['payments' => $payments]);
+        return view('finance/refundPayment/refundPayment', ['hour_refunds' => $hour_refunds,
+                                                             'filters' => $filters,
+                                                             'filter_departments' => $filter_departments,
+                                                             'filter_grades' => $filter_grades]);
     }
 
     public function paymentDelete(Request $request){
         // 检查登录状态
         if(!Session::has('login')){
             return loginExpired(); // 未登录，返回登陆视图
+        }
+        // 检测用户权限
+        if(!DB::table('user_access')
+           ->join('access', 'user_access.user_access_access', '=', 'access.access_id')
+           ->where('user_access_user', Session::get('user_id'))
+           ->where('access_url', '/finance/refund/payment/delete')
+           ->exists()){
+           return back()->with(['notify' => true,
+                                'type' => 'danger',
+                                'title' => '访问失败',
+                                'message' => '您的账户没有访问权限']);
         }
         // 获取payment_id
         $request_ids=$request->input('id');
@@ -124,7 +167,7 @@ class PaymentController extends Controller
         // 捕获异常
         catch(Exception $e){
             DB::rollBack();
-            return redirect("/education/payment")
+            return redirect("/finance/payment")
                    ->with(['notify' => true,
                          'type' => 'danger',
                          'title' => '购课记录删除失败',
@@ -132,7 +175,7 @@ class PaymentController extends Controller
         }
         DB::commit();
         // 返回课程列表
-        return redirect("/education/payment")
+        return redirect("/finance/payment")
                ->with(['notify' => true,
                        'type' => 'success',
                        'title' => '购课记录删除成功',
@@ -143,6 +186,17 @@ class PaymentController extends Controller
         // 检查登录状态
         if(!Session::has('login')){
             return loginExpired(); // 未登录，返回登陆视图
+        }
+        // 检测用户权限
+        if(!DB::table('user_access')
+           ->join('access', 'user_access.user_access_access', '=', 'access.access_id')
+           ->where('user_access_user', Session::get('user_id'))
+           ->where('access_url', '/finance/refund/payment/review')
+           ->exists()){
+           return back()->with(['notify' => true,
+                                'type' => 'danger',
+                                'title' => '访问失败',
+                                'message' => '您的账户没有访问权限']);
         }
         // 复核购课记录
         DB::beginTransaction();
@@ -157,7 +211,7 @@ class PaymentController extends Controller
         // 捕获异常
         catch(Exception $e){
             DB::rollBack();
-            return redirect("/education/payment")
+            return redirect("/finance/payment")
                    ->with(['notify' => true,
                          'type' => 'danger',
                          'title' => '可复核购课记录复核失败',
@@ -165,7 +219,7 @@ class PaymentController extends Controller
         }
         DB::commit();
         // 返回课程列表
-        return redirect("/education/payment")
+        return redirect("/finance/payment")
                ->with(['notify' => true,
                        'type' => 'success',
                        'title' => '全部可复核购课记录复核成功',
@@ -176,6 +230,17 @@ class PaymentController extends Controller
         // 检查登录状态
         if(!Session::has('login')){
             return loginExpired(); // 未登录，返回登陆视图
+        }
+        // 检测用户权限
+        if(!DB::table('user_access')
+           ->join('access', 'user_access.user_access_access', '=', 'access.access_id')
+           ->where('user_access_user', Session::get('user_id'))
+           ->where('access_url', '/finance/refund/payment/review')
+           ->exists()){
+           return back()->with(['notify' => true,
+                                'type' => 'danger',
+                                'title' => '访问失败',
+                                'message' => '您的账户没有访问权限']);
         }
         // 获取payment_id
         $request_ids=$request->input('id');
@@ -201,7 +266,7 @@ class PaymentController extends Controller
         // 捕获异常
         catch(Exception $e){
             DB::rollBack();
-            return redirect("/education/payment")
+            return redirect("/finance/payment")
                    ->with(['notify' => true,
                          'type' => 'danger',
                          'title' => '购课记录复核失败',
@@ -209,7 +274,7 @@ class PaymentController extends Controller
         }
         DB::commit();
         // 返回课程列表
-        return redirect("/education/payment")
+        return redirect("/finance/payment")
                ->with(['notify' => true,
                        'type' => 'success',
                        'title' => '购课记录复核成功',

@@ -27,6 +27,18 @@
               <div class="col-8">
                 <div class="h4">{{ $user->department_name }}</div>
               </div>
+              <div class="col-4">
+                <div class="h4">级别</div>
+              </div>
+              <div class="col-8">
+                <div class="h4">{{ $user->position_name }}</div>
+              </div>
+              <div class="col-4">
+                <div class="h4">评级</div>
+              </div>
+              <div class="col-8">
+                <div class="h4">{{ $user->teacher_type_name }}</div>
+              </div>
             </div>
           </div>
         </div>
@@ -53,14 +65,15 @@
               <table class="table table-flush datatable-basic">
                 <thead class="thead-light">
                   <tr>
-                    <th style='width:40px;'>序号</th>
-                    <th style='width:140px;'>班级</th>
-                    <th style='width:120px;'>上课学生</th>
-                    <th style='width:50px;'>年级</th>
-                    <th style='width:50px;'>科目</th>
+                    <th style='width:35px;'>序号</th>
+                    <th style='width:130px;'>班级</th>
+                    <th style='width:110px;'>上课学生</th>
+                    <th style='width:45px;'>年级</th>
+                    <th style='width:45px;'>科目</th>
                     <th style='width:150px;'>时间</th>
-                    <th style='width:90px;'>登记用户</th>
-                    <th style='width:100px;'>操作管理</th>
+                    <th style='width:80px;'>登记用户</th>
+                    <th style='width:80px;'>课时费</th>
+                    <th style='width:90px;'>操作管理</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -130,8 +143,9 @@
                     <td>
                       <a href="/user?id={{encode($lesson['create_user_id'], 'user_id')}}">{{ $lesson['create_user_name'] }}</a>
                     </td>
+                    <td>{{ $lesson['lesson_teacher_fee'] }} 元</td>
                     <td>
-                      <a href='/education/lesson/document?id={{encode($lesson['lesson_document'], 'document_id')}}'><button type="button" class="btn btn-primary btn-sm">下载教案</button></a>
+                      <a href='/file/document/download?id={{encode($lesson['lesson_document'], 'document_id')}}'><button type="button" class="btn btn-primary btn-sm">下载教案</button></a>
                     </td>
                   </tr>
                   @endforeach

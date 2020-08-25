@@ -40,7 +40,9 @@ class LoginController extends Controller
         $request_user_password = $request->input('input2');
         // 获取数据库对应用户信息
         $db_user = DB::table('user')
-                     ->join('department', 'user.user_department', '=', 'department.department_id')
+                     ->leftJoin('department', 'user.user_department', '=', 'department.department_id')
+                     ->leftJoin('teacher_type', 'user.user_teacher_type', '=', 'teacher_type.teacher_type_id')
+                     ->leftJoin('position', 'user.user_position', '=', 'position.position_id')
                      ->where('user_id', $request_user_id)
                      ->where('user_is_available', 1)
                      ->get();
@@ -62,24 +64,34 @@ class LoginController extends Controller
                                          'message' => '您的用户名或密码有误，请重新输入']);
         }
 
-        /*
         // 获取用户校区权限
         $department_access = array();
-        $user_departments = DB::table('user_department')
+        $db_department_accesses = DB::table('user_department')
                               ->where('user_department_user', $request_user_id)
                               ->get();
-        foreach($user_departments AS $user_department){
-            $department_access[] = $user_department->user_department_department;
+        foreach($db_department_accesses AS $db_department_access){
+            $department_access[] = $db_department_access->user_department_department;
         }
         // 获取用户页面权限
-        $page_access = array();
-        $user_pages = DB::table('user_page')
-                        ->where('user_page_user', $request_user_id)
-                        ->get();
-        foreach($user_pages AS $user_page){
-            $page_access[] = $user_page->user_page_page;
+        $user_accesses = array();
+        $db_user_accesses = DB::table('user_access')
+                              ->join('access', 'user_access.user_access_access', '=', 'access.access_id')
+                              ->where('user_access_user', $request_user_id)
+                              ->get();
+        foreach($db_user_accesses AS $db_user_access){
+            $user_accesses[] = $db_user_access->access_url;
         }
-        */
+        // 获取用户页面权限
+        $access_categories = array();
+        $db_access_categories = DB::table('user_access')
+                                  ->join('access', 'user_access.user_access_access', '=', 'access.access_id')
+                                  ->where('user_access_user', $request_user_id)
+                                  ->select('access_category')
+                                  ->distinct()
+                                  ->get();
+        foreach($db_access_categories AS $db_access_category){
+            $access_categories[] = $db_access_category->access_category;
+        }
 
         // 注册信息到Session中
         Session::put('login', true);
@@ -87,9 +99,14 @@ class LoginController extends Controller
         Session::put('user_name', $db_user->user_name);
         Session::put('user_department', $db_user->user_department);
         Session::put('user_department_name', $db_user->department_name);
+        Session::put('user_teacher_type', $db_user->user_teacher_type);
+        Session::put('user_teacher_type_name', $db_user->teacher_type_name);
+        Session::put('user_position', $db_user->user_position);
+        Session::put('user_position_name', $db_user->position_name);
         Session::put('user_gender', $db_user->user_gender);
-        //Session::put('user_department_access', $department_access);
-        //Session::put('user_page_access', $page_access);
+        Session::put('department_access', $department_access);
+        Session::put('user_accesses', $user_accesses);
+        Session::put('access_categories', $access_categories);
         // 返回主界面视图
         return redirect('/home')->with(['notify' => true,
                                         'type' => 'success',

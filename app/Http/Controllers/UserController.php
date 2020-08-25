@@ -20,10 +20,23 @@ class UserController extends Controller
         if(!Session::has('login')){
             return loginExpired(); // 未登录，返回登陆视图
         }
+        // 检测用户权限
+        if(!DB::table('user_access')
+           ->join('access', 'user_access.user_access_access', '=', 'access.access_id')
+           ->where('user_access_user', Session::get('user_id'))
+           ->where('access_url', '/user')
+           ->exists()){
+           return back()->with(['notify' => true,
+                                'type' => 'danger',
+                                'title' => '访问失败',
+                                'message' => '您的账户没有访问权限']);
+        }
         $user_id = decode($request->input('id'), 'user_id');
         // 获取数据信息
         $user = DB::table('user')
                    ->join('department', 'user.user_department', '=', 'department.department_id')
+                   ->join('teacher_type', 'user.user_teacher_type', '=', 'teacher_type.teacher_type_id')
+                   ->join('position', 'user.user_position', '=', 'position.position_id')
                    ->where('user_id', $user_id)
                    ->first();
 
@@ -46,6 +59,8 @@ class UserController extends Controller
             $temp['subject_name']=$db_lesson->subject_name;
             $temp['lesson_date']=$db_lesson->lesson_date;
             $temp['lesson_start']=$db_lesson->lesson_start;
+            $temp['lesson_teacher_fee']=$db_lesson->lesson_teacher_fee;
+            $temp['lesson_hour_price']=$db_lesson->lesson_hour_price;
             $temp['lesson_attended_num']=$db_lesson->lesson_attended_num;
             $temp['lesson_leave_num']=$db_lesson->lesson_leave_num;
             $temp['lesson_absence_num']=$db_lesson->lesson_absence_num;

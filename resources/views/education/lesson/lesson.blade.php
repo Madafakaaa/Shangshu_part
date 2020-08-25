@@ -27,23 +27,59 @@
   </div>
   <div class="row justify-content-center">
     <div class="col-12">
-      <div class="card">
-        <div class="table-responsive py-4">
+      <div class="card mb-4">
+        <div class="card-header p-0" style="border-bottom:0px;">
+          <div class="row my-3 mx-1">
+            <div class="col-12">
+              <small class="text-muted font-weight-bold px-2">校区：</small>
+              <a href="?@foreach($filters as $key => $value) @if($key!='filter_department') {{$key}}={{$value}}& @endif @endforeach">
+                <button type="button" @if(!isset($filters['filter_department'])) class="btn btn-primary btn-sm" disabled @else class="btn btn-sm" @endif>全部</button>
+              </a>
+              @foreach($filter_departments as $filter_department)
+                <a href="?@foreach($filters as $key => $value) @if($key!='filter_department') {{$key}}={{$value}}& @endif @endforeach &filter_department={{$filter_department->department_id}}"><button type="button" @if($filters['filter_department']==$filter_department->department_id) class="btn btn-primary btn-sm" disabled @else class="btn btn-sm" @endif>{{$filter_department->department_name}}</button></a>
+              @endforeach
+            </div>
+          </div>
+          <div class="row my-3 mx-1">
+            <div class="col-12">
+              <small class="text-muted font-weight-bold px-2">年级：</small>
+              <a href="?@foreach($filters as $key => $value) @if($key!='filter_grade') {{$key}}={{$value}}& @endif @endforeach">
+                <button type="button" @if(!isset($filters['filter_grade'])) class="btn btn-primary btn-sm" disabled @else class="btn btn-sm" @endif>全部</button>
+              </a>
+              @foreach($filter_grades as $filter_grade)
+                <a href="?@foreach($filters as $key => $value) @if($key!='filter_grade') {{$key}}={{$value}}& @endif @endforeach filter_grade={{$filter_grade->grade_id}}"><button type="button" @if($filters['filter_grade']==$filter_grade->grade_id) class="btn btn-primary btn-sm" disabled @else class="btn btn-sm" @endif>{{$filter_grade->grade_name}}</button></a>
+              @endforeach
+            </div>
+          </div>
+          <div class="row my-3 mx-1">
+            <div class="col-12">
+              <small class="text-muted font-weight-bold px-2">科目：</small>
+              <a href="?@foreach($filters as $key => $value) @if($key!='filter_subject') {{$key}}={{$value}}& @endif @endforeach">
+                <button type="button" @if(!isset($filters['filter_subject'])) class="btn btn-primary btn-sm" disabled @else class="btn btn-sm" @endif>全部</button>
+              </a>
+              @foreach($filter_subjects as $filter_subject)
+                <a href="?@foreach($filters as $key => $value) @if($key!='filter_subject') {{$key}}={{$value}}& @endif @endforeach filter_subject={{$filter_subject->subject_id}}"><button type="button" @if($filters['filter_subject']==$filter_subject->subject_id) class="btn btn-primary btn-sm" disabled @else class="btn btn-sm" @endif>{{$filter_subject->subject_name}}</button></a>
+              @endforeach
+            </div>
+          </div>
+        </div>
+        <hr>
+        <div class="table-responsive py-3">
           <table class="table table-hover datatable-basic text-left table-bordered">
             <thead class="thead-light">
               <tr>
                 <th style='width:20px;'></th>
                 <th style='width:40px;'>序号</th>
                 <th style='width:60px;'>校区</th>
-                <th style='width:190px;'>班级</th>
+                <th style='width:180px;'>班级</th>
                 <th style='width:80px;'>上课教师</th>
                 <th style='width:40px;'>年级</th>
                 <th style='width:40px;'>科目</th>
-                <th style='width:110px;'>上课学生</th>
+                <th style='width:105px;'>上课学生</th>
                 <th style='width:160px;'>时间</th>
                 <th style='width:80px;'>登记用户</th>
                 <th style='width:80px;'>复核用户</th>
-                <th>操作管理</th>
+                <th style='width:130px;'>操作管理</th>
               </tr>
             </thead>
             <tbody>
@@ -137,7 +173,7 @@
                   @endif
                 </td>
                 <td>
-                  <a href='/education/lesson/document?id={{encode($lesson['lesson_document'], 'document_id')}}'><button type="button" class="btn btn-primary btn-sm">下载教案</button></a>
+                  <a href='/file/document/download?id={{encode($lesson['lesson_document'], 'document_id')}}'><button type="button" class="btn btn-primary btn-sm">下载教案</button></a>
                   @if($lesson['review_user_name']=="")
                     <button type="button" class="btn btn-outline-danger btn-sm delete-button" id='delete_button_{{$loop->iteration}}' onclick="buttonConfirm('delete_button_{{$loop->iteration}}', '/education/lesson/delete?id={{encode($lesson['lesson_id'], 'lesson_id')}}', '删除后将返还学生所用课时。是否确认删除上课记录？')">删除</button>
                   @endif

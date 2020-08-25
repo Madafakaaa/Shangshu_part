@@ -34,16 +34,6 @@
                 </div>
               </div>
               <div class="col-2 text-right">
-                <label class="form-control-label">账号</label>
-              </div>
-              <div class="col-4 px-2 mb-2">
-                <div class="form-group mb-1">
-                  <input class="form-control form-control-sm" value="{{ $user->user_id }}" readonly>
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-2 text-right">
                 <label class="form-control-label">校区</label>
               </div>
               <div class="col-4 px-2 mb-2">
@@ -51,30 +41,22 @@
                   <input class="form-control form-control-sm" value="{{ $user->department_name }}" readonly>
                 </div>
               </div>
-              <div class="col-2 text-right">
-                <label class="form-control-label">等级</label>
-              </div>
-              <div class="col-4 px-2 mb-2">
-                <div class="form-group mb-1">
-                  <input class="form-control form-control-sm" value="{{ $user->position_level }}" readonly>
-                </div>
-              </div>
             </div>
             <div class="row">
               <div class="col-2 text-right">
-                <label class="form-control-label">部门</label>
-              </div>
-              <div class="col-4 px-2 mb-2">
-                <div class="form-group mb-1">
-                  <input class="form-control form-control-sm" value="{{ $user->section_name }}" readonly>
-                </div>
-              </div>
-              <div class="col-2 text-right">
-                <label class="form-control-label">岗位</label>
+                <label class="form-control-label">级别</label>
               </div>
               <div class="col-4 px-2 mb-2">
                 <div class="form-group mb-1">
                   <input class="form-control form-control-sm" value="{{ $user->position_name }}" readonly>
+                </div>
+              </div>
+              <div class="col-2 text-right">
+                <label class="form-control-label">评级</label>
+              </div>
+              <div class="col-4 px-2 mb-2">
+                <div class="form-group mb-1">
+                  <input class="form-control form-control-sm" value="{{ $user->teacher_type_name }}" readonly>
                 </div>
               </div>
             </div>
@@ -113,26 +95,37 @@
               <div class="col-2 text-right">
                 <label class="form-control-label">页面权限</label>
               </div>
-              <div class="col-8 px-4 mb-2">
+            </div>
+            <div class="row">
+              <div class="col-12 px-4 mb-2">
                 <div class="form-group mb-1">
                   <div class="custom-control custom-checkbox">
-                    @foreach($categories as $category)
+                    @foreach($accesses as $category => $pages)
                       <div class="row">
-                        <div class="col-4 mb-2">
-                          {{ $category[0] }}
+                        <div class="col-3 mb-2 text-center">
+                          {{ $category }}
                         </div>
-                        <div class="col-3 mb-2">
-                          <button type="button" class="btn btn-primary btn-block btn-sm" style="white-space:nowrap; overflow:hidden;" onclick="checkAll('{{ $category[0] }}');">全选</button>
+                        <div class="col-2 mb-2">
+                          <button type="button" class="btn btn-primary btn-block btn-sm" style="white-space:nowrap; overflow:hidden;" onclick="checkAll('{{ $category }}');">全选</button>
                         </div>
-                        <div class="col-3 mb-2">
-                          <button type="button" class="btn btn-outline-primary btn-block btn-sm" style="white-space:nowrap; overflow:hidden;" onclick="uncheckAll('{{ $category[0] }}');">全不选</button>
+                        <div class="col-2 mb-2">
+                          <button type="button" class="btn btn-outline-primary btn-block btn-sm" style="white-space:nowrap; overflow:hidden;" onclick="uncheckAll('{{ $category }}');">全不选</button>
                         </div>
                       </div>
                       <div class="row">
-                        @foreach($category[1] as $page)
-                          <div class="col-6 mb-2">
-                            <input type="checkbox" class="custom-control-input {{ $category[0] }}" id="{{$category[0]}}__{{ $loop->iteration }}" name="pages[]" value="{{ $page[0] }}" @if($pages[$page[0]][2]==1) checked @endif>
-                            <label class="custom-control-label" for="{{$category[0]}}__{{ $loop->iteration }}">{{ $page[1] }}</label>
+                        @foreach($pages as $page => $features)
+                          <div class="col-3 mb-2 text-center">
+                            {{ $page }}
+                          </div>
+                          <div class="col-9 mb-2">
+                            <div class="row">
+                              @foreach($features as $feature)
+                                <div class="col-2 mb-2">
+                                  <input type="checkbox" class="custom-control-input {{ $category }} {{ $page }}" id="label_{{ $feature['access_id'] }}" name="accesses[]" value="{{ $feature['access_id'] }}" @if(in_array($feature['access_id'], $user_accesses)) checked @endif>
+                                  <label class="custom-control-label" for="label_{{ $feature['access_id'] }}">{{ $feature['access_feature'] }}</label>
+                                </div>
+                              @endforeach
+                            </div>
                           </div>
                         @endforeach
                       </div>
@@ -149,7 +142,7 @@
               </div>
               <div class="col-lg-4 col-md-2 col-sm-12 my-2"></div>
               <div class="col-lg-4 col-md-5 col-sm-12">
-                <input type="hidden" name="id" value="{{ encode($user->user_id, 'user_id') }}" readonly>
+                <input type="hidden" name="user_id" value="{{$user->user_id}}">
                 <input type="submit" id="submitButton1" class="btn btn-warning btn-block" value="修改">
               </div>
             </div>
