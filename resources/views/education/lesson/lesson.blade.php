@@ -75,7 +75,7 @@
                 <th style='width:80px;'>上课教师</th>
                 <th style='width:40px;'>年级</th>
                 <th style='width:40px;'>科目</th>
-                <th style='width:105px;'>上课学生</th>
+                <th style='width:105px;'>实到/应到人数</th>
                 <th style='width:160px;'>时间</th>
                 <th style='width:80px;'>登记用户</th>
                 <th style='width:80px;'>复核用户</th>

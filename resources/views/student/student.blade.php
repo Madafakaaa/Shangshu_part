@@ -14,8 +14,18 @@
 <div class="container-fluid mt-4">
   <div class="row">
     <div class="col-lg-3 col-md-6 col-sm-12">
-      <div class="card">
-        <div class="card-body pt-4">
+      <div class="card card-profile">
+        <img src="{{ asset(_ASSETS_.'/img/theme/student-bg.jpg') }}" alt="Image placeholder" class="card-img-top">
+        <div class="row justify-content-center">
+          <div class="col-lg-3 order-lg-2">
+            <div class="card-profile-image">
+              <a href="#">
+                <img src="{{ asset(_ASSETS_.'/avatar/student.png') }}" class="rounded-circle">
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="card-body mt-4">
           <div class="text-center pb-0">
             <h1>{{ $student->student_name }}</h1>
             <div class="h5 font-weight-300">{{ $student->student_id }}</div>
@@ -378,7 +388,7 @@
                   </div>
                 </div>
               </div>
-            <form>
+            </form>
           </div>
         </div>
 

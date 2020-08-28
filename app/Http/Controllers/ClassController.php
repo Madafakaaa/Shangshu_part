@@ -82,6 +82,7 @@ class ClassController extends Controller
                         ->where('lesson_class', $class_id)
                         ->orderBy('lesson_date', 'desc')
                         ->orderBy('lesson_start', 'desc')
+                        ->limit(200)
                         ->get();
 
         $lessons = array();
@@ -132,12 +133,12 @@ class ClassController extends Controller
         $subjects = DB::table('subject')->orderBy('subject_id', 'asc')->get();
         $users = DB::table('user')
                    ->join('department', 'user.user_department', '=', 'department.department_id')
-                   ->where('user_department', Session::get('user_department'))
+                   ->where('user_department', $class->class_department)
                    ->where('user_is_available', 1)
                    ->get();
         $other_department_users = DB::table('user')
                    ->join('department', 'user.user_department', '=', 'department.department_id')
-                   ->where('user_department', '!=',Session::get('user_department'))
+                   ->where('user_department', '!=', $class->class_department)
                    ->where('user_is_available', 1)
                    ->orderBy('user_department', 'asc')
                    ->get();

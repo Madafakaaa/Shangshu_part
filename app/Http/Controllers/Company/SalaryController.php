@@ -34,7 +34,6 @@ class SalaryController extends Controller
         $salaries = DB::table('salary')
                       ->join('user', 'salary.salary_user', '=', 'user.user_id')
                       ->join('department', 'user.user_department', '=', 'department.department_id')
-                      ->join('teacher_type', 'user.user_teacher_type', '=', 'teacher_type.teacher_type_id')
                       ->orderBy('salary_month', 'desc')
                       ->orderBy('user_teacher_type', 'asc')
                       ->orderBy('user_department', 'asc')

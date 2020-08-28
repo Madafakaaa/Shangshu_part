@@ -156,7 +156,7 @@ class StudentController extends Controller
                 return redirect("/education/student/create")
                        ->with(['notify' => true,
                                'type' => 'danger',
-                               'title' => '客户添加失败',
+                               'title' => '学生添加失败',
                                'message' => '本校本月添加学生数量已超过超出上限，错误码:201']);
             }
             $new_student_num = intval(substr($pre_student_id->student_id , 7 , 10))+1;
@@ -187,17 +187,30 @@ class StudentController extends Controller
             return redirect("/education/student/create")
                    ->with(['notify' => true,
                            'type' => 'danger',
-                           'title' => '客户添加失败',
-                           'message' => '客户添加失败，该学生已经存在于本校区，错误码:202']);
+                           'title' => '学生添加失败',
+                           'message' => '学生添加失败，该学生已经存在于本校区，错误码:202']);
         }
         DB::commit();
         // 返回学生列表
-        //return redirect("/education/student/create/success?id=".encode($student_id, 'student_id'))
-        return redirect("/education/student")
+        return redirect("/education/student/create/success?id=".encode($student_id, 'student_id'))
                ->with(['notify' => true,
                        'type' => 'success',
-                       'title' => '客户添加成功',
-                       'message' => '客户添加成功']);
+                       'title' => '学生添加成功',
+                       'message' => '学生添加成功']);
+    }
+
+    /**
+     * 学生添加成功
+     * URL: GET /company/user/access/success
+     */
+    public function studentCreateSuccess(Request $request){
+        // 检查登录状态
+        if(!Session::has('login')){
+            return loginExpired(); // 未登录，返回登陆视图
+        }
+        // 获取id
+        $student_id = decode($request->input('id'), 'student_id');
+        return view('education/student/studentCreateSuccess', ['student_id' => $student_id]);
     }
 
     public function studentDelete(Request $request){
@@ -267,6 +280,7 @@ class StudentController extends Controller
                        'title' => '学生删除成功',
                        'message' => '学生删除成功!']);
     }
+
 
     public function studentPaymentCreate(Request $request){
         // 检查登录状态
@@ -418,12 +432,23 @@ class StudentController extends Controller
                          'message' => '购课添加失败，错误码:333']);
         }
         DB::commit();
-        return redirect("/education/student")
+        return redirect("/education/student/payment/create/success?id=".encode($payment_student, 'student_id'))
                ->with(['notify' => true,
                      'type' => 'success',
-                     'title' => '购课添加成功',
-                     'message' => '购课添加成功']);
+                     'title' => '学生购课成功',
+                     'message' => '学生购课成功']);
     }
+
+    public function studentPaymentCreateSuccess(Request $request){
+        // 检查登录状态
+        if(!Session::has('login')){
+            return loginExpired(); // 未登录，返回登陆视图
+        }
+        // 获取id
+        $student_id = decode($request->input('id'), 'student_id');
+        return view('education/student/studentPaymentCreateSuccess', ['student_id' => $student_id]);
+    }
+
 
     public function studentDaycareCreate(Request $request){
         // 检查登录状态
@@ -565,10 +590,20 @@ class StudentController extends Controller
                          'message' => '购晚托添加失败，错误码:333']);
         }
         DB::commit();
-        return redirect("/education/student")
+        return redirect("/education/student/daycare/create/success?id=".encode($daycare_record_student, 'student_id'))
                ->with(['notify' => true,
                      'type' => 'success',
-                     'title' => '购晚托添加成功',
-                     'message' => '购晚托添加成功']);
+                     'title' => '学生购晚托成功',
+                     'message' => '学生购晚托成功']);
+    }
+
+    public function studentDaycareCreateSuccess(Request $request){
+        // 检查登录状态
+        if(!Session::has('login')){
+            return loginExpired(); // 未登录，返回登陆视图
+        }
+        // 获取id
+        $student_id = decode($request->input('id'), 'student_id');
+        return view('education/student/studentDaycareCreateSuccess', ['student_id' => $student_id]);
     }
 }

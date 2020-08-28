@@ -53,8 +53,9 @@ class RefundPaymentController extends Controller
             $filters['filter_grade']=$request->input("filter_grade");
         }
         $db_hour_refunds = $db_hour_refunds->orderBy('hour_refund_date', 'desc')
-                                            ->orderBy('hour_refund_id', 'desc')
-                                            ->get();
+                                           ->orderBy('hour_refund_id', 'desc')
+                                           ->limit(200)
+                                           ->get();
         $hour_refunds = array();
         foreach($db_hour_refunds as $db_hour_refund){
             $temp = array();
@@ -92,7 +93,7 @@ class RefundPaymentController extends Controller
                                                              'filter_grades' => $filter_grades]);
     }
 
-    public function paymentDelete(Request $request){
+    public function refundPaymentReview(Request $request){
         // 检查登录状态
         if(!Session::has('login')){
             return loginExpired(); // 未登录，返回登陆视图
@@ -101,184 +102,87 @@ class RefundPaymentController extends Controller
         if(!DB::table('user_access')
            ->join('access', 'user_access.user_access_access', '=', 'access.access_id')
            ->where('user_access_user', Session::get('user_id'))
-           ->where('access_url', '/finance/refund/payment/delete')
+           ->where('access_url', '/finance/refund/payment/review')
            ->exists()){
            return back()->with(['notify' => true,
                                 'type' => 'danger',
                                 'title' => '访问失败',
                                 'message' => '您的账户没有访问权限']);
         }
-        // 获取payment_id
-        $request_ids=$request->input('id');
-        $payment_ids = array();
-        if(is_array($request_ids)){
-            foreach ($request_ids as $request_id) {
-                $payment_ids[]=decode($request_id, 'payment_id');
-            }
-        }else{
-            $payment_ids[]=decode($request_ids, 'payment_id');
+        // 获取hour_refund_id
+        $hour_refund_id=decode($request->input('id'), 'hour_refund_id');
+        // 获取退款信息
+        $hour_refund = DB::table('hour_refund')
+                         ->join('student', 'hour_refund.hour_refund_student', '=', 'student.student_id')
+                         ->join('department', 'student.student_department', '=', 'department.department_id')
+                         ->join('grade', 'student.student_grade', '=', 'grade.grade_id')
+                         ->join('course', 'hour_refund.hour_refund_course', '=', 'course.course_id')
+                         ->join('user', 'hour_refund.hour_refund_create_user', '=', 'user.user_id')
+                         ->where('hour_refund_id', $hour_refund_id)
+                         ->first();
+        // 返回视图
+        return view('finance/refundPayment/refundPaymentReview', ['hour_refund' => $hour_refund]);
+    }
+
+    public function refundPaymentReviewStore(Request $request){
+        // 检查登录状态
+        if(!Session::has('login')){
+            return loginExpired(); // 未登录，返回登陆视图
         }
-        // 删除购课记录
+
+        // 获取表单数据
+        $hour_refund_id = $request->input('hour_refund_id');
+        $hour_refund_reviewed_status = $request->input('hour_refund_reviewed_status');
+
+        // 复核购课记录
         DB::beginTransaction();
         try{
-            foreach ($payment_ids as $payment_id){
-                // 获取购课信息
-                $payment =  DB::table('payment')
-                              ->where('payment_id', $payment_id)
-                              ->first();
-                // 更新学生剩余课时、课时单价
-                $hour = DB::table('hour')
-                          ->where('hour_course', $payment->payment_course)
-                          ->where('hour_student', $payment->payment_student)
-                          ->first();
-                $prev_hour_remain = $hour->hour_remain;
-                $prev_hour_used = $hour->hour_used;
-                $prev_hour_unit_price = $hour->hour_unit_price;
-
-                $total_value = ($prev_hour_remain+$prev_hour_used)*$prev_hour_unit_price-($payment->payment_total_price-$payment->payment_extra);
-                $total_hour = $prev_hour_remain+$prev_hour_used-$payment->payment_hour;
-                if($total_hour!=0){
-                    $new_hour_unit_price = $total_value/$total_hour;
-                }else{
-                    $new_hour_unit_price = 0;
-                }
+            if($hour_refund_reviewed_status==1){
+                // 同意、更新审核状态
+                DB::table('hour_refund')
+                  ->where('hour_refund_id', $hour_refund_id)
+                  ->update(['hour_refund_reviewed_status' => 1,
+                            'hour_refund_reviewed_user' => Session::get('user_id'),
+                            'hour_refund_reviewed_time' => date('Y-m-d H:i:s')]);
+            }else{
+                // 拒绝、退还学生课时
+                DB::table('hour_refund')
+                  ->where('hour_refund_id', $hour_refund_id)
+                  ->update(['hour_refund_reviewed_status' => 2,
+                            'hour_refund_reviewed_user' => Session::get('user_id'),
+                            'hour_refund_reviewed_time' => date('Y-m-d H:i:s')]);
+                //  获取退款信息
+                $hour_refund = DB::table('hour_refund')
+                                 ->where('hour_refund_id', $hour_refund_id)
+                                 ->first();
+                // 增加学生课时
                 DB::table('hour')
-                  ->where('hour_course', $payment->payment_course)
-                  ->where('hour_student', $payment->payment_student)
-                  ->update(['hour_remain' => $prev_hour_remain-$payment->payment_hour,
-                            'hour_unit_price' => $new_hour_unit_price]);
-                // 如果剩余已用课时均为零删除课时信息
-                $hour = DB::table('hour')
-                          ->where('hour_course', $payment->payment_course)
-                          ->where('hour_student', $payment->payment_student)
-                          ->first();
-                if(($hour->hour_remain+$hour->hour_used)==0){
-                    DB::table('hour')
-                      ->where('hour_course', $payment->payment_course)
-                      ->where('hour_student', $payment->payment_student)
-                      ->delete();
-                }
-                // 删除购课信息
-                DB::table('payment')
-                  ->where('payment_id', $payment_id)
-                  ->delete();
+                  ->where('hour_course', $hour_refund->hour_refund_course)
+                  ->where('hour_student', $hour_refund->hour_refund_student)
+                  ->increment('hour_remain', $hour_refund->hour_refund_amount);
+                // 减少已退课时数
+                DB::table('hour')
+                  ->where('hour_course', $hour_refund->hour_refund_course)
+                  ->where('hour_student', $hour_refund->hour_refund_student)
+                  ->decrement('hour_refunded', $hour_refund->hour_refund_amount);
             }
         }
         // 捕获异常
         catch(Exception $e){
             DB::rollBack();
-            return redirect("/finance/payment")
+            return redirect("/finance/refund/payment")
                    ->with(['notify' => true,
                          'type' => 'danger',
-                         'title' => '购课记录删除失败',
-                         'message' => '部分学生剩余课时不足，购课记录删除失败，错误码:204']);
+                         'title' => '退款记录审核失败',
+                         'message' => '退款记录审核失败，错误码:204']);
         }
         DB::commit();
         // 返回课程列表
-        return redirect("/finance/payment")
+        return redirect("/finance/refund/payment")
                ->with(['notify' => true,
                        'type' => 'success',
-                       'title' => '购课记录删除成功',
-                       'message' => '购课记录删除成功!']);
-    }
-
-    public function paymentReviewAll(Request $request){
-        // 检查登录状态
-        if(!Session::has('login')){
-            return loginExpired(); // 未登录，返回登陆视图
-        }
-        // 检测用户权限
-        if(!DB::table('user_access')
-           ->join('access', 'user_access.user_access_access', '=', 'access.access_id')
-           ->where('user_access_user', Session::get('user_id'))
-           ->where('access_url', '/finance/refund/payment/review')
-           ->exists()){
-           return back()->with(['notify' => true,
-                                'type' => 'danger',
-                                'title' => '访问失败',
-                                'message' => '您的账户没有访问权限']);
-        }
-        // 复核购课记录
-        DB::beginTransaction();
-        try{
-            // 更新可复核班级购课记录复核信息
-            DB::table('payment')
-              ->whereNull('payment_review_user')
-              ->where('payment_create_user', '<>', Session::get('user_id'))
-              ->update(['payment_review_user' => Session::get('user_id'),
-                        'payment_review_time' => date('Y-m-d H:i:s')]);
-        }
-        // 捕获异常
-        catch(Exception $e){
-            DB::rollBack();
-            return redirect("/finance/payment")
-                   ->with(['notify' => true,
-                         'type' => 'danger',
-                         'title' => '可复核购课记录复核失败',
-                         'message' => '可复核购课记复核失败，错误码:204']);
-        }
-        DB::commit();
-        // 返回课程列表
-        return redirect("/finance/payment")
-               ->with(['notify' => true,
-                       'type' => 'success',
-                       'title' => '全部可复核购课记录复核成功',
-                       'message' => '全部可复核购课记录复核成功!']);
-    }
-
-    public function paymentReview(Request $request){
-        // 检查登录状态
-        if(!Session::has('login')){
-            return loginExpired(); // 未登录，返回登陆视图
-        }
-        // 检测用户权限
-        if(!DB::table('user_access')
-           ->join('access', 'user_access.user_access_access', '=', 'access.access_id')
-           ->where('user_access_user', Session::get('user_id'))
-           ->where('access_url', '/finance/refund/payment/review')
-           ->exists()){
-           return back()->with(['notify' => true,
-                                'type' => 'danger',
-                                'title' => '访问失败',
-                                'message' => '您的账户没有访问权限']);
-        }
-        // 获取payment_id
-        $request_ids=$request->input('id');
-        $payment_ids = array();
-        if(is_array($request_ids)){
-            foreach ($request_ids as $request_id) {
-                $payment_ids[]=decode($request_id, 'payment_id');
-            }
-        }else{
-            $payment_ids[]=decode($request_ids, 'payment_id');
-        }
-        // 复核购课记录
-        DB::beginTransaction();
-        try{
-            foreach ($payment_ids as $payment_id){
-                // 更新购课记录复核信息
-                DB::table('payment')
-                  ->where('payment_id', $payment_id)
-                  ->update(['payment_review_user' => Session::get('user_id'),
-                            'payment_review_time' => date('Y-m-d H:i:s')]);
-            }
-        }
-        // 捕获异常
-        catch(Exception $e){
-            DB::rollBack();
-            return redirect("/finance/payment")
-                   ->with(['notify' => true,
-                         'type' => 'danger',
-                         'title' => '购课记录复核失败',
-                         'message' => '购课记复核失败，错误码:204']);
-        }
-        DB::commit();
-        // 返回课程列表
-        return redirect("/finance/payment")
-               ->with(['notify' => true,
-                       'type' => 'success',
-                       'title' => '购课记录复核成功',
-                       'message' => '购课记录复核成功!']);
+                       'title' => '退款记录审核成功',
+                       'message' => '退款记录审核成功!']);
     }
 
 

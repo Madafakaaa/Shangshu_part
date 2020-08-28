@@ -242,24 +242,6 @@
             </ul>
           </div>
         </li>
-        <!--
-        <li class="nav-item">
-          <a class="nav-link" href="#navbar-self" data-toggle="collapse" aria-expanded="false" role="button" aria-controls="navbar-self" id="link-self">
-            <i class="ni ni-circle-08"></i>
-            <span class="nav-link-text">个人中心</span>
-          </a>
-          <div class="collapse" id="navbar-self">
-            <ul class="nav nav-sm flex-column">
-              <li class="nav-item">
-                <a href="/self/profile" class="nav-link" id="selfProfile">
-                  <i class="fa fa-id-badge"></i>
-                  <span class="nav-link-text">我的信息</span>
-                </a>
-              </li>
-            </ul>
-          </div>
-        </li>
-        -->
       </ul>
       <!-- Divider -->
       <hr class="my-3">
@@ -267,6 +249,12 @@
       <!-- <h6 class="navbar-heading p-0 text-muted">其它</h6> -->
       <!-- Navigation -->
       <ul class="navbar-nav mb-md-3">
+        <li class="nav-item">
+          <a class="nav-link" href="/profile" id="link-profile">
+            <i class="ni ni-circle-08"></i>
+            <span class="nav-link-text">个人信息</span>
+          </a>
+        </li>
         <li class="nav-item">
           <a class="nav-link" href="/exit">
             <i class="ni ni-user-run text-red"></i>

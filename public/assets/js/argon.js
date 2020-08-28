@@ -1560,8 +1560,8 @@ var DatatableBasic = (function() {
 			keys: !0,
       ordering: false,
       lengthMenu: [
-        [50, -1],
-        [50, "全部"]
+        [20, 50, -1],
+        [20, 50, "全部"]
       ],
       responsive: true,
 			language: {

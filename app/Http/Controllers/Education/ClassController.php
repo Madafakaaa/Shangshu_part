@@ -216,13 +216,23 @@ class ClassController extends Controller
         }
         DB::commit();
         // 返回学生列表
-        //return redirect("/education/class/create/success?id=".encode($class_id, 'class_id'))
-        return redirect("/education/class")
+        return redirect("/education/class/create/success?id=".encode($class_id, 'class_id'))
                ->with(['notify' => true,
                        'type' => 'success',
                        'title' => '班级添加成功',
                        'message' => '班级添加成功']);
     }
+
+    public function classCreateSuccess(Request $request){
+        // 检查登录状态
+        if(!Session::has('login')){
+            return loginExpired(); // 未登录，返回登陆视图
+        }
+        // 获取id
+        $class_id = decode($request->input('id'), 'class_id');
+        return view('education/class/classCreateSuccess', ['class_id' => $class_id]);
+    }
+
 
     public function classDelete(Request $request){
         // 检查登录状态
@@ -321,6 +331,12 @@ class ClassController extends Controller
                       ->where('user_department', '=', $class->class_department)
                       ->where('user_is_available', 1)
                       ->get();
+        $other_department_teachers = DB::table('user')
+                   ->join('department', 'user.user_department', '=', 'department.department_id')
+                   ->where('user_department', '!=', $class->class_department)
+                   ->where('user_is_available', 1)
+                   ->orderBy('user_department', 'asc')
+                   ->get();
 
         // 获取班级成员
         $members = array();
@@ -346,6 +362,7 @@ class ClassController extends Controller
         }
         return view('education/class/classLessonCreate', ['class' => $class,
                                                           'teachers' => $teachers,
+                                                          'other_department_teachers' => $other_department_teachers,
                                                           'members' => $members]);
     }
 
@@ -387,10 +404,8 @@ class ClassController extends Controller
                          'title' => '课程点名失败',
                          'message' => "教师在此时间段已有上课记录！"]);
         }
-
         // 获取上课人数
         $lesson_student_num = $class->class_current_num;
-
         /*
          *  教案
          */
@@ -547,10 +562,13 @@ class ClassController extends Controller
             DB::table('class')
               ->where('class_id', $lesson_class)
               ->increment('class_attended_num');
+            // 上传教案文件
+            $file->move("files/document", $document_path);
         }
         // 捕获异常
         catch(Exception $e){
             DB::rollBack();
+            return $e;
             // 返回第一步
             return redirect("/education/class/lesson/create?id=".encode($lesson_class, 'class_id'))
                    ->with(['notify' => true,
@@ -559,15 +577,23 @@ class ClassController extends Controller
                          'message' => '学生剩余课时不足，错误码:328']);
         }
         DB::commit();
-        // 上传教案文件
-        $file->move("files/document", $document_path);
         // 返回我的上课记录视图
-        return redirect("/education/class")
+        return redirect("/education/class/lesson/create/success?id=".encode($lesson_class, 'class_id'))
                ->with(['notify' => true,
                        'type' => 'success',
                        'title' => '课程点名成功',
                        'message' => '课程点名成功']);
     }
 
+
+    public function classLessonCreateSuccess(Request $request){
+        // 检查登录状态
+        if(!Session::has('login')){
+            return loginExpired(); // 未登录，返回登陆视图
+        }
+        // 获取id
+        $class_id = decode($request->input('id'), 'class_id');
+        return view('education/class/classLessonCreateSuccess', ['class_id' => $class_id]);
+    }
 
 }

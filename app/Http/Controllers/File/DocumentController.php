@@ -60,6 +60,7 @@ class DocumentController extends Controller
         }
         // 排序并获取数据对象
         $rows = $rows->orderBy('document_id', 'desc')
+                     ->limit(200)
                      ->get();
 
         // 获取校区信息(筛选)

@@ -58,10 +58,10 @@
             <thead class="thead-light">
               <tr>
                 <th style='width:40px;'>序号</th>
-                <th style='width:60px;'>校区</th>
                 <th style='width:100px;'>学生</th>
-                <th style='width:100px;'>年级</th>
-                <th style='width:100px;'>晚托类型</th>
+                <th style='width:60px;'>校区</th>
+                <th style='width:60px;'>年级</th>
+                <th style='width:160px;'>晚托类型</th>
                 <th style='width:100px;'>开始日期</th>
                 <th style='width:100px;'>结束日期</th>
                 <th style='width:100px;'>晚托状态</th>
@@ -72,7 +72,6 @@
               @foreach ($daycare_records as $daycare_record)
               <tr>
                 <td>{{ $loop->iteration }}</td>
-                <td>{{ $daycare_record->department_name }}</td>
                 <td>
                   @if($daycare_record->student_gender=="男")
                     <img src="{{ asset(_ASSETS_.'/img/icons/male.png') }}" style="height:20px;">
@@ -81,18 +80,19 @@
                   @endif
                   <a href="/student?id={{encode($daycare_record->student_id, 'student_id')}}">{{ $daycare_record->student_name }}</a>
                 </td>
+                <td>{{ $daycare_record->department_name }}</td>
                 <td>{{ $daycare_record->grade_name }}</td>
                 <td>{{ $daycare_record->daycare_name }}</td>
                 <td>{{ $daycare_record->daycare_record_start }}</td>
                 <td>{{ $daycare_record->daycare_record_end }}</td>
                 @if($daycare_record->daycare_record_is_refunded==1)
-                  <td><span class="text-danger">已退费</span></td>
+                  <td><strong><span class="text-danger">已退费</span></strong></td>
                 @elseif(date('Y-m-d')>$daycare_record->daycare_record_end)
-                  <td><span class="text-warning">已过期</span></td>
+                  <td><strong><span class="text-warning">已过期</span></strong></td>
                 @elseif(date('Y-m-d')>=$daycare_record->daycare_record_start&&date('Y-m-d')<=$daycare_record->daycare_record_end)
-                  <td><span class="text-success">使用中</span></td>
+                  <td><strong><span class="text-success">使用中</span></strong></td>
                 @else
-                  <td><span class="text-info">未开始</span></td>
+                  <td><strong><span class="text-info">未开始</span></strong></td>
                 @endif
                 <td>
                   @if($daycare_record->daycare_record_is_refunded==0&&date('Y-m-d')<=$daycare_record->daycare_record_end)

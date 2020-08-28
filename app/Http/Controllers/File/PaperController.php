@@ -57,7 +57,7 @@ class paperController extends Controller
                      ->orderBy('paper_grade', 'asc')
                      ->orderBy('paper_semester', 'asc')
                      ->orderBy('paper_id', 'asc')
-                     ->limit(500)
+                     ->limit(200)
                      ->get();
 
         // 获取校区信息(筛选)

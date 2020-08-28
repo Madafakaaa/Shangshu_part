@@ -59,9 +59,10 @@
               <tr>
                 <th style='width:20px;'></th>
                 <th style='width:40px;'>序号</th>
+                <th style='width:120px;'>学生</th>
                 <th style='width:70px;'>校区</th>
-                <th style='width:200px;'>学生</th>
                 <th style='width:50px;'>年级</th>
+                <th style='width:80px;'>学号</th>
                 <th style='width:80px;'>所在班级</th>
                 <th style='width:80px;'>剩余课时</th>
                 <th style='width:80px;'>晚托状态</th>
@@ -78,17 +79,17 @@
                   </div>
                 </td>
                 <td>{{ $loop->iteration }}</td>
-                <td>{{ $student['department_name'] }}</td>
                 <td>
                   @if($student['student_gender']=="男")
                     <img src="{{ asset(_ASSETS_.'/img/icons/male.png') }}" style="height:20px;">
                   @else
                     <img src="{{ asset(_ASSETS_.'/img/icons/female.png') }}" style="height:20px;">
                   @endif
-                  [ {{ $student['student_id'] }} ]
                   <a href="/student?id={{encode($student['student_id'], 'student_id')}}">{{ $student['student_name'] }}</a>
                 </td>
+                <td>{{ $student['department_name'] }}</td>
                 <td>{{ $student['grade_name'] }}</td>
+                <td>{{$student['student_id']}}</td>
                 <td>
                   {{ count($student['classes']) }} 个
                   <button type="button" class="btn btn-outline-primary btn-sm" data-toggle="modal" data-target="#modal-{{$loop->iteration}}-1">查看</button>
@@ -206,8 +207,8 @@
                   <td><span class="text-success">晚托使用中</span></td>
                 @endif
                 <td>
-                  <a href="/education/student/payment/create?id={{encode($student['student_id'], 'student_id')}}"><button type="button" class="btn btn-warning btn-sm">购课时</button></a>
-                  <a href="/education/student/daycare/create?id={{encode($student['student_id'], 'student_id')}}"><button type="button" class="btn btn-info btn-sm">购晚托</button></a>
+                  <a href="/education/student/payment/create?id={{encode($student['student_id'], 'student_id')}}" target="_blank"><button type="button" class="btn btn-warning btn-sm">购课时</button></a>
+                  <a href="/education/student/daycare/create?id={{encode($student['student_id'], 'student_id')}}" target="_blank"><button type="button" class="btn btn-info btn-sm">购晚托</button></a>
                   <a href='/student?id={{encode($student['student_id'], 'student_id')}}'><button type="button" class="btn btn-primary btn-sm">详情</button></a>
                   <button type="button" class="btn btn-outline-danger btn-sm delete-button" id='delete_button_{{$loop->iteration}}' onclick="buttonConfirm('delete_button_{{$loop->iteration}}', '/education/student/delete?id={{encode($student['student_id'], 'student_id')}}', '删除后学生将转为离校学生，且从所在班级中退出。是否确认删除所选学生？')">删除</button>
                 </td>

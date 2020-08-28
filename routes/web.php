@@ -57,16 +57,16 @@ Route::get('/home', 'HomeController@home');
         Route::get('/company/user/create', 'Company\UserController@userCreate');
         // 保存用户
         Route::post('/company/user/store', 'Company\UserController@userStore');
-        // 修改用户 √
-        Route::get('/company/user/edit', 'Company\UserController@userEdit');
-        // 更新用户
-        Route::post('/company/user/update', 'Company\UserController@userUpdate');
+        // 添加用户成功
+        Route::get('/company/user/create/success', 'Company\UserController@userCreateSuccess');
         // 删除用户 √
         Route::get('/company/user/delete', 'Company\UserController@userDelete');
         // 用户权限 √
         Route::get('/company/user/access', 'Company\UserController@userAccess');
         // 用户权限更新
         Route::post('/company/user/access/update', 'Company\UserController@userAccessUpdate');
+        // 用户权限更新成功
+        Route::get('/company/user/access/success', 'Company\UserController@userAccessSuccess');
     // 教师评级
         // 查看教师评级 √
         Route::get('/company/teacherType', 'Company\TeacherTypeController@teacherType');
@@ -142,6 +142,8 @@ Route::get('/home', 'HomeController@home');
         Route::get('/education/class/lesson/create', 'Education\ClassController@classLessonCreate');
         // 保存上课记录
         Route::post('/education/class/lesson/store', 'Education\ClassController@classLessonStore');
+        // 添加上课记录成功
+        Route::get('/education/class/lesson/create/success', 'Education\ClassController@classLessonCreateSuccess');
     // 上课记录
         // 查看上课记录 √
         Route::get('/education/lesson', 'Education\LessonController@lesson');
@@ -175,9 +177,21 @@ Route::get('/home', 'HomeController@home');
     // 课时退费记录
         // 查看课时退费记录 √
         Route::get('/finance/refund/payment', 'Finance\RefundPaymentController@refundPayment');
+        // 审核课时退费记录 √
+        Route::get('/finance/refund/payment/review', 'Finance\RefundPaymentController@refundPaymentReview');
+        // 提交课时退费记录审核结果 √
+        Route::post('/finance/refund/payment/review/store', 'Finance\RefundPaymentController@refundPaymentReviewStore');
+        // 删除课时退费记录 √
+        Route::get('/finance/refund/payment/delete', 'Finance\RefundPaymentController@refundPaymentDelete');
     // 晚托退费记录
         // 查看晚托退费记录 √
         Route::get('/finance/refund/daycare', 'Finance\RefundDaycareController@refundDaycare');
+        // 审核晚托退费记录 √
+        Route::get('/finance/refund/daycare/review', 'Finance\RefundDaycareController@refundDaycareReview');
+        // 提交晚托退费记录审核结果 √
+        Route::post('/finance/refund/daycare/review/store', 'Finance\RefundDaycareController@refundDaycareReviewStore');
+        // 删除晚托退费记录 √
+        Route::get('/finance/refund/daycare/delete', 'Finance\RefundDaycareController@refundDaycareDelete');
 
 
 // 文档资料 ********************************************************************************
@@ -219,6 +233,14 @@ Route::get('/home', 'HomeController@home');
         Route::get('/teacher/assessment/manager/create', 'Teacher\AssessmentController@assessmentManagerCreate');
         // 保存分校长评
         Route::post('/teacher/assessment/manager/store', 'Teacher\AssessmentController@assessmentManagerStore');
+
+// 个人信息
+    // 查看个人信息
+    Route::get('/profile', 'ProfileController@profile');
+    // 修改个人信息
+    Route::post('/profile/update', 'ProfileController@profileUpdate');
+    // 修改密码
+    Route::post('/profile/password', 'ProfileController@profilePassword');
 
 
 // 学生详情

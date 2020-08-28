@@ -67,9 +67,20 @@
                   <label class="form-control-label">班级教师<span style="color:red">*</span></label>
                   <select class="form-control" name="input_class_teacher" data-toggle="select" required>
                     <option value=''>请选择班级教师...</option>
-                    @foreach ($users as $user)
-                      <option value="{{ $user->user_id }}">[ {{ $user->department_name }} ] {{ $user->user_name }}</option>
-                    @endforeach
+                    @if(count($users)>0)
+                      <optgroup label="{{Session::get('user_department_name')}}">
+                        @foreach ($users as $user)
+                          <option value="{{ $user->user_id }}">{{ $user->user_name }}</option>
+                        @endforeach
+                      </optgroup>
+                    @endif
+                    @if(count($other_department_users)>0)
+                      <optgroup label="其它校区">
+                        @foreach ($other_department_users as $user)
+                          <option value="{{ $user->user_id }}">[ {{ $user->department_name }} ] {{ $user->user_name }}</option>
+                        @endforeach
+                      </optgroup>
+                    @endif
                   </select>
                 </div>
               </div>

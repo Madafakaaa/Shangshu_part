@@ -50,13 +50,13 @@
             <thead class="thead-light">
               <tr>
                 <th style='width:40px;'>序号</th>
-                <th style='width:60px;'>校区</th>
-                <th style='width:210px;'>学生</th>
-                <th style='width:40px;'>年级</th>
-                <th style='width:140px;'>课程</th>
-                <th style='width:50px;' class="text-right">已使用</th>
-                <th style='width:50px;' class="text-right">已退款</th>
-                <th style='width:50px;' class="text-right">剩余</th>
+                <th style='width:120px;'>学生</th>
+                <th style='width:50px;'>校区</th>
+                <th style='width:50px;'>年级</th>
+                <th style='width:180px;'>课程</th>
+                <th style='width:60px;' class="text-right">已使用</th>
+                <th style='width:60px;' class="text-right">已退款</th>
+                <th style='width:60px;' class="text-right">剩余</th>
                 <th style='width:160px;'>操作管理</th>
               </tr>
             </thead>
@@ -64,16 +64,15 @@
               @foreach ($hours as $hour)
               <tr>
                 <td>{{ $loop->iteration }}</td>
-                <td>{{ $hour->department_name }}</td>
                 <td>
                   @if($hour->student_gender=="男")
                     <img src="{{ asset(_ASSETS_.'/img/icons/male.png') }}" style="height:20px;">
                   @else
                     <img src="{{ asset(_ASSETS_.'/img/icons/female.png') }}" style="height:20px;">
                   @endif
-                  [ {{ $hour->student_id }} ]
                   <a href="/student?id={{encode($hour->student_id, 'student_id')}}">{{ $hour->student_name }}</a>
                 </td>
+                <td>{{ $hour->department_name }}</td>
                 <td>{{ $hour->grade_name }}</td>
                 <td>{{ $hour->course_name }}</td>
                 <td class="text-right">{{ $hour->hour_used }} 课时</td>

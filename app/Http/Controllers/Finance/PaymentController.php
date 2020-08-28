@@ -54,6 +54,7 @@ class PaymentController extends Controller
         }
         $db_payments = $db_payments->orderBy('payment_date', 'desc')
                                    ->orderBy('payment_id', 'desc')
+                                   ->limit(200)
                                    ->get();
         $payments = array();
         foreach($db_payments as $db_payment){

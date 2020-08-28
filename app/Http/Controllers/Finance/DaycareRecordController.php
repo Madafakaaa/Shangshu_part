@@ -54,6 +54,7 @@ class DaycareRecordController extends Controller
         }
         $db_daycare_records = $db_daycare_records->orderBy('daycare_record_date', 'desc')
                                                  ->orderBy('daycare_record_id', 'desc')
+                                                 ->limit(200)
                                                  ->get();
         $daycare_records = array();
         foreach($db_daycare_records as $db_daycare_record){

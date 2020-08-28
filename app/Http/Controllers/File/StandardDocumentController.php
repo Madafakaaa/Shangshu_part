@@ -57,7 +57,7 @@ class standardDocumentController extends Controller
                      ->orderBy('standard_document_grade', 'asc')
                      ->orderBy('standard_document_semester', 'asc')
                      ->orderBy('standard_document_id', 'asc')
-                     ->limit(500)
+                     ->limit(200)
                      ->get();
 
         // 获取校区信息(筛选)

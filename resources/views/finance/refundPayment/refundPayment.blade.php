@@ -15,14 +15,6 @@
 <div class="container-fluid mt-3">
   <div class="row mb-3">
     <div class="col-auto">
-      <button type="button" class="btn btn-sm btn-outline-warning btn-round btn-icon" id='review_all_button' onclick="buttonConfirm('review_all_button', '/finance/payment/review/all', '确认复核所有可复核购课记录？')">
-        <span class="btn-inner--icon"><i class="ni ni-check-bold"></i></span>
-        <span class="btn-inner--text">全部复核</span>
-      </button>
-      <button class="btn btn-sm btn-outline-danger btn-round btn-icon" data-toggle="tooltip" data-original-title="批量删除" onclick="batchConfirm('/finance/payment/delete', 'delete-button', '删除后将扣除学生课时，若学生剩余课时不足将无法扣除。是否确认删除购课记录')">
-        <span class="btn-inner--icon"><i class="fas fa-trash"></i></span>
-        <span class="btn-inner--text">批量删除</span>
-      </button>
     </div>
   </div>
   <div class="row justify-content-center">
@@ -68,7 +60,6 @@
                 <th style='width:90px;'>退费日期</th>
                 <th style='width:70px;'>申请用户</th>
                 <th style='width:80px;'>审核状态</th>
-                <th style='width:70px;'>操作管理</th>
               </tr>
             </thead>
             <tbody>
@@ -102,16 +93,11 @@
                 </td>
                 <td>
                   @if($hour_refund['hour_refund_reviewed_status']==0)
-                    <button type="button" class="btn btn-warning btn-sm" id='review_button_{{$loop->iteration}}' onclick="buttonConfirm('review_button_{{$loop->iteration}}', '/finance/refundPayment/review?id={{encode($hour_refund['hour_refund_id'], 'hour_refund_id')}}', '确认复核所选退费记录？')">复核</button>
+                    <a href="/finance/refund/payment/review?id={{encode($hour_refund['hour_refund_id'], 'hour_refund_id')}}"><button type="button" class="btn btn-warning btn-sm">审核</button></a>
                   @elseif($hour_refund['hour_refund_reviewed_status']==1)
                     <span class="text-success">同意</span>
                   @else
                     <span class="text-danger">拒绝</span>
-                  @endif
-                </td>
-                <td>
-                  @if($hour_refund['hour_refund_reviewed_status']==0)
-                    <button type="button" class="btn btn-outline-danger btn-sm" id='delete_button_{{$loop->iteration}}' onclick="buttonConfirm('delete_button_{{$loop->iteration}}', '/finance/refundPayment/delete?id={{encode($hour_refund['hour_refund_id'], 'hour_refund_id')}}', '确认删除所选退费记录？')">删除</button>
                   @endif
                 </td>
               </tr>

@@ -45,6 +45,7 @@ class StudentController extends Controller
                       ->join('grade', 'class.class_grade', '=', 'grade.grade_id')
                       ->where('member.member_student', $student_id)
                       ->get();
+
         // 生成已有班级ID数组
         $member_class_ids = array();
         foreach($members as $member){
@@ -82,6 +83,7 @@ class StudentController extends Controller
                         ->where('participant_student', $student_id)
                         ->orderBy('lesson_date', 'desc')
                         ->orderBy('lesson_start', 'desc')
+                        ->limit(200)
                         ->get();
 
         $lessons = array();

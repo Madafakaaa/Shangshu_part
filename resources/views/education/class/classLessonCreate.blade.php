@@ -71,9 +71,20 @@
               <div class="col-4 px-2 mb-2">
                 <div class="form-group mb-1">
                   <select class="form-control form-control-sm" name="input_lesson_teacher" data-toggle="select" required>
-                    @foreach ($teachers as $teacher)
-                      <option value="{{ $teacher->user_id }}" @if($class->class_teacher==$teacher->user_id) selected @endif>[ {{ $teacher->department_name }} ] {{ $teacher->user_name }}</option>
-                    @endforeach
+                    @if(count($teachers)>0)
+                      <optgroup label="{{Session::get('user_department_name')}}">
+                        @foreach ($teachers as $user)
+                          <option value="{{ $user->user_id }}" @if($class->class_teacher==$user->user_id) selected @endif>{{ $user->user_name }}</option>
+                        @endforeach
+                      </optgroup>
+                    @endif
+                    @if(count($other_department_teachers)>0)
+                      <optgroup label="其它校区">
+                        @foreach ($other_department_teachers as $user)
+                          <option value="{{ $user->user_id }}" @if($class->class_teacher==$user->user_id) selected @endif>[ {{ $user->department_name }} ] {{ $user->user_name }}</option>
+                        @endforeach
+                      </optgroup>
+                    @endif
                   </select>
                 </div>
               </div>
@@ -125,7 +136,7 @@
                 <div class="col-4 px-2 mb-2">
                   <div class="form-group mb-1">
                     <label>
-                      <a href="/student?id={{encode($member[0]->student_id,'student_id')}}">{{ $member[0]->student_name }}</a> [ {{ $member[0]->student_id }} ]
+                      <a href="/student?id={{encode($member[0]->student_id,'student_id')}}">{{ $member[0]->student_name }}</a> <small>[ {{ $member[0]->student_id }} ]</small>
                       @if($member[0]->student_gender=="男")
                         <img src="{{ asset(_ASSETS_.'/img/icons/male.png') }}" style="height:20px;">
                       @else

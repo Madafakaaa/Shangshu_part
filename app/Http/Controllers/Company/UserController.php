@@ -155,108 +155,7 @@ class UserController extends Controller
                              'message' => '用户添加失败，错误码:113']);
         }
         // 返回用户列表
-        return redirect("/company/user")
-               ->with(['notify' => true,
-                       'type' => 'success',
-                       'title' => '用户添加成功',
-                       'message' => '用户添加成功']);
-    }
-
-    public function userEdit(Request $request){
-        // 检查登录状态
-        if(!Session::has('login')){
-            return loginExpired(); // 未登录，返回登陆视图
-        }
-        // 检测用户权限
-        if(!DB::table('user_access')
-           ->join('access', 'user_access.user_access_access', '=', 'access.access_id')
-           ->where('user_access_user', Session::get('user_id'))
-           ->where('access_url', '/company/user/edit')
-           ->exists()){
-           return back()->with(['notify' => true,
-                                'type' => 'danger',
-                                'title' => '访问失败',
-                                'message' => '您的账户没有访问权限']);
-        }
-        // 获取id
-        $user_id = decode($request->input('id'), 'user_id');
-        // 获取用户信息
-        $user = DB::table('user')
-                  ->where('user_id', $user_id)
-                  ->first();
-        // 获取校区、教师评级信息
-        $departments = DB::table('department')
-                         ->where('department_is_available', 1)
-                         ->orderBy('department_id', 'asc')
-                         ->get();
-        $teacher_types = DB::table('teacher_type')
-                         ->orderBy('teacher_type_id', 'asc')
-                         ->get();
-        $positions = DB::table('position')
-                         ->orderBy('position_id', 'asc')
-                         ->get();
-        return view('company/user/userEdit', ['user' => $user, 'departments' => $departments, 'teacher_types' => $teacher_types, 'positions' => $positions]);
-    }
-
-    public function userUpdate(Request $request){
-        // 检查登录状态
-        if(!Session::has('login')){
-            return loginExpired(); // 未登录，返回登陆视图
-        }
-        // 获取id
-        $user_id = $request->input('user_id');
-        // 获取表单输入
-        $user_name = $request->input('input_user_name');
-        $user_gender = $request->input('input_user_gender');
-        $user_department = $request->input('input_user_department');
-        $user_birthday = $request->input('input_user_birthday');
-        $user_teacher_type = $request->input('input_user_teacher_type');
-        $user_position = $request->input('input_user_position');
-        $user_salary_basic = $request->input('input_user_salary_basic');
-        $user_salary_housing = $request->input('input_user_salary_housing');
-        $user_salary_pension = $request->input('input_user_salary_pension');
-        $user_salary_medical = $request->input('input_user_salary_medical');
-        $user_salary_unemployment = $request->input('input_user_salary_unemployment');
-        $user_salary_provident = $request->input('input_user_salary_provident');
-        $user_salary_children = $request->input('input_user_salary_children');
-        $user_salary_elderly = $request->input('input_user_salary_elderly');
-        $user_salary_performance = $request->input('input_user_salary_performance');
-        $user_salary_commission = $request->input('input_user_salary_commission');
-        $user_salary_method = $request->input('input_user_salary_method');
-        // 插入数据库
-        try{
-            DB::table('user')
-              ->where('user_id', $user_id)
-              ->update(['user_name' => $user_name,
-                        'user_gender' => $user_gender,
-                        'user_department' => $user_department,
-                        'user_birthday' => $user_birthday,
-                        'user_teacher_type' => $user_teacher_type,
-                        'user_position' => $user_position,
-                        'user_salary_basic' => $user_salary_basic,
-                        'user_salary_housing' => $user_salary_housing,
-                        'user_salary_pension' => $user_salary_pension,
-                        'user_salary_medical' => $user_salary_medical,
-                        'user_salary_unemployment' => $user_salary_unemployment,
-                        'user_salary_provident' => $user_salary_provident,
-                        'user_salary_children' => $user_salary_children,
-                        'user_salary_elderly' => $user_salary_elderly,
-                        'user_salary_performance' => $user_salary_performance,
-                        'user_salary_commission' => $user_salary_commission,
-                        'user_salary_method' => $user_salary_method,
-                        'user_modified_user' => Session::get('user_id'),
-                        'user_modified_time' => date('Y-m-d H:i:s')]);
-        }
-        // 捕获异常
-        catch(Exception $e){
-            return redirect("/company/user/edit?id=".encode($user_id, 'user_id'))
-                   ->with(['notify' => true,
-                           'type' => 'danger',
-                           'title' => '用户添加失败',
-                           'message' => '用户添加失败，错误码:113']);
-        }
-        // 返回用户列表
-        return redirect("/company/user")
+        return redirect("/company/user/create/success?id=".encode($user_id, 'user_id'))
                ->with(['notify' => true,
                        'type' => 'success',
                        'title' => '用户添加成功',
@@ -264,50 +163,17 @@ class UserController extends Controller
     }
 
     /**
-     * 删除用户
-     * URL: DELETE /company/user/{id}
-     * @param  int  $user_id
+     * 创建新用户页面
+     * URL: GET /company/user/create
      */
-    public function userDelete(Request $request){
+    public function userCreateSuccess(Request $request){
         // 检查登录状态
         if(!Session::has('login')){
             return loginExpired(); // 未登录，返回登陆视图
         }
-        // 检测用户权限
-        if(!DB::table('user_access')
-           ->join('access', 'user_access.user_access_access', '=', 'access.access_id')
-           ->where('user_access_user', Session::get('user_id'))
-           ->where('access_url', '/company/user/delete')
-           ->exists()){
-           return back()->with(['notify' => true,
-                                'type' => 'danger',
-                                'title' => '访问失败',
-                                'message' => '您的账户没有访问权限']);
-        }
-        // 获取user_id
+        // 获取id
         $user_id = decode($request->input('id'), 'user_id');
-        // 删除数据
-        try{
-            DB::table('user')
-              ->where('user_id', $user_id)
-              ->update(['user_is_available' => 0,
-                        'user_modified_user' => Session::get('user_id'),
-                        'user_modified_time' => date('Y-m-d H:i:s')]);
-        }
-        // 捕获异常
-        catch(Exception $e){
-            return redirect("/company/user")
-                   ->with(['notify' => true,
-                         'type' => 'danger',
-                         'title' => '用户删除失败',
-                         'message' => '用户删除失败，错误码:116']);
-        }
-        // 返回用户列表
-        return redirect("/company/user")
-                 ->with(['notify' => true,
-                         'type' => 'success',
-                         'title' => '用户删除成功',
-                         'message' => '用户删除成功']);
+        return view('company/user/userCreateSuccess', ['user_id' => $user_id]);
     }
 
     /**
@@ -437,11 +303,73 @@ class UserController extends Controller
                            'message' => '用户权限修改失败，错误码:114']);
         }
         DB::commit();
-        return redirect("/company/user")
+        return redirect("/company/user/access/success?id=".encode($user_id, 'user_id'))
                ->with(['notify' => true,
                        'type' => 'success',
                        'title' => '用户权限修改成功',
                        'message' => '用户权限修改成功,新权限将在重新登录后生效！']);
     }
+
+    /**
+     * 用户权限成功
+     * URL: GET /company/user/access/success
+     */
+    public function userAccessSuccess(Request $request){
+        // 检查登录状态
+        if(!Session::has('login')){
+            return loginExpired(); // 未登录，返回登陆视图
+        }
+        // 获取id
+        $user_id = decode($request->input('id'), 'user_id');
+        return view('company/user/userAccessSuccess', ['user_id' => $user_id]);
+    }
+
+    /**
+     * 删除用户
+     * URL: DELETE /company/user/{id}
+     * @param  int  $user_id
+     */
+    public function userDelete(Request $request){
+        // 检查登录状态
+        if(!Session::has('login')){
+            return loginExpired(); // 未登录，返回登陆视图
+        }
+        // 检测用户权限
+        if(!DB::table('user_access')
+           ->join('access', 'user_access.user_access_access', '=', 'access.access_id')
+           ->where('user_access_user', Session::get('user_id'))
+           ->where('access_url', '/company/user/delete')
+           ->exists()){
+           return back()->with(['notify' => true,
+                                'type' => 'danger',
+                                'title' => '访问失败',
+                                'message' => '您的账户没有访问权限']);
+        }
+        // 获取user_id
+        $user_id = decode($request->input('id'), 'user_id');
+        // 删除数据
+        try{
+            DB::table('user')
+              ->where('user_id', $user_id)
+              ->update(['user_is_available' => 0,
+                        'user_modified_user' => Session::get('user_id'),
+                        'user_modified_time' => date('Y-m-d H:i:s')]);
+        }
+        // 捕获异常
+        catch(Exception $e){
+            return redirect("/company/user")
+                   ->with(['notify' => true,
+                         'type' => 'danger',
+                         'title' => '用户删除失败',
+                         'message' => '用户删除失败，错误码:116']);
+        }
+        // 返回用户列表
+        return redirect("/company/user")
+                 ->with(['notify' => true,
+                         'type' => 'success',
+                         'title' => '用户删除成功',
+                         'message' => '用户删除成功']);
+    }
+
 
 }

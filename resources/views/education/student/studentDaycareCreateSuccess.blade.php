@@ -1,13 +1,13 @@
 @extends('main')
 
 @section('nav')
-<h2 class="text-white d-inline-block mb-0">添加学生</h2>
-<nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+<h2 class="text-white d-inline-block mb-0">购买晚托</h2>
+<nav aria-label="breadcrumb" class="d-none d-inline-block ml-4">
   <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
     <li class="breadcrumb-item"><a href="/home"><i class="fas fa-home"></i></a></li>
-    <li class="breadcrumb-item active">教务运营</li>
+    <li class="breadcrumb-item active">教务中心</li>
     <li class="breadcrumb-item"><a href="/education/student">学生管理</a></li>
-    <li class="breadcrumb-item active">添加学生</li>
+    <li class="breadcrumb-item active">购买晚托</li>
   </ol>
 </nav>
 @endsection
@@ -26,22 +26,22 @@
             </div>
             <div class="row justify-content-center my-3">
               <div class="col-3 text-center">
-                <h1 class="my-2 text-success">学生添加成功</h1>
+                <h1 class="my-2 text-success">购买晚托成功</h1>
               </div>
             </div>
             <hr>
             <div class="row mt-4">
               <div class="col-lg-3 col-md-6 col-sm-12">
-                <a href="/education/student/payment/create?id={{encode($student_id, 'student_id')}}" ><button type="button" class="btn btn-outline-primary btn-block">购买课时</button></a>
+                <a href="/education/student"><button type="button" class="btn btn-outline-primary btn-block">学生管理</button></a>
+              </div>
+              <div class="col-lg-3 col-md-6 col-sm-12">
+                <a href="/education/daycare"><button type="button" class="btn btn-outline-primary btn-block">学生晚托</button></a>
               </div>
               <div class="col-lg-3 col-md-6 col-sm-12">
                 <a href="/student?id={{encode($student_id, 'student_id')}}" ><button type="button" class="btn btn-outline-primary btn-block">学生详情</button></a>
               </div>
               <div class="col-lg-3 col-md-6 col-sm-12">
-                <a href="/education/student"><button type="button" class="btn btn-outline-primary btn-block">学生管理</button></a>
-              </div>
-              <div class="col-lg-3 col-md-6 col-sm-12">
-                <a href="/education/student/create"><button type="button" class="btn btn-outline-primary btn-block">继续添加学生</button></a>
+                <a href="javascript:window.opener=null;window.open('','_self');window.close();"><button type="button" class="btn btn-outline-danger btn-block">关闭</button></a>
               </div>
             </div>
           </div>

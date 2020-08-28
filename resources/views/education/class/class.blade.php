@@ -70,8 +70,9 @@
               <tr>
                 <th style='width:20px;'></th>
                 <th style='width:40px;'>序号</th>
+                <th style='width:180px;'>班级</th>
+                <th style='width:90px;'>班号</th>
                 <th style='width:60px;'>校区</th>
-                <th style='width:240px;'>班级</th>
                 <th style='width:80px;'>教师</th>
                 <th style='width:40px;'>年级</th>
                 <th style='width:40px;'>科目</th>
@@ -90,11 +91,11 @@
                   </div>
                 </td>
                 <td>{{ $loop->iteration }}</td>
-                <td>{{ $class['department_name'] }}</td>
                 <td>
-                  [ {{ $class['class_id'] }} ]
                   <a href="/class?id={{encode($class['class_id'], 'class_id')}}">{{ $class['class_name'] }}</a>
                 </td>
+                <td>{{ $class['class_id'] }}</td>
+                <td>{{ $class['department_name'] }}</td>
                 <td><a href="/user?id={{encode($class['user_id'], 'user_id')}}">{{ $class['user_name'] }}</a></td>
                 <td>{{ $class['grade_name'] }}</td>
                 <td>{{ $class['subject_name'] }}</td>
@@ -205,7 +206,7 @@
                 </td>
                 <td>
                   @if($class['class_current_num']>0)
-                    <a href="/education/class/lesson/create?id={{encode($class['class_id'], 'class_id')}}"><button type="button" class="btn btn-warning btn-sm">点名</button></a>
+                    <a href="/education/class/lesson/create?id={{encode($class['class_id'], 'class_id')}}" target="_blank"><button type="button" class="btn btn-warning btn-sm">点名</button></a>
                   @else
                     <a href="#"><button type="button" class="btn btn-warning btn-sm" disabled>点名</button></a>
                   @endif

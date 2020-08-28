@@ -59,6 +59,7 @@ class LessonController extends Controller
         }
         $db_lessons = $db_lessons->orderBy('lesson_date', 'desc')
                                  ->orderBy('lesson_start', 'desc')
+                                 ->limit(200)
                                  ->get();
 
         $lessons = array();

@@ -14,8 +14,18 @@
 <div class="container-fluid mt-4">
   <div class="row">
     <div class="col-lg-3 col-md-6 col-sm-12">
-      <div class="card">
-        <div class="card-body pt-4">
+      <div class="card card-profile">
+        <img src="{{ asset(_ASSETS_.'/img/theme/class-bg.jpg') }}" alt="Image placeholder" class="card-img-top">
+        <div class="row justify-content-center">
+          <div class="col-lg-3 order-lg-2">
+            <div class="card-profile-image">
+              <a href="#">
+                <img src="{{ asset(_ASSETS_.'/avatar/class.png') }}" class="rounded-circle">
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="card-body mt-4">
           <div class="text-center pb-0">
             <h1>{{ $class->class_name }}</h1>
             <div class="h5 font-weight-300">{{ $class->class_id }}</div>
@@ -267,9 +277,20 @@
                     <div class="form-group">
                       <label class="form-control-label">教师<span style="color:red">*</span></label>
                       <select class="form-control" name="input_class_teacher" data-toggle="select" required>
-                        @foreach ($users as $user)
-                          <option value="{{ $user->user_id }}" @if($class->class_teacher==$user->user_id) selected @endif>[ {{ $user->department_name }} ] {{ $user->user_name }}</option>
-                        @endforeach
+                        @if(count($users)>0)
+                          <optgroup label="{{Session::get('user_department_name')}}">
+                            @foreach ($users as $user)
+                              <option value="{{ $user->user_id }}" @if($class->class_teacher==$user->user_id) selected @endif>{{ $user->user_name }}</option>
+                            @endforeach
+                          </optgroup>
+                        @endif
+                        @if(count($other_department_users)>0)
+                          <optgroup label="其它校区">
+                            @foreach ($other_department_users as $user)
+                              <option value="{{ $user->user_id }}" @if($class->class_teacher==$user->user_id) selected @endif>[ {{ $user->department_name }} ] {{ $user->user_name }}</option>
+                            @endforeach
+                          </optgroup>
+                        @endif
                       </select>
                     </div>
                   </div>
@@ -289,7 +310,7 @@
                   </div>
                 </div>
               </div>
-            <form>
+            </form>
           </div>
         </div>
 

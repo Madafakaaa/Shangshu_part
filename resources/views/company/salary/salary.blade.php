@@ -28,20 +28,20 @@
           <table class="table table-hover datatable-basic text-center table-bordered">
             <thead class="thead-light">
               <tr>
-                <th rowspan="2" style='width:30px;'><strong>序号</strong></th>
                 <th rowspan="2" style='width:50px;'><strong>月份</strong></th>
                 <th rowspan="2" style='width:55px;'><strong>姓名</strong></th>
+                <th rowspan="2" style='width:36px;'><strong>校区</strong></th>
                 <th rowspan="2" style='width:50px;'><strong>基本</strong></th>
                 <th rowspan="2" style='width:45px;'><strong>住房</strong></th>
                 <th rowspan="2" style='width:50px;'><strong>课时</strong></th>
                 <th rowspan="2" style='width:50px;'><strong>绩效</strong></th>
                 <th rowspan="2" style='width:50px;'><strong>课消</strong></th>
-                <th rowspan="2" style='width:70px;'><strong>应发</strong></th>
-                <th colspan="4" style='width:240px;'><strong>代扣款项</strong></th>
-                <th colspan="2" style='width:110px;'><strong>六项专项扣除</strong></th>
+                <th rowspan="2" style='width:66px;'><strong>应发</strong></th>
+                <th colspan="4" style='width:232px;'><strong>代扣款项</strong></th>
+                <th colspan="2" style='width:106px;'><strong>六项专项扣除</strong></th>
                 <th rowspan="2" style='width:45px;'><strong>处罚</strong></th>
                 <th rowspan="2" style='width:45px;'><strong>所得税</strong></th>
-                <th rowspan="2" style='width:70px;'><strong>实发</strong></th>
+                <th rowspan="2" style='width:66px;'><strong>实发</strong></th>
               </tr>
               <tr>
                 <th><strong>养老</strong></th>
@@ -55,9 +55,9 @@
             <tbody>
               @foreach ($salaries as $salary)
               <tr>
-                <td>{{ $loop->iteration }}</td>
                 <td>{{ date('y-m', strtotime($salary->salary_month)) }}</td>
                 <td class="text-right"><a href="/user?id={{encode($salary->user_id, 'user_id')}}">{{ $salary->user_name }}</a></td>
+                <td class="text-right">{{ $salary->department_name }}</td>
                 <!-- 基本 -->
                 @if($salary->salary_basic!=0)
                   <td class="text-right">{{ floatval($salary->salary_basic) }}</td>

@@ -55,6 +55,7 @@ class RefundDaycareController extends Controller
         }
         $db_daycare_refunds = $db_daycare_refunds->orderBy('daycare_refund_date', 'desc')
                                                   ->orderBy('daycare_refund_id', 'desc')
+                                                  ->limit(200)
                                                   ->get();
         $daycare_refunds = array();
         foreach($db_daycare_refunds as $db_daycare_refund){
@@ -93,97 +94,7 @@ class RefundDaycareController extends Controller
                                                            'filter_grades' => $filter_grades]);
     }
 
-    public function paymentDelete(Request $request){
-        // 检查登录状态
-        if(!Session::has('login')){
-            return loginExpired(); // 未登录，返回登陆视图
-        }
-        // 检测用户权限
-        if(!DB::table('user_access')
-           ->join('access', 'user_access.user_access_access', '=', 'access.access_id')
-           ->where('user_access_user', Session::get('user_id'))
-           ->where('access_url', '/finance/refund/daycare/delete')
-           ->exists()){
-           return back()->with(['notify' => true,
-                                'type' => 'danger',
-                                'title' => '访问失败',
-                                'message' => '您的账户没有访问权限']);
-        }
-        // 获取payment_id
-        $request_ids=$request->input('id');
-        $payment_ids = array();
-        if(is_array($request_ids)){
-            foreach ($request_ids as $request_id) {
-                $payment_ids[]=decode($request_id, 'payment_id');
-            }
-        }else{
-            $payment_ids[]=decode($request_ids, 'payment_id');
-        }
-        // 删除购课记录
-        DB::beginTransaction();
-        try{
-            foreach ($payment_ids as $payment_id){
-                // 获取购课信息
-                $payment =  DB::table('payment')
-                              ->where('payment_id', $payment_id)
-                              ->first();
-                // 更新学生剩余课时、课时单价
-                $hour = DB::table('hour')
-                          ->where('hour_course', $payment->payment_course)
-                          ->where('hour_student', $payment->payment_student)
-                          ->first();
-                $prev_hour_remain = $hour->hour_remain;
-                $prev_hour_used = $hour->hour_used;
-                $prev_hour_unit_price = $hour->hour_unit_price;
-
-                $total_value = ($prev_hour_remain+$prev_hour_used)*$prev_hour_unit_price-($payment->payment_total_price-$payment->payment_extra);
-                $total_hour = $prev_hour_remain+$prev_hour_used-$payment->payment_hour;
-                if($total_hour!=0){
-                    $new_hour_unit_price = $total_value/$total_hour;
-                }else{
-                    $new_hour_unit_price = 0;
-                }
-                DB::table('hour')
-                  ->where('hour_course', $payment->payment_course)
-                  ->where('hour_student', $payment->payment_student)
-                  ->update(['hour_remain' => $prev_hour_remain-$payment->payment_hour,
-                            'hour_unit_price' => $new_hour_unit_price]);
-                // 如果剩余已用课时均为零删除课时信息
-                $hour = DB::table('hour')
-                          ->where('hour_course', $payment->payment_course)
-                          ->where('hour_student', $payment->payment_student)
-                          ->first();
-                if(($hour->hour_remain+$hour->hour_used)==0){
-                    DB::table('hour')
-                      ->where('hour_course', $payment->payment_course)
-                      ->where('hour_student', $payment->payment_student)
-                      ->delete();
-                }
-                // 删除购课信息
-                DB::table('payment')
-                  ->where('payment_id', $payment_id)
-                  ->delete();
-            }
-        }
-        // 捕获异常
-        catch(Exception $e){
-            DB::rollBack();
-            return redirect("/finance/payment")
-                   ->with(['notify' => true,
-                         'type' => 'danger',
-                         'title' => '购课记录删除失败',
-                         'message' => '部分学生剩余课时不足，购课记录删除失败，错误码:204']);
-        }
-        DB::commit();
-        // 返回课程列表
-        return redirect("/finance/payment")
-               ->with(['notify' => true,
-                       'type' => 'success',
-                       'title' => '购课记录删除成功',
-                       'message' => '购课记录删除成功!']);
-    }
-
-    public function paymentReviewAll(Request $request){
+    public function refundDaycareReview(Request $request){
         // 检查登录状态
         if(!Session::has('login')){
             return loginExpired(); // 未登录，返回登陆视图
@@ -199,88 +110,65 @@ class RefundDaycareController extends Controller
                                 'title' => '访问失败',
                                 'message' => '您的账户没有访问权限']);
         }
-        // 复核购课记录
-        DB::beginTransaction();
-        try{
-            // 更新可复核班级购课记录复核信息
-            DB::table('payment')
-              ->whereNull('payment_review_user')
-              ->where('payment_create_user', '<>', Session::get('user_id'))
-              ->update(['payment_review_user' => Session::get('user_id'),
-                        'payment_review_time' => date('Y-m-d H:i:s')]);
-        }
-        // 捕获异常
-        catch(Exception $e){
-            DB::rollBack();
-            return redirect("/finance/payment")
-                   ->with(['notify' => true,
-                         'type' => 'danger',
-                         'title' => '可复核购课记录复核失败',
-                         'message' => '可复核购课记复核失败，错误码:204']);
-        }
-        DB::commit();
-        // 返回课程列表
-        return redirect("/finance/payment")
-               ->with(['notify' => true,
-                       'type' => 'success',
-                       'title' => '全部可复核购课记录复核成功',
-                       'message' => '全部可复核购课记录复核成功!']);
+        // 获取hour_refund_id
+        $daycare_refund_id=decode($request->input('id'), 'daycare_refund_id');
+        // 获取退款信息
+        $daycare_refund = DB::table('daycare_refund')
+                             ->join('daycare_record', 'daycare_refund.daycare_refund_daycare_record', '=', 'daycare_record.daycare_record_id')
+                             ->join('student', 'daycare_record.daycare_record_student', '=', 'student.student_id')
+                             ->join('department', 'student.student_department', '=', 'department.department_id')
+                             ->join('grade', 'student.student_grade', '=', 'grade.grade_id')
+                             ->join('daycare', 'daycare_record.daycare_record_daycare', '=', 'daycare.daycare_id')
+                             ->join('user', 'daycare_refund.daycare_refund_create_user', '=', 'user.user_id')
+                             ->where('daycare_refund_id', $daycare_refund_id)
+                             ->first();
+        // 返回视图
+        return view('finance/refundDaycare/refundDaycareReview', ['daycare_refund' => $daycare_refund]);
     }
 
-    public function paymentReview(Request $request){
+
+    public function refundDaycareReviewStore(Request $request){
         // 检查登录状态
         if(!Session::has('login')){
             return loginExpired(); // 未登录，返回登陆视图
         }
-        // 检测用户权限
-        if(!DB::table('user_access')
-           ->join('access', 'user_access.user_access_access', '=', 'access.access_id')
-           ->where('user_access_user', Session::get('user_id'))
-           ->where('access_url', '/finance/refund/daycare/review')
-           ->exists()){
-           return back()->with(['notify' => true,
-                                'type' => 'danger',
-                                'title' => '访问失败',
-                                'message' => '您的账户没有访问权限']);
-        }
-        // 获取payment_id
-        $request_ids=$request->input('id');
-        $payment_ids = array();
-        if(is_array($request_ids)){
-            foreach ($request_ids as $request_id) {
-                $payment_ids[]=decode($request_id, 'payment_id');
-            }
-        }else{
-            $payment_ids[]=decode($request_ids, 'payment_id');
-        }
+
+        // 获取表单数据
+        $daycare_refund_id = $request->input('daycare_refund_id');
+        $daycare_refund_reviewed_status = $request->input('daycare_refund_reviewed_status');
+
         // 复核购课记录
         DB::beginTransaction();
         try{
-            foreach ($payment_ids as $payment_id){
-                // 更新购课记录复核信息
-                DB::table('payment')
-                  ->where('payment_id', $payment_id)
-                  ->update(['payment_review_user' => Session::get('user_id'),
-                            'payment_review_time' => date('Y-m-d H:i:s')]);
+            if($daycare_refund_reviewed_status==2){
+               $daycare_refund = DB::table('daycare_refund')->where('daycare_refund_id', $daycare_refund_id)->first();
+                DB::table('daycare_record')
+                  ->where('daycare_record_id', $daycare_refund->daycare_refund_daycare_record)
+                  ->update(['daycare_record_is_refunded' => 0]);
+
             }
+            // 同意、更新审核状态
+            DB::table('daycare_refund')
+              ->where('daycare_refund_id', $daycare_refund_id)
+              ->update(['daycare_refund_reviewed_status' => $daycare_refund_reviewed_status,
+                        'daycare_refund_reviewed_user' => Session::get('user_id'),
+                        'daycare_refund_reviewed_time' => date('Y-m-d H:i:s')]);
         }
         // 捕获异常
         catch(Exception $e){
             DB::rollBack();
-            return redirect("/finance/payment")
+            return redirect("/finance/refund/daycare")
                    ->with(['notify' => true,
                          'type' => 'danger',
-                         'title' => '购课记录复核失败',
-                         'message' => '购课记复核失败，错误码:204']);
+                         'title' => '退款记录审核失败',
+                         'message' => '退款记录审核失败，错误码:204']);
         }
         DB::commit();
         // 返回课程列表
-        return redirect("/finance/payment")
+        return redirect("/finance/refund/daycare")
                ->with(['notify' => true,
                        'type' => 'success',
-                       'title' => '购课记录复核成功',
-                       'message' => '购课记录复核成功!']);
+                       'title' => '退款记录审核成功',
+                       'message' => '退款记录审核成功!']);
     }
-
-
 }

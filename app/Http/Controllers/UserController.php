@@ -48,6 +48,7 @@ class UserController extends Controller
                         ->where('lesson_teacher', $user_id)
                         ->orderBy('lesson_date', 'desc')
                         ->orderBy('lesson_start', 'desc')
+                        ->limit(200)
                         ->get();
         $lessons = array();
         foreach($db_lessons as $db_lesson){
