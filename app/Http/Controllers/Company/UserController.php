@@ -177,6 +177,119 @@ class UserController extends Controller
     }
 
     /**
+     * 创建新用户页面
+     * URL: GET /company/user/create
+     */
+    public function userEdit(Request $request){
+        // 检查登录状态
+        if(!Session::has('login')){
+            return loginExpired(); // 未登录，返回登陆视图
+        }
+        // 检测用户权限
+        if(!DB::table('user_access')
+           ->join('access', 'user_access.user_access_access', '=', 'access.access_id')
+           ->where('user_access_user', Session::get('user_id'))
+           ->where('access_url', '/company/user/edit')
+           ->exists()){
+           return back()->with(['notify' => true,
+                                'type' => 'danger',
+                                'title' => '访问失败',
+                                'message' => '您的账户没有访问权限']);
+        }
+        // 获取用户id
+        $user_id = decode($request->input('id'), 'user_id');
+        // 获取用户信息
+        $user = DB::table('user')
+                         ->where('user_id', $user_id)
+                         ->first();
+        // 获取校区、教师评级信息
+        $departments = DB::table('department')
+                         ->where('department_is_available', 1)
+                         ->orderBy('department_id', 'asc')
+                         ->get();
+        $teacher_types = DB::table('teacher_type')
+                         ->orderBy('teacher_type_id', 'asc')
+                         ->get();
+        $positions = DB::table('position')
+                         ->orderBy('position_id', 'asc')
+                         ->get();
+        return view('company/user/userEdit', ['user' => $user, 'departments' => $departments, 'teacher_types' => $teacher_types, 'positions' => $positions]);
+    }
+
+    /**
+     * 创建新用户提交数据库
+     * URL: POST /company/user/create
+     * @param  Request  $request
+     * @param  $request->input('input1'): 用户姓名
+     */
+    public function userUpdate(Request $request){
+        // 检查登录状态
+        if(!Session::has('login')){
+            return loginExpired(); // 未登录，返回登陆视图
+        }
+        // 获取表单输入
+        $user_id=$request->input('input_user_id');
+        $user_name = $request->input('input_user_name');
+        $user_gender = $request->input('input_user_gender');
+        $user_department = $request->input('input_user_department');
+        $user_birthday = $request->input('input_user_birthday');
+        $user_teacher_type = $request->input('input_user_teacher_type');
+        $user_position = $request->input('input_user_position');
+        $user_salary_basic = $request->input('input_user_salary_basic');
+        $user_salary_housing = $request->input('input_user_salary_housing');
+        $user_salary_pension = $request->input('input_user_salary_pension');
+        $user_salary_medical = $request->input('input_user_salary_medical');
+        $user_salary_unemployment = $request->input('input_user_salary_unemployment');
+        $user_salary_provident = $request->input('input_user_salary_provident');
+        $user_salary_children = $request->input('input_user_salary_children');
+        $user_salary_elderly = $request->input('input_user_salary_elderly');
+        $user_salary_performance = $request->input('input_user_salary_performance');
+        $user_salary_commission = $request->input('input_user_salary_commission');
+        $user_salary_method = $request->input('input_user_salary_method');
+        // 插入数据库
+        try{
+            DB::table('user')
+              ->where('user_id', $user_id)
+              ->update(
+                ['user_id' => $user_id,
+                 'user_name' => $user_name,
+                 'user_gender' => $user_gender,
+                 'user_department' => $user_department,
+                 'user_birthday' => $user_birthday,
+                 'user_teacher_type' => $user_teacher_type,
+                 'user_position' => $user_position,
+                 'user_salary_basic' => $user_salary_basic,
+                 'user_salary_housing' => $user_salary_housing,
+                 'user_salary_pension' => $user_salary_pension,
+                 'user_salary_medical' => $user_salary_medical,
+                 'user_salary_unemployment' => $user_salary_unemployment,
+                 'user_salary_provident' => $user_salary_provident,
+                 'user_salary_children' => $user_salary_children,
+                 'user_salary_elderly' => $user_salary_elderly,
+                 'user_salary_performance' => $user_salary_performance,
+                 'user_salary_commission' => $user_salary_commission,
+                 'user_salary_method' => $user_salary_method,
+                 'user_create_user' => Session::get('user_id'),
+                 'user_modified_user' => Session::get('user_id')]
+            );
+        }
+        // 捕获异常
+        catch(Exception $e){
+            return redirect("/company/user/edit?id=".encode($user_id, "user_id"))
+                     ->with(['notify' => true,
+                             'type' => 'danger',
+                             'title' => '用户修改失败',
+                             'message' => '用户修改失败，错误码:113']);
+        }
+        // 返回用户列表
+        return redirect("/company/user")
+               ->with(['notify' => true,
+                       'type' => 'success',
+                       'title' => '用户修改成功',
+                       'message' => '用户修改成功']);
+    }
+
+    /**
      * 用户权限视图
      * URL: GET /company/user/access/{user_id}
      * @param  int  $user_id

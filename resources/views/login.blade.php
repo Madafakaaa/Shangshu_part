@@ -55,6 +55,7 @@
               <div class="input-group" style="margin-top:10%;">
                 <input type="submit" class="btn btn-primary btn-round btn-block mb-3" value="登陆">
               </div>
+              <a href="/old/index.php"><small>登陆旧系统</small></a>
             </form>
           </div>
         </div>

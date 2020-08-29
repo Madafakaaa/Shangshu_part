@@ -57,6 +57,10 @@ Route::get('/home', 'HomeController@home');
         Route::get('/company/user/create', 'Company\UserController@userCreate');
         // 保存用户
         Route::post('/company/user/store', 'Company\UserController@userStore');
+        // 修改用户 √
+        Route::get('/company/user/edit', 'Company\UserController@userEdit');
+        // 更新用户
+        Route::post('/company/user/update', 'Company\UserController@userUpdate');
         // 添加用户成功
         Route::get('/company/user/create/success', 'Company\UserController@userCreateSuccess');
         // 删除用户 √
