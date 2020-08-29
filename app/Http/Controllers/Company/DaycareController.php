@@ -122,7 +122,7 @@ class DaycareController extends Controller
         if(!DB::table('user_access')
            ->join('access', 'user_access.user_access_access', '=', 'access.access_id')
            ->where('user_access_user', Session::get('user_id'))
-           ->where('access_url', '/company/edit')
+           ->where('access_url', '/company/daycare/edit')
            ->exists()){
            return back()->with(['notify' => true,
                                 'type' => 'danger',

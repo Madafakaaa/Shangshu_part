@@ -33,8 +33,8 @@
               </div>
               <div class="col-6">
                 <div class="form-group">
-                  <label class="form-control-label">课时单价（元）</label>
-                  <input class="form-control" type="number" value="{{ $course->course_unit_price }}" readonly>
+                  <label class="form-control-label">课时单价（元）<span style="color:red">*</span></label>
+                  <input class="form-control" name="input_course_unit_price" type="number" value="{{ $course->course_unit_price }}" min="1">
                 </div>
               </div>
               <div class="col-6">

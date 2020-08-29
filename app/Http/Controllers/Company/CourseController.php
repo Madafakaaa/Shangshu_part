@@ -158,6 +158,7 @@ class CourseController extends Controller
         $course_quarter = $request->input('input_course_quarter');
         $course_grade = $request->input('input_course_grade');
         $course_type = $request->input('input_course_type');
+        $course_unit_price = $request->input('input_course_unit_price');
         // 更新数据库
         try{
             DB::table('course')
@@ -166,6 +167,7 @@ class CourseController extends Controller
                         'course_quarter' => $course_quarter,
                         'course_grade' => $course_grade,
                         'course_type' => $course_type,
+                        'course_unit_price' => $course_unit_price,
                         'course_modified_user' => Session::get('user_id'),
                         'course_modified_time' => date('Y-m-d H:i:s')]);
         }
