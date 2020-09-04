@@ -36,6 +36,7 @@
                 <th style='width:40px;'>序号</th>
                 <th style='width:200px;' class="text-left">名称</th>
                 <th style='width:80px;'>年级</th>
+                <th style='width:80px;'>科目</th>
                 <th style='width:80px;'>类型</th>
                 <th style='width:80px;'>季度</th>
                 <th style='width:80px;'>单价</th>
@@ -55,6 +56,7 @@
                 <td>{{ $loop->iteration }}</td>
                 <td class="text-left">{{ $course->course_name }}</td>
                 <td>@if($course->course_grade==0) 全年级 @else{{ $course->grade_name }}@endif</td>
+                <td>@if($course->course_subject==0) 全科目 @else{{ $course->subject_name }}@endif</td>
                 <td>
                   @if($course->course_type==1)
                     1人班

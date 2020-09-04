@@ -196,6 +196,19 @@ Route::get('/home', 'HomeController@home');
         Route::post('/finance/refund/daycare/review/store', 'Finance\RefundDaycareController@refundDaycareReviewStore');
         // 删除晚托退费记录 √
         Route::get('/finance/refund/daycare/delete', 'Finance\RefundDaycareController@refundDaycareDelete');
+    // 费用支出记录
+        // 查看支出记录 √
+        Route::get('/finance/expenditure', 'Finance\ExpenditureController@expenditure');
+        // 添加支出记录 √
+        Route::get('/finance/expenditure/create', 'Finance\ExpenditureController@expenditureCreate');
+        // 保存支出记录
+        Route::post('/finance/expenditure/store', 'Finance\ExpenditureController@expenditureStore');
+        // 审核支出记录 √
+        Route::get('/finance/expenditure/review', 'Finance\ExpenditureController@expenditureReview');
+        // 批量审核支出记录 √
+        Route::get('/finance/expenditure/review/all', 'Finance\ExpenditureController@expenditureReviewAll');
+        // 删除支出记录 √
+        Route::get('/finance/expenditure/delete', 'Finance\ExpenditureController@expenditureDelete');
 
 
 // 文档资料 ********************************************************************************
@@ -237,6 +250,22 @@ Route::get('/home', 'HomeController@home');
         Route::get('/teacher/assessment/manager/create', 'Teacher\AssessmentController@assessmentManagerCreate');
         // 保存分校长评
         Route::post('/teacher/assessment/manager/store', 'Teacher\AssessmentController@assessmentManagerStore');
+
+
+// 统计中心 ********************************************************************************
+    // 收入统计
+        // 查看收入统计 √
+        Route::get('/statistic/income', 'Statistic\IncomeController@income');
+    // 支出统计
+        // 查看支出统计 √
+        Route::get('/statistic/expenditure', 'Statistic\ExpenditureController@expenditure');
+    // 课消统计
+        // 查看课消统计 √
+        Route::get('/statistic/consumption', 'Statistic\ConsumptionController@consumption');
+    // 课时统计
+        // 查看课时统计 √
+        Route::get('/statistic/hour', 'Statistic\HourController@hour');
+
 
 // 个人信息
     // 查看个人信息

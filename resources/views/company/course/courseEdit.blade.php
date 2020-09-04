@@ -42,8 +42,8 @@
                   <label class="form-control-label">课程类型<span style="color:red">*</span></label>
                   <select class="form-control" name="input_course_type" data-toggle="selectNoFilter" required>
                     <option value='1' @if($course->course_type==1) selected @endif>1人班</option>
-                    <option value='2' @if($course->course_type==1) selected @endif>2人班</option>
-                    <option value='3' @if($course->course_type==1) selected @endif>3-6人班</option>
+                    <option value='2' @if($course->course_type==2) selected @endif>2人班</option>
+                    <option value='3' @if($course->course_type==3) selected @endif>3-6人班</option>
                   </select>
                 </div>
               </div>
@@ -67,6 +67,17 @@
                     <option value='0'>全年级</option>
                     @foreach ($grades as $grade)
                       <option value="{{ $grade->grade_id }}" @if($course->course_grade==$grade->grade_id) selected @endif>{{ $grade->grade_name }}</option>
+                    @endforeach
+                  </select>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="form-group">
+                  <label class="form-control-label">课程科目<span style="color:red">*</span></label>
+                  <select class="form-control" name="input_course_subject" data-toggle="selectNoFilter">
+                    <option value='0'>全科目</option>
+                    @foreach ($subjects as $subject)
+                      <option value="{{ $subject->subject_id }}" @if($course->course_subject==$subject->subject_id) selected @endif>{{ $subject->subject_name }}</option>
                     @endforeach
                   </select>
                 </div>

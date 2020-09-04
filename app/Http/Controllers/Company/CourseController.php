@@ -33,10 +33,11 @@ class CourseController extends Controller
         // 获取数据
         $courses = DB::table('course')
                      ->leftJoin('grade', 'course.course_grade', '=', 'grade.grade_id')
+                     ->leftJoin('subject', 'course.course_subject', '=', 'subject.subject_id')
                      ->orderBy('course_is_available', 'desc')
-                     ->orderBy('course_type', 'asc')
                      ->orderBy('course_grade', 'asc')
-                     ->orderBy('course_unit_price', 'asc')
+                     ->orderBy('course_subject', 'asc')
+                     ->orderBy('course_type', 'asc')
                      ->get();
         // 获取校区、年级、科目信息(筛选)
         //$filter_departments = DB::table('department')->where('department_status', 1)->whereIn('department_id', $department_access)->orderBy('department_id', 'asc')->get();
@@ -68,7 +69,8 @@ class CourseController extends Controller
         }
         // 获取年级、科目信息、课程类型
         $grades = DB::table('grade')->orderBy('grade_id', 'asc')->get();
-        return view('/company/course/courseCreate', ['grades' => $grades]);
+        $subjects = DB::table('subject')->orderBy('subject_id', 'asc')->get();
+        return view('/company/course/courseCreate', ['grades' => $grades, 'subjects' => $subjects]);
     }
 
     /**
@@ -139,7 +141,8 @@ class CourseController extends Controller
         // 获取数据信息
         $course = DB::table('course')->where('course_id', $course_id)->first();
         $grades = DB::table('grade')->orderBy('grade_id', 'asc')->get();
-        return view('/company/course/courseEdit', ['course' => $course, 'grades' => $grades]);
+        $subjects = DB::table('subject')->orderBy('subject_id', 'asc')->get();
+        return view('/company/course/courseEdit', ['course' => $course, 'grades' => $grades, 'subjects' => $subjects]);
     }
 
     /**
@@ -157,6 +160,7 @@ class CourseController extends Controller
         $course_name = $request->input('input_course_name');
         $course_quarter = $request->input('input_course_quarter');
         $course_grade = $request->input('input_course_grade');
+        $course_subject = $request->input('input_course_subject');
         $course_type = $request->input('input_course_type');
         $course_unit_price = $request->input('input_course_unit_price');
         // 更新数据库
@@ -166,6 +170,7 @@ class CourseController extends Controller
               ->update(['course_name' => $course_name,
                         'course_quarter' => $course_quarter,
                         'course_grade' => $course_grade,
+                        'course_subject' => $course_subject,
                         'course_type' => $course_type,
                         'course_unit_price' => $course_unit_price,
                         'course_modified_user' => Session::get('user_id'),

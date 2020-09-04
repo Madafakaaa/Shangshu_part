@@ -59,6 +59,8 @@ class ClassController extends Controller
         }
         $db_classes = $db_classes->orderBy('class_department', 'asc')
                                  ->orderBy('class_grade', 'asc')
+                                 ->orderBy('class_max_num', 'asc')
+                                 ->orderBy('class_id', 'asc')
                                  ->get();
 
         $classes = array();
@@ -474,6 +476,7 @@ class ClassController extends Controller
                           );
             // 消耗课时价值
             $lesson_hour_price = 0;
+            $lesson_hour_amount = 0;
             // 扣除学生课时
             for($i=1;$i<=$lesson_student_num;$i++){
                 $participant_student = $request->input('input_student_id_'.$i);
@@ -528,6 +531,7 @@ class ClassController extends Controller
                                          ->first()
                                          ->hour_unit_price;
                     $lesson_hour_price += $hour_unit_price * $participant_amount;
+                    $lesson_hour_amount+=$participant_amount;
                 }
                 // 添加上课成员表
                 DB::table('participant')->insert(
@@ -554,6 +558,7 @@ class ClassController extends Controller
             DB::table('lesson')
               ->where('lesson_id', $lesson_id)
               ->update(['lesson_hour_price' => $lesson_hour_price,
+                        'lesson_hour_amount' => $lesson_hour_amount,
                         'lesson_teacher_fee' => $lesson_teacher_fee,
                         'lesson_attended_num' => $lesson_attended_num,
                         'lesson_leave_num' => $lesson_leave_num,

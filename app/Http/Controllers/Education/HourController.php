@@ -34,6 +34,7 @@ class HourController extends Controller
                    ->join('department', 'student.student_department', '=', 'department.department_id')
                    ->join('grade', 'student.student_grade', '=', 'grade.grade_id')
                    ->join('course', 'hour.hour_course', '=', 'course.course_id')
+                   ->leftJoin('subject', 'course.course_subject', '=', 'subject.subject_id')
                    ->where('student_is_available', 1)
                    ->whereIn('student_department', $department_access);
         // 搜索条件
@@ -53,6 +54,9 @@ class HourController extends Controller
         }
         $hours = $hours->orderBy('student_department', 'asc')
                        ->orderBy('student_grade', 'asc')
+                       ->orderBy('student_id', 'asc')
+                       ->orderBy('course_subject', 'asc')
+                       ->orderBy('course_type', 'asc')
                        ->get();
         // 获取校区、年级信息(筛选)
         $filter_departments = DB::table('department')->where('department_is_available', 1)->whereIn('department_id', $department_access)->orderBy('department_id', 'asc')->get();

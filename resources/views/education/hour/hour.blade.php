@@ -52,12 +52,13 @@
                 <th style='width:40px;'>序号</th>
                 <th style='width:120px;'>学生</th>
                 <th style='width:50px;'>校区</th>
-                <th style='width:50px;'>年级</th>
+                <th style='width:50px;'>学生年级</th>
                 <th style='width:180px;'>课程</th>
+                <th style='width:50px;'>课程科目</th>
                 <th style='width:60px;' class="text-right">已使用</th>
                 <th style='width:60px;' class="text-right">已退款</th>
                 <th style='width:60px;' class="text-right">剩余</th>
-                <th style='width:160px;'>操作管理</th>
+                <th style='width:80px;'>操作管理</th>
               </tr>
             </thead>
             <tbody>
@@ -75,6 +76,7 @@
                 <td>{{ $hour->department_name }}</td>
                 <td>{{ $hour->grade_name }}</td>
                 <td>{{ $hour->course_name }}</td>
+                <td>{{ $hour->subject_name }}</td>
                 <td class="text-right">{{ $hour->hour_used }} 课时</td>
                 <td class="text-right">{{ $hour->hour_refunded }} 课时</td>
                 @if($hour->hour_remain<=5)

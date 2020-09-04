@@ -70,6 +70,17 @@
                   </select>
                 </div>
               </div>
+              <div class="col-6">
+                <div class="form-group">
+                  <label class="form-control-label">课程科目<span style="color:red">*</span></label>
+                  <select class="form-control" name="input_course_subject" data-toggle="selectNoFilter">
+                    <option value='0'>全科目</option>
+                    @foreach ($subjects as $subject)
+                      <option value="{{ $subject->subject_id }}">{{ $subject->subject_name }}</option>
+                    @endforeach
+                  </select>
+                </div>
+              </div>
             </div>
             <hr class="my-3">
             <div class="row">

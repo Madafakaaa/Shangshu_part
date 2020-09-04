@@ -173,7 +173,7 @@
               @if(in_array("/finance/refund/payment", Session::get('user_accesses')))
                 <li class="nav-item">
                   <a href="/finance/refund/payment" class="nav-link" id="financeRefundPayment">
-                    <i class="ni ni-money-coins text-purple"></i>
+                    <i class="fa fa-sign-out-alt text-purple"></i>
                     <span class="nav-link-text">课时退费记录</span>
                   </a>
                 </li>
@@ -181,11 +181,17 @@
               @if(in_array("/finance/refund/daycare", Session::get('user_accesses')))
                 <li class="nav-item">
                   <a href="/finance/refund/daycare" class="nav-link" id="financeRefundDaycare">
-                    <i class="ni ni-money-coins text-purple"></i>
+                    <i class="fa fa-sign-out-alt text-purple"></i>
                     <span class="nav-link-text">晚托退费记录</span>
                   </a>
                 </li>
               @endif
+                <li class="nav-item">
+                  <a href="/finance/expenditure" class="nav-link" id="financeExpenditure">
+                    <i class="fa fa-hand-holding-usd text-purple"></i>
+                    <span class="nav-link-text">费用支出记录</span>
+                  </a>
+                </li>
             </ul>
           </div>
         </li>
@@ -237,6 +243,46 @@
                 <a href="/teacher/assessment" class="nav-link" id="teacherAssessment">
                   <i class="fa fa-list-ol text-indigo"></i>
                   <span class="nav-link-text">教师考核</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="/teacher/summary" class="nav-link" id="teacherSummary">
+                  <i class="fa fa-clipboard-list text-indigo"></i>
+                  <span class="nav-link-text">周总结</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#navbar-statistic" data-toggle="collapse" aria-expanded="false" role="button" aria-controls="navbar-statistic" id="link-statistic">
+            <i class="fa fa-chart-bar text-gray-dark"></i>
+            <span class="nav-link-text">统计中心</span>
+          </a>
+          <div class="collapse" id="navbar-statistic">
+            <ul class="nav nav-sm flex-column">
+              <li class="nav-item">
+                <a href="/statistic/income" class="nav-link" id="statisticIncome">
+                  <i class="ni ni-money-coins text-gray-dark"></i>
+                  <span class="nav-link-text">收入支出</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="/statistic/expenditure" class="nav-link" id="statisticExpenditure">
+                  <i class="fa fa-sign-out-alt text-gray-dark"></i>
+                  <span class="nav-link-text">支出统计</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="/statistic/consumption" class="nav-link" id="statisticConsumption">
+                  <i class="fa fa-minus-square text-gray-dark"></i>
+                  <span class="nav-link-text">课消统计</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="/statistic/hour" class="nav-link" id="statisticHour">
+                  <i class="fa fa-user-clock text-gray-dark"></i>
+                  <span class="nav-link-text">课时统计</span>
                 </a>
               </li>
             </ul>

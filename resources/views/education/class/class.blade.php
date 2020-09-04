@@ -70,15 +70,14 @@
               <tr>
                 <th style='width:20px;'></th>
                 <th style='width:40px;'>序号</th>
-                <th style='width:180px;'>班级</th>
-                <th style='width:90px;'>班号</th>
+                <th style='width:240px;'>班级</th>
                 <th style='width:60px;'>校区</th>
-                <th style='width:80px;'>教师</th>
-                <th style='width:40px;'>年级</th>
-                <th style='width:40px;'>科目</th>
-                <th style='width:100px;'>人数</th>
-                <th style='width:80px;'>已上课</th>
-                <th style='width:200px;'>操作管理</th>
+                <th style='width:70px;'>教师</th>
+                <th style='width:50px;'>年级</th>
+                <th style='width:50px;'>科目</th>
+                <th style='width:120px;'>班级人数</th>
+                <th style='width:100px;'>已上课</th>
+                <th style='width:150px;'>操作管理</th>
               </tr>
             </thead>
             <tbody>
@@ -94,13 +93,25 @@
                 <td>
                   <a href="/class?id={{encode($class['class_id'], 'class_id')}}">{{ $class['class_name'] }}</a>
                 </td>
-                <td>{{ $class['class_id'] }}</td>
                 <td>{{ $class['department_name'] }}</td>
                 <td><a href="/user?id={{encode($class['user_id'], 'user_id')}}">{{ $class['user_name'] }}</a></td>
                 <td>{{ $class['grade_name'] }}</td>
                 <td>{{ $class['subject_name'] }}</td>
                 <td>
-                  {{ $class['class_current_num'] }} / {{ $class['class_max_num'] }} 人
+                  @if($class['class_current_num']==0)
+                    <span class="text-danger">
+                      {{ $class['class_current_num'] }} / {{ $class['class_max_num'] }}
+                    </span>
+                  @elseif($class['class_current_num']<$class['class_max_num'])
+                    <span class="text-warning">
+                      {{ $class['class_current_num'] }} / {{ $class['class_max_num'] }}
+                    </span>
+                  @else
+                    <span class="text-success">
+                      {{ $class['class_current_num'] }} / {{ $class['class_max_num'] }}
+                    </span>
+                  @endif
+                  &nbsp;
                   <button type="button" class="btn btn-outline-primary btn-sm" data-toggle="modal" data-target="#modal-{{$loop->iteration}}-1">查看</button>
                   <div class="modal fade" id="modal-{{$loop->iteration}}-1" tabindex="-1" role="dialog" aria-labelledby="modal-default" aria-hidden="true">
                     <div class="modal-dialog modal- modal-dialog-centered modal-" role="document">

@@ -51,6 +51,7 @@ class StudentController extends Controller
         }
         $db_students = $db_students->orderBy('student_department', 'asc')
                                    ->orderBy('student_grade', 'asc')
+                                   ->orderBy('student_id', 'asc')
                                    ->get();
         $students = array();
         foreach($db_students as $db_student){
