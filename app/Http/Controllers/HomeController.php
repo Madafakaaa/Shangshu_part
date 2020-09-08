@@ -77,7 +77,7 @@ class HomeController extends Controller
             $dashboard3 = $dashboard3->whereIn('class_department', $department_access)->first();
         }
         $dashboard['dashboard_lesson_num']+=$dashboard3->dashboard_lesson_num;
-        $dashboard['dashboard_lesson_student_num']+=$dashboard3->dashboard_consumption_hour_price;
+        $dashboard['dashboard_lesson_student_num']+=$dashboard3->dashboard_lesson_student_num;
         $dashboard['dashboard_consumption_hour_price']+=$dashboard3->dashboard_consumption_hour_price;
         $dashboard['dashboard_consumption_hour_amount']+=$dashboard3->dashboard_consumption_hour_amount;
         // 获取当前校区名称

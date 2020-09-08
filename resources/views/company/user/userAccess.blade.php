@@ -121,8 +121,8 @@
                             <div class="row">
                               @foreach($features as $feature)
                                 <div class="col-2 mb-2">
-                                  <input type="checkbox" class="custom-control-input {{ $category }} {{ $page }}" id="label_{{ $feature['access_id'] }}" name="accesses[]" value="{{ $feature['access_id'] }}" @if(in_array($feature['access_id'], $user_accesses)) checked @endif>
-                                  <label class="custom-control-label" for="label_{{ $feature['access_id'] }}">{{ $feature['access_feature'] }}</label>
+                                  <input type="checkbox" class="custom-control-input {{ $category }} {{ $page }}" id="label_{{ $feature['access_url'] }}" name="accesses[]" value="{{ $feature['access_url'] }}" @if(in_array($feature['access_url'], $user_accesses)) checked @endif>
+                                  <label class="custom-control-label" for="label_{{ $feature['access_url'] }}">{{ $feature['access_feature'] }}</label>
                                 </div>
                               @endforeach
                             </div>

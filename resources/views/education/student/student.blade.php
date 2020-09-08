@@ -19,6 +19,10 @@
         <span class="btn-inner--icon"><i class="fas fa-user-edit"></i></span>
         <span class="btn-inner--text">添加学生</span>
       </a>
+      <a href="/education/student/export?@foreach($filters as $key => $value) {{$key}}={{$value}}& @endforeach" target="_blank" class="btn btn-sm btn-neutral btn-round btn-icon" data-toggle="tooltip" data-original-title="导出名单">
+        <span class="btn-inner--icon"><i class="fas fa-file-export"></i></span>
+        <span class="btn-inner--text">导出名单</span>
+      </a>
       <button class="btn btn-sm btn-outline-danger btn-round btn-icon" data-toggle="tooltip" data-original-title="批量删除" onclick="batchConfirm('/education/student/delete', 'delete-button', '删除后学生将转为离校学生，且从所在班级中退出。是否确认批量删除所选学生？')">
         <span class="btn-inner--icon"><i class="fas fa-trash"></i></span>
         <span class="btn-inner--text">批量删除</span>
@@ -54,7 +58,7 @@
         </div>
         <hr>
         <div class="table-responsive py-3">
-          <table class="table table-hover datatable-basic text-left table-bordered">
+          <table class="table table-hover datatable-basic text-left table-bordered" id="table-1">
             <thead class="thead-light">
               <tr>
                 <th style='width:20px;'></th>

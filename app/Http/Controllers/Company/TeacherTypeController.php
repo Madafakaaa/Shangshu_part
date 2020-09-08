@@ -19,15 +19,8 @@ class TeacherTypeController extends Controller
             return loginExpired(); // 未登录，返回登陆视图
         }
         // 检测用户权限
-        if(!DB::table('user_access')
-           ->join('access', 'user_access.user_access_access', '=', 'access.access_id')
-           ->where('user_access_user', Session::get('user_id'))
-           ->where('access_url', '/company/teacherType')
-           ->exists()){
-           return back()->with(['notify' => true,
-                                'type' => 'danger',
-                                'title' => '访问失败',
-                                'message' => '您的账户没有访问权限']);
+        if(!in_array("/company/teacherType", Session::get('user_accesses'))){
+           return back()->with(['notify' => true,'type' => 'danger','title' => '您的账户没有访问权限']);
         }
         // 获取数据
         $teacher_types = DB::table('teacher_type')
@@ -47,15 +40,8 @@ class TeacherTypeController extends Controller
             return loginExpired(); // 未登录，返回登陆视图
         }
         // 检测用户权限
-        if(!DB::table('user_access')
-           ->join('access', 'user_access.user_access_access', '=', 'access.access_id')
-           ->where('user_access_user', Session::get('user_id'))
-           ->where('access_url', '/company/teacherType/create')
-           ->exists()){
-           return back()->with(['notify' => true,
-                                'type' => 'danger',
-                                'title' => '访问失败',
-                                'message' => '您的账户没有访问权限']);
+        if(!in_array("/company/teacherType/create", Session::get('user_accesses'))){
+           return back()->with(['notify' => true,'type' => 'danger','title' => '您的账户没有访问权限']);
         }
         $grades = DB::table('grade')
                     ->orderBy('grade_id', 'asc')
@@ -119,15 +105,8 @@ class TeacherTypeController extends Controller
             return loginExpired(); // 未登录，返回登陆视图
         }
         // 检测用户权限
-        if(!DB::table('user_access')
-           ->join('access', 'user_access.user_access_access', '=', 'access.access_id')
-           ->where('user_access_user', Session::get('user_id'))
-           ->where('access_url', '/company/teacherType/edit')
-           ->exists()){
-           return back()->with(['notify' => true,
-                                'type' => 'danger',
-                                'title' => '访问失败',
-                                'message' => '您的账户没有访问权限']);
+        if(!in_array("/company/teacherType/edit", Session::get('user_accesses'))){
+           return back()->with(['notify' => true,'type' => 'danger','title' => '您的账户没有访问权限']);
         }
         // 获取id
         $teacher_type_id = decode($request->input('id'), 'teacher_type_id');

@@ -60,9 +60,9 @@
                 <th style='width:20px;'></th>
                 <th style='width:40px;'>序号</th>
                 <th style='width:60px;'>校区</th>
-                <th style='width:110px;'>学生</th>
-                <th style='width:100px;'>晚托类型</th>
-                <th style='width:220px;'>晚托时间</th>
+                <th style='width:100px;'>学生</th>
+                <th style='width:180px;'>晚托类型</th>
+                <th style='width:210px;'>晚托时间</th>
                 <th style='width:80px;' class="text-right">合计优惠</th>
                 <th style='width:80px;' class="text-right">合计金额</th>
                 <th style='width:90px;'>购买日期</th>

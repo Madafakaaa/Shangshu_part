@@ -67,24 +67,23 @@ class LoginController extends Controller
         // 获取用户校区权限
         $department_access = array();
         $db_department_accesses = DB::table('user_department')
-                              ->where('user_department_user', $request_user_id)
-                              ->get();
+                                    ->where('user_department_user', $request_user_id)
+                                    ->get();
         foreach($db_department_accesses AS $db_department_access){
             $department_access[] = $db_department_access->user_department_department;
         }
         // 获取用户页面权限
         $user_accesses = array();
         $db_user_accesses = DB::table('user_access')
-                              ->join('access', 'user_access.user_access_access', '=', 'access.access_id')
                               ->where('user_access_user', $request_user_id)
                               ->get();
         foreach($db_user_accesses AS $db_user_access){
-            $user_accesses[] = $db_user_access->access_url;
+            $user_accesses[] = $db_user_access->user_access_access;
         }
         // 获取用户页面权限
         $access_categories = array();
         $db_access_categories = DB::table('user_access')
-                                  ->join('access', 'user_access.user_access_access', '=', 'access.access_id')
+                                  ->join('access', 'user_access.user_access_access', '=', 'access.access_url')
                                   ->where('user_access_user', $request_user_id)
                                   ->select('access_category')
                                   ->distinct()

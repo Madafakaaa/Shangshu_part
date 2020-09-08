@@ -63,7 +63,7 @@
                 <th style='width:100px;'>学生</th>
                 <th style='width:140px;'>购买课程</th>
                 <th style='width:70px;' class="text-right">数量</th>
-                <th style='width:80px;' class="text-right">合计优惠</th>
+                <th style='width:90px;' class="text-right">合计优惠</th>
                 <th style='width:80px;' class="text-right">资料费</th>
                 <th style='width:90px;' class="text-right">合计</th>
                 <th style='width:90px;'>购课日期</th>

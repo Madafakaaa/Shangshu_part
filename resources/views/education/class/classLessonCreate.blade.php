@@ -179,7 +179,7 @@
                     <select class="form-control form-control-sm" name="input_student_course_{{ $loop->iteration }}" id="input_student_course_{{ $loop->iteration }}" data-toggle="select" required>
                       <option value=''>选择扣除课程...</option>
                       @foreach ($member[1] as $course)
-                        <option value="{{ $course->course_id }}">
+                        <option value="{{ $course->course_id }}" @if($class->subject_id==$course->course_subject) selected @endif>
                           {{ $course->course_name }} [剩余：{{ $course->hour_remain }} 课时]
                         </option>
                       @endforeach
@@ -212,7 +212,7 @@
               </div>
             </div>
           </div>
-        <form>
+        </form>
       </div>
     </div>
   </div>

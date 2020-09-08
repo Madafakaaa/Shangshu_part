@@ -16,15 +16,8 @@ class DaycareController extends Controller
             return loginExpired(); // 未登录，返回登陆视图
         }
         // 检测用户权限
-        if(!DB::table('user_access')
-           ->join('access', 'user_access.user_access_access', '=', 'access.access_id')
-           ->where('user_access_user', Session::get('user_id'))
-           ->where('access_url', '/education/daycare')
-           ->exists()){
-           return back()->with(['notify' => true,
-                                'type' => 'danger',
-                                'title' => '访问失败',
-                                'message' => '您的账户没有访问权限']);
+        if(!in_array("/education/daycare", Session::get('user_accesses'))){
+           return back()->with(['notify' => true,'type' => 'danger','title' => '您的账户没有访问权限']);
         }
         // 获取用户校区权限
         $department_access = Session::get('department_access');
@@ -71,15 +64,8 @@ class DaycareController extends Controller
             return loginExpired(); // 未登录，返回登陆视图
         }
         // 检测用户权限
-        if(!DB::table('user_access')
-           ->join('access', 'user_access.user_access_access', '=', 'access.access_id')
-           ->where('user_access_user', Session::get('user_id'))
-           ->where('access_url', '/education/daycare/refund/create')
-           ->exists()){
-           return back()->with(['notify' => true,
-                                'type' => 'danger',
-                                'title' => '访问失败',
-                                'message' => '您的账户没有访问权限']);
+        if(!in_array("/education/daycare/refund/create", Session::get('user_accesses'))){
+           return back()->with(['notify' => true,'type' => 'danger','title' => '您的账户没有访问权限']);
         }
         // 获取学生课程id
         $daycare_record_id = decode($request->input('id'), 'daycare_record_id');

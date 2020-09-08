@@ -97,6 +97,8 @@ Route::get('/home', 'HomeController@home');
     // 学生管理
         // 查看学生 √
         Route::get('/education/student', 'Education\StudentController@student');
+        // 导出学生名单 √
+        Route::get('/education/student/export', 'Education\StudentController@studentExport');
         // 添加学生 √
         Route::get('/education/student/create', 'Education\StudentController@studentCreate');
         // 保存学生
@@ -256,15 +258,15 @@ Route::get('/home', 'HomeController@home');
     // 收入统计
         // 查看收入统计 √
         Route::get('/statistic/income', 'Statistic\IncomeController@income');
-    // 支出统计
-        // 查看支出统计 √
-        Route::get('/statistic/expenditure', 'Statistic\ExpenditureController@expenditure');
     // 课消统计
         // 查看课消统计 √
         Route::get('/statistic/consumption', 'Statistic\ConsumptionController@consumption');
     // 课时统计
         // 查看课时统计 √
         Route::get('/statistic/hour', 'Statistic\HourController@hour');
+    // 工资统计
+        // 查看工资统计 √
+        Route::get('/statistic/salary', 'Statistic\SalaryController@salary');
 
 
 // 个人信息

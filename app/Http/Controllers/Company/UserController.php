@@ -26,15 +26,8 @@ class UserController extends Controller
             return loginExpired(); // 未登录，返回登陆视图
         }
         // 检测用户权限
-        if(!DB::table('user_access')
-           ->join('access', 'user_access.user_access_access', '=', 'access.access_id')
-           ->where('user_access_user', Session::get('user_id'))
-           ->where('access_url', '/company/user')
-           ->exists()){
-           return back()->with(['notify' => true,
-                                'type' => 'danger',
-                                'title' => '访问失败',
-                                'message' => '您的账户没有访问权限']);
+        if(!in_array("/company/user", Session::get('user_accesses'))){
+           return back()->with(['notify' => true,'type' => 'danger','title' => '您的账户没有访问权限']);
         }
 
         // 获取数据
@@ -44,6 +37,7 @@ class UserController extends Controller
                    ->join('position', 'user.user_position', '=', 'position.position_id')
                    ->where('user_is_available', 1)
                    ->orderBy('user_department', 'asc')
+                   ->orderBy('user_position', 'asc')
                    ->get();
 
         // 筛选条件
@@ -66,15 +60,8 @@ class UserController extends Controller
             return loginExpired(); // 未登录，返回登陆视图
         }
         // 检测用户权限
-        if(!DB::table('user_access')
-           ->join('access', 'user_access.user_access_access', '=', 'access.access_id')
-           ->where('user_access_user', Session::get('user_id'))
-           ->where('access_url', '/company/user/create')
-           ->exists()){
-           return back()->with(['notify' => true,
-                                'type' => 'danger',
-                                'title' => '访问失败',
-                                'message' => '您的账户没有访问权限']);
+        if(!in_array("/company/user/create", Session::get('user_accesses'))){
+           return back()->with(['notify' => true,'type' => 'danger','title' => '您的账户没有访问权限']);
         }
         // 获取校区、教师评级信息
         $departments = DB::table('department')
@@ -186,15 +173,8 @@ class UserController extends Controller
             return loginExpired(); // 未登录，返回登陆视图
         }
         // 检测用户权限
-        if(!DB::table('user_access')
-           ->join('access', 'user_access.user_access_access', '=', 'access.access_id')
-           ->where('user_access_user', Session::get('user_id'))
-           ->where('access_url', '/company/user/edit')
-           ->exists()){
-           return back()->with(['notify' => true,
-                                'type' => 'danger',
-                                'title' => '访问失败',
-                                'message' => '您的账户没有访问权限']);
+        if(!in_array("/company/user/edit", Session::get('user_accesses'))){
+           return back()->with(['notify' => true,'type' => 'danger','title' => '您的账户没有访问权限']);
         }
         // 获取用户id
         $user_id = decode($request->input('id'), 'user_id');
@@ -299,6 +279,10 @@ class UserController extends Controller
         if(!Session::has('login')){
             return loginExpired(); // 未登录，返回登陆视图
         }
+        // 检测用户权限
+        if(!in_array("/company/user/access", Session::get('user_accesses'))){
+           return back()->with(['notify' => true,'type' => 'danger','title' => '您的账户没有访问权限']);
+        }
         // 获取user_id
         $user_id = decode($request->input('id'), 'user_id');
         // 获取全部校区
@@ -340,7 +324,7 @@ class UserController extends Controller
                                         ->get();
                 foreach($db_access_features as $db_access_feature){
                     $temp = array();
-                    $temp['access_id']=$db_access_feature->access_id;
+                    $temp['access_url']=$db_access_feature->access_url;
                     $temp['access_feature']=$db_access_feature->access_feature;
                     $accesses[$db_access_category->access_category][$db_access_page->access_page][] = $temp;
                 }
@@ -448,15 +432,8 @@ class UserController extends Controller
             return loginExpired(); // 未登录，返回登陆视图
         }
         // 检测用户权限
-        if(!DB::table('user_access')
-           ->join('access', 'user_access.user_access_access', '=', 'access.access_id')
-           ->where('user_access_user', Session::get('user_id'))
-           ->where('access_url', '/company/user/delete')
-           ->exists()){
-           return back()->with(['notify' => true,
-                                'type' => 'danger',
-                                'title' => '访问失败',
-                                'message' => '您的账户没有访问权限']);
+        if(!in_array("/company/user/delete", Session::get('user_accesses'))){
+           return back()->with(['notify' => true,'type' => 'danger','title' => '您的账户没有访问权限']);
         }
         // 获取user_id
         $user_id = decode($request->input('id'), 'user_id');

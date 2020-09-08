@@ -16,15 +16,8 @@ class ClassController extends Controller
             return loginExpired(); // 未登录，返回登陆视图
         }
         // 检测用户权限
-        if(!DB::table('user_access')
-           ->join('access', 'user_access.user_access_access', '=', 'access.access_id')
-           ->where('user_access_user', Session::get('user_id'))
-           ->where('access_url', '/education/class')
-           ->exists()){
-           return back()->with(['notify' => true,
-                                'type' => 'danger',
-                                'title' => '访问失败',
-                                'message' => '您的账户没有访问权限']);
+        if(!in_array("/education/class", Session::get('user_accesses'))){
+           return back()->with(['notify' => true,'type' => 'danger','title' => '您的账户没有访问权限']);
         }
         // 获取用户校区权限
         $department_access = Session::get('department_access');
@@ -130,15 +123,8 @@ class ClassController extends Controller
             return loginExpired(); // 未登录，返回登陆视图
         }
         // 检测用户权限
-        if(!DB::table('user_access')
-           ->join('access', 'user_access.user_access_access', '=', 'access.access_id')
-           ->where('user_access_user', Session::get('user_id'))
-           ->where('access_url', '/education/class/create')
-           ->exists()){
-           return back()->with(['notify' => true,
-                                'type' => 'danger',
-                                'title' => '访问失败',
-                                'message' => '您的账户没有访问权限']);
+        if(!in_array("/education/class/create", Session::get('user_accesses'))){
+           return back()->with(['notify' => true,'type' => 'danger','title' => '您的账户没有访问权限']);
         }
         // 获取年级信息
         $grades = DB::table('grade')->orderBy('grade_id', 'asc')->get();
@@ -241,6 +227,10 @@ class ClassController extends Controller
         if(!Session::has('login')){
             return loginExpired(); // 未登录，返回登陆视图
         }
+        // 检测用户权限
+        if(!in_array("/education/class/delete", Session::get('user_accesses'))){
+           return back()->with(['notify' => true,'type' => 'danger','title' => '您的账户没有访问权限']);
+        }
         // 获取class_id
         $request_ids=$request->input('id');
         $class_ids = array();
@@ -250,17 +240,6 @@ class ClassController extends Controller
             }
         }else{
             $class_ids[]=decode($request_ids, 'class_id');
-        }
-        // 检测用户权限
-        if(!DB::table('user_access')
-           ->join('access', 'user_access.user_access_access', '=', 'access.access_id')
-           ->where('user_access_user', Session::get('user_id'))
-           ->where('access_url', '/education/class/delete')
-           ->exists()){
-           return back()->with(['notify' => true,
-                                'type' => 'danger',
-                                'title' => '访问失败',
-                                'message' => '您的账户没有访问权限']);
         }
         // 更新班级可用状态
         DB::beginTransaction();
@@ -307,15 +286,8 @@ class ClassController extends Controller
             return loginExpired(); // 未登录，返回登陆视图
         }
         // 检测用户权限
-        if(!DB::table('user_access')
-           ->join('access', 'user_access.user_access_access', '=', 'access.access_id')
-           ->where('user_access_user', Session::get('user_id'))
-           ->where('access_url', '/education/class/lesson/create')
-           ->exists()){
-           return back()->with(['notify' => true,
-                                'type' => 'danger',
-                                'title' => '访问失败',
-                                'message' => '您的账户没有访问权限']);
+        if(!in_array("/education/class/lesson/create", Session::get('user_accesses'))){
+           return back()->with(['notify' => true,'type' => 'danger','title' => '您的账户没有访问权限']);
         }
         $class_id = decode($request->input('id'), 'class_id');
         // 获取班级信息
@@ -412,28 +384,28 @@ class ClassController extends Controller
          *  教案
          */
         // 获取教案文件
-        $file = $request->file('file');
-        if($file===null){
+        if (!$request->hasFile('file')) {
             return redirect("/education/class/lesson/create?id=".encode($lesson_class, 'class_id'))
                    ->with(['notify' => true,
                            'type' => 'danger',
                            'title' => '没有上传教案',
                            'message' => '没有上传教案，班级点名失败，错误码:401']);
         }
-        // 获取文件大小(MB)
-        $document_file_size = $file->getClientSize()/1024/1024+0.01;
-        // 判断文件是否大于15MB
-        if($document_file_size>15){
-            return redirect("/education/document/create")
+        $tmp_file = $request->file('file');
+        if (!$tmp_file->isValid()) {
+            return redirect("/education/class/lesson/create?id=".encode($lesson_class, 'class_id'))
                    ->with(['notify' => true,
                            'type' => 'danger',
-                           'title' => '教案文件过大',
-                           'message' => '文件大于15MB，班级点名失败，错误码:401']);
+                           'title' => '非法文件',
+                           'message' => '非法教案文件，班级点名失败，错误码:401']);
         }
+        // 获取文件大小(MB)
+        // $document_file_size = $tmp_file->getClientSize(); 导致500？？
+        $document_file_size = 0;
         // 获取文件名称
-        $document_name = $file->getClientOriginalName();
+        $document_name = $tmp_file->getClientOriginalName();
         // 获取文件扩展名
-        $document_ext = $file->getClientOriginalExtension();
+        $document_ext = $tmp_file->getClientOriginalExtension();
         // 生成路径
         $document_path = "D".date('ymdHis').rand(1000000000,9999999999).".".$document_ext;
         // 获取教案信息
@@ -567,13 +539,10 @@ class ClassController extends Controller
             DB::table('class')
               ->where('class_id', $lesson_class)
               ->increment('class_attended_num');
-            // 上传教案文件
-            $file->move("files/document", $document_path);
         }
         // 捕获异常
         catch(Exception $e){
             DB::rollBack();
-            return $e;
             // 返回第一步
             return redirect("/education/class/lesson/create?id=".encode($lesson_class, 'class_id'))
                    ->with(['notify' => true,
@@ -582,6 +551,10 @@ class ClassController extends Controller
                          'message' => '学生剩余课时不足，错误码:328']);
         }
         DB::commit();
+        // 上传教案文件
+        //$tmp_file->move("/files/document", $document_path);
+        $tmp_file->move(public_path("/files/document"), $document_path);
+        //$tmp_file->storeAs('document', $document_path);
         // 返回我的上课记录视图
         return redirect("/education/class/lesson/create/success?id=".encode($lesson_class, 'class_id'))
                ->with(['notify' => true,
