@@ -217,6 +217,7 @@ CREATE TABLE `payment` (
   `payment_method` char(5) NOT NULL DEFAULT '现金' COMMENT '付款方式',
   `payment_remark` varchar(50)  DEFAULT '' COMMENT '购课备注',
   `payment_date` date NOT NULL COMMENT '购课日期',
+  `payment_is_new` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否为新生(0：续费，1：新生)',
   `payment_create_user` char(8) NOT NULL COMMENT '添加用户',
   `payment_create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '添加时间',
   `payment_review_user` char(8) COMMENT '复核用户',

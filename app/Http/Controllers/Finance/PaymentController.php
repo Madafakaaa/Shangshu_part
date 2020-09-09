@@ -63,6 +63,7 @@ class PaymentController extends Controller
             $temp['payment_extra'] = $db_payment->payment_extra;
             $temp['payment_total_price'] = $db_payment->payment_total_price;
             $temp['payment_date'] = $db_payment->payment_date;
+            $temp['payment_is_new'] = $db_payment->payment_is_new;
             $temp['review_user_id'] = $db_payment->user_id;
             $temp['review_user_name'] = $db_payment->user_name;
             $temp['payment_id'] = $db_payment->payment_id;

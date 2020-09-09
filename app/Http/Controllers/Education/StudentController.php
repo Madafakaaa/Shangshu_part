@@ -315,6 +315,7 @@ class StudentController extends Controller
         $hours = DB::table('hour')
                    ->join('course', 'hour.hour_course', '=', 'course.course_id')
                    ->where('hour_student', $student_id)
+                   ->orderBy('hour_remain', 'desc')
                    ->get();
 
         // 获取可购买课程信息
@@ -358,6 +359,7 @@ class StudentController extends Controller
         $payment_method = $request->input("payment_method");
         $payment_date = $request->input("payment_date");
         $payment_remark = $request->input("payment_remark");
+        $payment_is_new = $request->input("payment_is_new");
 
         DB::beginTransaction();
         // 插入数据库
@@ -391,6 +393,7 @@ class StudentController extends Controller
                      'payment_method' => $payment_method,
                      'payment_remark' => $payment_remark,
                      'payment_date' => $payment_date,
+                     'payment_is_new' => $payment_is_new,
                      'payment_create_user' => Session::get('user_id')]
                 );
                 // 更新Hour表

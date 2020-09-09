@@ -35,7 +35,7 @@
                 <a href="/education/student"><button type="button" class="btn btn-outline-primary btn-block">学生管理</button></a>
               </div>
               <div class="col-lg-3 col-md-6 col-sm-12">
-                <a href="/education/student"><button type="button" class="btn btn-outline-primary btn-block">学生课时</button></a>
+                <a href="/education/hour"><button type="button" class="btn btn-outline-primary btn-block">学生课时</button></a>
               </div>
               <div class="col-lg-3 col-md-6 col-sm-12">
                 <a href="/student?id={{encode($student_id, 'student_id')}}" ><button type="button" class="btn btn-outline-primary btn-block">学生详情</button></a>

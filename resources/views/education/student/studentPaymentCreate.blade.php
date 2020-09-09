@@ -165,6 +165,19 @@
               </div>
             </div>
             <div class="row">
+              <div class="col-6">
+                <div class="form-group row">
+                  <label class="col-4 col-form-label form-control-label">类型<span style="color:red">*</span></label>
+                  <div class="col-8">
+                    <select class="form-control" name="payment_is_new" data-toggle="select" required>
+                      <option value='1' @if(count($hours)==0) selected @endif>新生</option>
+                      <option value='0' @if(count($hours)>0) selected @endif>续费</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
               <div class="col-12">
                 <div class="form-group row">
                   <label class="col-md-2 col-form-label form-control-label">购课备注</label>

@@ -61,6 +61,7 @@
                 <th style='width:40px;'>序号</th>
                 <th style='width:60px;'>校区</th>
                 <th style='width:100px;'>学生</th>
+                <th style='width:50px;'>类型</th>
                 <th style='width:140px;'>购买课程</th>
                 <th style='width:70px;' class="text-right">数量</th>
                 <th style='width:90px;' class="text-right">合计优惠</th>
@@ -92,6 +93,13 @@
                     <img src="{{ asset(_ASSETS_.'/img/icons/female.png') }}" style="height:20px;">
                   @endif
                   <a href="/student?id={{encode($payment['student_id'], 'student_id')}}">{{ $payment['student_name'] }}</a>
+                </td>
+                <td>
+                  @if($payment['payment_is_new']=="1")
+                    <span class="text-danger">新生</span>
+                  @else
+                    <span class="text-success">续费</span>
+                  @endif
                 </td>
                 <td>{{ $payment['course_name'] }}</td>
                 <td class="text-right">{{ $payment['payment_hour'] }} 课时</td>

@@ -42,7 +42,7 @@ class ConsumptionController extends Controller
                                                  ['hour.hour_student', '=', 'student.student_id'],
                                              ])
 
-                              ->select(DB::raw('sum(participant_amount) as total_participant_amount, count(*) as lesson_num, student_id, student_name, course_name, department_name, hour_remain, subject_name, grade_name, course_unit_price'))
+                              ->select(DB::raw('sum(participant_amount) as total_participant_amount, count(*) as lesson_num, student_id, student_name, course_name, department_name, hour_remain, subject_name, grade_name, hour_unit_price'))
                               ->whereIn('student_department', $department_access);
         // 搜索条件
         $filters = array(
@@ -111,14 +111,14 @@ class ConsumptionController extends Controller
         foreach($db_participants as $db_participant){
             $temp = array();
             $temp['total_participant_amount'] = $db_participant->total_participant_amount;
-            $temp['total_participant_price'] = $db_participant->total_participant_amount*$db_participant->course_unit_price;
+            $temp['total_participant_price'] = $db_participant->total_participant_amount*$db_participant->hour_unit_price;
             $temp['lesson_num'] = $db_participant->lesson_num;
             $temp['student_id'] = $db_participant->student_id;
             $temp['student_name'] = $db_participant->student_name;
             $temp['course_name'] = $db_participant->course_name;
             $temp['department_name'] = $db_participant->department_name;
             $temp['hour_remain'] = $db_participant->hour_remain;
-            $temp['hour_remain_price'] = $db_participant->hour_remain*$db_participant->course_unit_price;
+            $temp['hour_remain_price'] = $db_participant->hour_remain*$db_participant->hour_unit_price;
             $temp['subject_name'] = $db_participant->subject_name;
             $temp['grade_name'] = $db_participant->grade_name;
             // 更新dashboard
