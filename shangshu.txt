@@ -510,7 +510,7 @@ CREATE TABLE `access` (
 DROP TABLE IF EXISTS `user_access`;
 CREATE TABLE `user_access` (
   `user_access_user` char(8) NOT NULL COMMENT '用户id',
-  `user_access_access` int(10) unsigned NOT NULL COMMENT '用户功能权限',
+  `user_access_access` varchar(40) NOT NULL COMMENT '用户功能权限',
   PRIMARY KEY (`user_access_user`,`user_access_access`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -529,6 +529,26 @@ CREATE TABLE `expenditure` (
   `expenditure_create_user` char(8) NOT NULL COMMENT '添加用户',
   `expenditure_create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '添加时间',
   PRIMARY KEY (`expenditure_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for `dashboard_access`
+-- ----------------------------
+DROP TABLE IF EXISTS `dashboard_access`;
+CREATE TABLE `dashboard_access` (
+  `dashboard_access_id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '主页功能模块id',
+  `dashboard_access_name` varchar(40) UNIQUE NOT NULL COMMENT '主页功能权限名',
+  PRIMARY KEY (`dashboard_access_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for `user_dashboard`
+-- ----------------------------
+DROP TABLE IF EXISTS `user_dashboard`;
+CREATE TABLE `user_dashboard` (
+  `user_dashboard_user` char(8) NOT NULL COMMENT '用户id',
+  `user_dashboard_dashboard` varchar(40) NOT NULL COMMENT '用户主页功能权限名',
+  PRIMARY KEY (`user_dashboard_user`,`user_dashboard_dashboard`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------

@@ -18,7 +18,7 @@ class HomeController extends Controller
         if(!Session::has('login')){
             return loginExpired(); // 未登录，返回登陆视图
         }
-        // 模块1 统计数据 ----------------------------------------------------------------------------------
+        // 模块 统计数据 ----------------------------------------------------------------------------------
         // 获取用户校区权限
         $department_access = Session::get('department_access');
         // 搜索条件
@@ -90,11 +90,56 @@ class HomeController extends Controller
                               ->whereIn('department_id', $department_access)
                               ->orderBy('department_id', 'asc')
                               ->get();
-        // 模块2 。。。 ----------------------------------------------------------------------------------
-
+        // 模块 退款申请 ----------------------------------------------------------------------------------
+        $hour_refunds = DB::table('hour_refund')
+                          ->join('student', 'hour_refund.hour_refund_student', '=', 'student.student_id')
+                          ->join('department', 'student.student_department', '=', 'department.department_id')
+                          ->join('course', 'hour_refund.hour_refund_course', '=', 'course.course_id')
+                          ->join('user', 'hour_refund.hour_refund_create_user', '=', 'user.user_id')
+                          ->where('hour_refund_reviewed_status', 0)
+                          ->orderBy('hour_refund_date', 'asc')
+                          ->get();
+        $daycare_refunds = DB::table('daycare_refund')
+                          ->join('student', 'daycare_refund.daycare_refund_student', '=', 'student.student_id')
+                          ->join('department', 'student.student_department', '=', 'department.department_id')
+                          ->join('daycare_record', 'daycare_refund.daycare_refund_daycare_record', '=', 'daycare_record.daycare_record_id')
+                          ->join('daycare', 'daycare_record.daycare_record_daycare', '=', 'daycare.daycare_id')
+                          ->join('user', 'daycare_refund.daycare_refund_create_user', '=', 'user.user_id')
+                          ->where('daycare_refund_reviewed_status', 0)
+                          ->orderBy('daycare_refund_date', 'asc')
+                          ->get();
+        // 模块 到期提醒 ----------------------------------------------------------------------------------
+        $hours = DB::table('hour')
+                   ->join('student', 'hour.hour_student', '=', 'student.student_id')
+                   ->join('department', 'student.student_department', '=', 'department.department_id')
+                   ->join('grade', 'student.student_grade', '=', 'grade.grade_id')
+                   ->join('course', 'hour.hour_course', '=', 'course.course_id')
+                   ->leftJoin('subject', 'course.course_subject', '=', 'subject.subject_id')
+                   ->where('student_is_available', 1)
+                   ->where('hour_remain', '<=', 5)
+                   ->whereIn('student_department', $department_access)
+                   ->orderBy('student_department', 'asc')
+                   ->orderBy('hour_remain', 'asc')
+                   ->get();
+        $daycare_records = DB::table('daycare_record')
+                             ->join('student', 'daycare_record.daycare_record_student', '=', 'student.student_id')
+                             ->join('department', 'student.student_department', '=', 'department.department_id')
+                             ->join('grade', 'student.student_grade', '=', 'grade.grade_id')
+                             ->join('daycare', 'daycare_record.daycare_record_daycare', '=', 'daycare.daycare_id')
+                             ->where('student_is_available', 1)
+                             ->where('daycare_record_end', '>=', date('Y-m-d', strtotime ("-5 day", strtotime(date('Y-m-d')))))
+                             ->where('daycare_record_end', '<=', date('Y-m-d', strtotime ("+5 day", strtotime(date('Y-m-d')))))
+                             ->whereIn('student_department', $department_access)
+                             ->orderBy('student_department', 'asc')
+                             ->orderBy('daycare_record_end', 'asc')
+                             ->get();
         return view('/dashboard', ['dashboard' => $dashboard,
                                    'filters' => $filters,
-                                   'filter_departments' => $filter_departments]);
+                                   'filter_departments' => $filter_departments,
+                                   'hour_refunds' => $hour_refunds,
+                                   'daycare_refunds' => $daycare_refunds,
+                                   'hours' => $hours,
+                                   'daycare_records' => $daycare_records]);
     }
 
 }

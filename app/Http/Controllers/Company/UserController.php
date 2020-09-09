@@ -308,6 +308,18 @@ class UserController extends Controller
         foreach($user_departments AS $user_department){
             $department_array[$user_department->user_department_department][2]=1;
         }
+
+        // 获取主页权限
+        $dashboard_accesses = DB::table('dashboard_access')->get();
+        // 获取用户主页权限
+        $db_user_dashboards = DB::table('user_dashboard')
+                                ->where('user_dashboard_user', $user_id)
+                                ->get();
+        $user_dashboards = array();
+        foreach($db_user_dashboards AS $db_user_dashboard){
+            $user_dashboards[] = $db_user_dashboard->user_dashboard_dashboard;
+        }
+
         // 获取全部页面种类及其页面
         $accesses = array();
         $db_access_categories = DB::table('access')->select('access_category')->distinct()->get();
@@ -340,6 +352,8 @@ class UserController extends Controller
         }
         return view('company/user/userAccess', ['user' => $user,
                                                 'department_array' => $department_array,
+                                                'dashboard_accesses' => $dashboard_accesses,
+                                                'user_dashboards' => $user_dashboards,
                                                 'accesses' => $accesses,
                                                 'user_accesses' => $user_accesses]);
     }
@@ -361,6 +375,7 @@ class UserController extends Controller
         $user_id = $request->input('user_id');
         $accesses = $request->input('accesses');
         $departments = $request->input('departments');
+        $dashboards = $request->input('dashboards');
         // 更新数据库
         DB::beginTransaction();
         try{
@@ -371,12 +386,24 @@ class UserController extends Controller
             DB::table('user_access')
               ->where('user_access_user', $user_id)
               ->delete();
+            DB::table('user_dashboard')
+              ->where('user_dashboard_user', $user_id)
+              ->delete();
             if($departments!=NULL){
                 // 添加校区权限
                 foreach($departments as $department){
                     DB::table('user_department')->insert(
                         ['user_department_user' => $user_id,
                          'user_department_department' => $department]
+                    );
+                }
+            }
+            if($dashboards!=NULL){
+                // 添加主页权限
+                foreach($dashboards as $dashboard){
+                    DB::table('user_dashboard')->insert(
+                        ['user_dashboard_user' => $user_id,
+                         'user_dashboard_dashboard' => $dashboard]
                     );
                 }
             }

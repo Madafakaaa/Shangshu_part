@@ -5973,7 +5973,7 @@ input[type='button'].btn-block
     word-wrap: break-word;
 
     border: 1px solid rgba(0, 0, 0, .05);
-    border-radius: .2rem;
+    border-radius: .8rem;
     background-color: #fff;
     background-clip: border-box;
 }

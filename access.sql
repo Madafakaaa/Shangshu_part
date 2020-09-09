@@ -176,8 +176,27 @@ VALUES ('详情资料', '班级详情', '查看', 'ClassController', 'class', '/
 -- 用户详情 --
 INSERT INTO `access`(access_category, access_page, access_feature, access_controller, access_function, access_url) 
 VALUES ('详情资料', '用户详情', '查看', 'UserController', 'user', '/user');
-	
-	
-	
+
+
+
+-- ----------------------------
+-- Table structure for `dashboard_access`
+-- ----------------------------
+DROP TABLE IF EXISTS `dashboard_access`;
+CREATE TABLE `dashboard_access` (
+  `dashboard_access_id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '主页功能模块id',
+  `dashboard_access_name` varchar(40) UNIQUE NOT NULL COMMENT '主页功能权限名',
+  PRIMARY KEY (`dashboard_access_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of dashboard_access
+-- ----------------------------
+-- 统计模块 --
+INSERT INTO `dashboard_access`(dashboard_access_name) VALUES ('收入/课消数据统计');
+-- 退费模块 --
+INSERT INTO `dashboard_access`(dashboard_access_name) VALUES ('课时/晚托退款申请');
+-- 提示模块 --
+INSERT INTO `dashboard_access`(dashboard_access_name) VALUES ('课时/晚托剩余提醒');
 	
 	

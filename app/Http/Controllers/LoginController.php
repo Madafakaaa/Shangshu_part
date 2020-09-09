@@ -72,6 +72,15 @@ class LoginController extends Controller
         foreach($db_department_accesses AS $db_department_access){
             $department_access[] = $db_department_access->user_department_department;
         }
+
+        // 获取用户校区主页权限
+        $user_dashboards = array();
+        $db_user_dashboards = DB::table('user_dashboard')
+                                    ->where('user_dashboard_user', $request_user_id)
+                                    ->get();
+        foreach($db_user_dashboards AS $db_user_dashboard){
+            $user_dashboards[] = $db_user_dashboard->user_dashboard_dashboard;
+        }
         // 获取用户页面权限
         $user_accesses = array();
         $db_user_accesses = DB::table('user_access')
@@ -104,6 +113,7 @@ class LoginController extends Controller
         Session::put('user_position_name', $db_user->position_name);
         Session::put('user_gender', $db_user->user_gender);
         Session::put('department_access', $department_access);
+        Session::put('user_dashboards', $user_dashboards);
         Session::put('user_accesses', $user_accesses);
         Session::put('access_categories', $access_categories);
         // 返回主界面视图
