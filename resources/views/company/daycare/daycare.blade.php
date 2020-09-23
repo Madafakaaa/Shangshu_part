@@ -34,7 +34,7 @@
               <tr>
                 <th style='width:20px;'></th>
                 <th style='width:40px;'>序号</th>
-                <th style='width:140px;'>名称</th>
+                <th style='width:140px;' class="text-left">名称</th>
                 <th style='width:80px;'>年级</th>
                 <th style='width:80px;' class="text-right">收费标准（30天）</th>
                 <th style='width:80px;'>状态</th>
@@ -51,7 +51,7 @@
                   </div>
                 </td>
                 <td>{{ $loop->iteration }}</td>
-                <td>{{ $daycare->daycare_name }}</td>
+                <td class="text-left">{{ $daycare->daycare_name }}</td>
                 <td>@if($daycare->daycare_grade==0) 全年级 @else{{ $daycare->grade_name }}@endif</td>
                 <td class="text-right"><strong>{{ number_format($daycare->daycare_unit_price,1) }} 元</strong></td>
                 <td>

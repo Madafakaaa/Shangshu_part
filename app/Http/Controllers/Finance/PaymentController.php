@@ -29,6 +29,7 @@ class PaymentController extends Controller
                         ->join('grade', 'student.student_grade', '=', 'grade.grade_id')
                         ->join('course', 'payment.payment_course', '=', 'course.course_id')
                         ->leftJoin('user', 'payment.payment_review_user', '=', 'user.user_id')
+                        ->leftJoin('receipt', 'payment.payment_receipt', '=', 'receipt.receipt_id')
                         ->whereIn('student_department', $department_access);
         // 搜索条件
         $filters = array(
@@ -63,10 +64,12 @@ class PaymentController extends Controller
             $temp['payment_extra'] = $db_payment->payment_extra;
             $temp['payment_total_price'] = $db_payment->payment_total_price;
             $temp['payment_date'] = $db_payment->payment_date;
+            $temp['payment_receipt'] = $db_payment->payment_receipt;
             $temp['payment_is_new'] = $db_payment->payment_is_new;
             $temp['review_user_id'] = $db_payment->user_id;
             $temp['review_user_name'] = $db_payment->user_name;
             $temp['payment_id'] = $db_payment->payment_id;
+            $temp['receipt_reviewed_status'] = $db_payment->receipt_reviewed_status;
             // 获取登记用户
             $temp_create_user = DB::table('user')
                                   ->where('user_id', $db_payment->payment_create_user)

@@ -29,6 +29,7 @@ class DaycareRecordController extends Controller
                                 ->join('grade', 'student.student_grade', '=', 'grade.grade_id')
                                 ->join('daycare', 'daycare_record.daycare_record_daycare', '=', 'daycare.daycare_id')
                                 ->leftJoin('user', 'daycare_record.daycare_record_review_user', '=', 'user.user_id')
+                                ->leftJoin('receipt', 'daycare_record.daycare_record_receipt', '=', 'receipt.receipt_id')
                                 ->whereIn('student_department', $department_access);
         // 搜索条件
         $filters = array(
@@ -64,6 +65,8 @@ class DaycareRecordController extends Controller
             $temp['daycare_record_discount_total'] = $db_daycare_record->daycare_record_discount_total;
             $temp['daycare_record_total_price'] = $db_daycare_record->daycare_record_total_price;
             $temp['daycare_record_date'] = $db_daycare_record->daycare_record_date;
+            $temp['daycare_record_receipt'] = $db_daycare_record->daycare_record_receipt;
+            $temp['receipt_reviewed_status'] = $db_daycare_record->receipt_reviewed_status;
             $temp['review_user_id'] = $db_daycare_record->user_id;
             $temp['review_user_name'] = $db_daycare_record->user_name;
             // 获取登记用户

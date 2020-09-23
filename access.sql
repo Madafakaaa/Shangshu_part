@@ -17,6 +17,15 @@ CREATE TABLE `access` (
 -- Records of access
 -- ----------------------------
 -- 公司管理 --
+	-- 单位设置 --
+	INSERT INTO `access`(access_category, access_page, access_feature, access_controller, access_function, access_url) 
+	VALUES ('公司管理', '单位设置', '查看', 'Company\CorporationController', 'corporation', '/company/corporation');
+	INSERT INTO `access`(access_category, access_page, access_feature, access_controller, access_function, access_url) 
+	VALUES ('公司管理', '单位设置', '添加', 'Company\CorporationController', 'corporationCreate', '/company/corporation/create');
+	INSERT INTO `access`(access_category, access_page, access_feature, access_controller, access_function, access_url) 
+	VALUES ('公司管理', '单位设置', '修改', 'Company\CorporationController', 'corporationEdit', '/company/corporation/edit');
+	INSERT INTO `access`(access_category, access_page, access_feature, access_controller, access_function, access_url) 
+	VALUES ('公司管理', '单位设置', '删除', 'Company\CorporationController', 'corporationDelete', '/company/corporation/delete');
 	-- 校区设置 --
 	INSERT INTO `access`(access_category, access_page, access_feature, access_controller, access_function, access_url) 
 	VALUES ('公司管理', '校区设置', '查看', 'Company\DepartmentController', 'department', '/company/department');
@@ -71,6 +80,13 @@ CREATE TABLE `access` (
 	VALUES ('公司管理', '员工工资', '查看', 'Company\SalaryController', 'salary', '/company/salary');
 	INSERT INTO `access`(access_category, access_page, access_feature, access_controller, access_function, access_url) 
 	VALUES ('公司管理', '员工工资', '结算', 'Company\SalaryController', 'salaryCreate', '/company/salary/create');
+	-- 发票管理 --
+	INSERT INTO `access`(access_category, access_page, access_feature, access_controller, access_function, access_url) 
+	VALUES ('公司管理', '发票管理', '查看', 'Company\ReceiptController', 'receipt', '/company/receipt');
+	INSERT INTO `access`(access_category, access_page, access_feature, access_controller, access_function, access_url) 
+	VALUES ('公司管理', '发票管理', '添加', 'Company\ReceiptController', 'receiptCreate', '/company/receipt/create');
+	INSERT INTO `access`(access_category, access_page, access_feature, access_controller, access_function, access_url) 
+	VALUES ('公司管理', '发票管理', '删除', 'Company\ReceiptController', 'receiptDelete', '/company/receipt/delete');
 	
 
 -- 教务运营 --
@@ -149,6 +165,11 @@ CREATE TABLE `access` (
 	VALUES ('财务中心', '费用支出记录', '复核', 'Finance\ExpenditureController', 'expenditureReview', '/finance/expenditure/review');
 	INSERT INTO `access`(access_category, access_page, access_feature, access_controller, access_function, access_url) 
 	VALUES ('财务中心', '费用支出记录', '删除', 'Finance\ExpenditureController', 'expenditureDelete', '/finance/expenditure/delete');
+	-- 发票申请记录 --
+	INSERT INTO `access`(access_category, access_page, access_feature, access_controller, access_function, access_url) 
+	VALUES ('财务中心', '发票申请记录', '查看', 'Finance\ReceiptController', 'receipt', '/finance/receipt');
+	INSERT INTO `access`(access_category, access_page, access_feature, access_controller, access_function, access_url) 
+	VALUES ('财务中心', '发票申请记录', '审核', 'Finance\ReceiptController', 'receipt', '/finance/receipt/review');
 	
 
 -- 统计中心 --

@@ -218,6 +218,7 @@ CREATE TABLE `payment` (
   `payment_remark` varchar(50)  DEFAULT '' COMMENT '购课备注',
   `payment_date` date NOT NULL COMMENT '购课日期',
   `payment_is_new` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否为新生(0：续费，1：新生)',
+  `payment_receipt` int(10) unsigned COMMENT '购课记录发票',
   `payment_create_user` char(8) NOT NULL COMMENT '添加用户',
   `payment_create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '添加时间',
   `payment_review_user` char(8) COMMENT '复核用户',
@@ -332,6 +333,7 @@ CREATE TABLE `daycare_record` (
   `daycare_record_start` date NOT NULL COMMENT '晚托开始日期',
   `daycare_record_end` date NOT NULL COMMENT '晚托结束日期',
   `daycare_record_is_refunded` tinyint(4) NOT NULL DEFAULT '0' COMMENT '晚托退费状态(0：未退费，1：已退费)',
+  `daycare_record_receipt` int(10) unsigned COMMENT '晚托记录发票',
   `daycare_record_create_user` char(8) NOT NULL COMMENT '晚托记录创建用户',
   `daycare_record_create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '晚托记录创建时间',
   `daycare_record_review_user` char(8) COMMENT '晚托记录复核用户',
@@ -551,6 +553,47 @@ CREATE TABLE `user_dashboard` (
   `user_dashboard_dashboard` varchar(40) NOT NULL COMMENT '用户主页功能权限名',
   PRIMARY KEY (`user_dashboard_user`,`user_dashboard_dashboard`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for `corporation`
+-- ----------------------------
+DROP TABLE IF EXISTS `corporation`;
+CREATE TABLE `corporation` (
+  `corporation_id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '公司id',
+  `corporation_name` varchar(20) NOT NULL COMMENT '公司名称',
+  `corporation_receipt_amount` decimal(10,2) NOT NULL COMMENT '公司发票额度',
+  `corporation_is_available` tinyint(4) NOT NULL DEFAULT '1' COMMENT '公司可用状态(0：删除，1：可用)(0：删除，1：可用)',
+  `corporation_create_user` char(8) NOT NULL COMMENT '创建用户',
+  `corporation_create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  PRIMARY KEY (`corporation_id`),
+  UNIQUE KEY `corporation_name` (`corporation_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for `receipt`
+-- ----------------------------
+DROP TABLE IF EXISTS `receipt`;
+CREATE TABLE `receipt` (
+  `receipt_id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '发票id',
+  `receipt_student` char(10) NOT NULL COMMENT '发票学生id',
+  `receipt_header` varchar(40) NOT NULL COMMENT '发票抬头',
+  `receipt_tax_number` varchar(20) NOT NULL COMMENT '发票税号',
+  `receipt_fee` decimal(10,2) NOT NULL COMMENT '发票金额',
+  `receipt_date` date COMMENT '发票日期',
+  `receipt_type` char(5) NOT NULL COMMENT '发票类型（申请、公对公、刷卡、现金）',
+  `receipt_remark` varchar(50) NOT NULL COMMENT '发票备注',
+  `receipt_reviewed_status` tinyint(4) NOT NULL DEFAULT '0' COMMENT '发票审核状态(0：待审核，1：通过，2：拒绝)',
+  `receipt_reviewed_user` char(8) COMMENT '发票审核用户',
+  `receipt_corporation` int(10) unsigned COMMENT '开票单位',
+  `receipt_number` varchar(30) COMMENT '发票号',
+  `receipt_create_user` char(8) NOT NULL COMMENT '添加/申请用户',
+  `receipt_create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '添加/申请时间',
+  PRIMARY KEY (`receipt_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+ALTER TABLE daycare_record ADD `daycare_record_receipt` int(10) unsigned COMMENT '晚托记录发票';
+ALTER TABLE payment ADD `payment_receipt` int(10) unsigned COMMENT '购课记录发票';
 
 -- ----------------------------
 -- Initial Records

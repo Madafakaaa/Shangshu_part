@@ -20,7 +20,7 @@
           <div class="col-lg-3 order-lg-2">
             <div class="card-profile-image">
               <a href="#">
-                <img src="{{ asset(_ASSETS_.'/avatar/male.png') }}" class="rounded-circle">
+                <img src="{{ asset(_ASSETS_.'/avatar/male.png') }}" class="rounded-circle" style="height:100px; width:100px;">
               </a>
             </div>
           </div>
@@ -76,14 +76,13 @@
                 <thead class="thead-light">
                   <tr>
                     <th style='width:35px;'>序号</th>
-                    <th style='width:130px;'>班级</th>
+                    <th style='width:220px;'>班级</th>
                     <th style='width:110px;'>上课学生</th>
                     <th style='width:45px;'>年级</th>
                     <th style='width:45px;'>科目</th>
                     <th style='width:150px;'>时间</th>
-                    <th style='width:80px;'>登记用户</th>
-                    <th style='width:80px;'>课时费</th>
-                    <th style='width:90px;'>操作管理</th>
+                    <th style='width:70px;'>登记用户</th>
+                    <th style='width:70px;' class="text-right">课时费</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -153,10 +152,7 @@
                     <td>
                       <a href="/user?id={{encode($lesson['create_user_id'], 'user_id')}}">{{ $lesson['create_user_name'] }}</a>
                     </td>
-                    <td>{{ $lesson['lesson_teacher_fee'] }} 元</td>
-                    <td>
-                      <a href='/file/document/download?id={{encode($lesson['lesson_document'], 'document_id')}}'><button type="button" class="btn btn-primary btn-sm">下载教案</button></a>
-                    </td>
+                    <td class="text-right">{{ $lesson['lesson_teacher_fee'] }} 元</td>
                   </tr>
                   @endforeach
                 </tbody>
@@ -232,13 +228,10 @@
                 </div>
                 <hr class="my-3">
                 <div class="row">
-                  <div class="col-lg-4 col-md-5 col-sm-12">
-                    <a href="javascript:history.go(-1)" ><button type="button" class="btn btn-outline-primary btn-block">返回</button></a>
-                  </div>
-                  <div class="col-lg-4 col-md-2 col-sm-12 my-2"></div>
-                  <div class="col-lg-4 col-md-5 col-sm-12">
+                  <div class="col-lg-9 col-md-7 col-sm-12 my-2"></div>
+                  <div class="col-lg-3 col-md-5 col-sm-12">
                     <input type="hidden" name="input_user_id" value="{{ $user->user_id }}">
-                    <input type="submit" id="submitButton1" class="btn btn-warning btn-block" value="提交">
+                    <input type="submit" id="submitButton1" class="btn btn-warning btn-block" value="修改">
                   </div>
                 </div>
               </div>

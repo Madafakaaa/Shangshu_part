@@ -36,6 +36,14 @@
             </a>
             <div class="collapse" id="navbar-company">
               <ul class="nav nav-sm flex-column">
+                @if(in_array("/company/corporation", Session::get('user_accesses')))
+                  <li class="nav-item">
+                    <a href="/company/corporation" class="nav-link" id="companyCorporation">
+                      <i class="fa fa-building text-green"></i>
+                      <span class="nav-link-text">单位设置</span>
+                    </a>
+                  </li>
+                @endif
                 @if(in_array("/company/department", Session::get('user_accesses')))
                   <li class="nav-item">
                     <a href="/company/department" class="nav-link" id="companyDepartment">
@@ -81,6 +89,14 @@
                     <a href="/company/salary" class="nav-link" id="companySalary">
                       <i class="fa fa-list-alt text-green"></i>
                       <span class="nav-link-text">员工工资</span>
+                    </a>
+                  </li>
+                @endif
+                @if(in_array("/company/receipt", Session::get('user_accesses')))
+                  <li class="nav-item">
+                    <a href="/company/receipt" class="nav-link" id="companyReceipt">
+                      <i class="fa fa-receipt text-green"></i>
+                      <span class="nav-link-text">发票管理</span>
                     </a>
                   </li>
                 @endif
@@ -157,7 +173,7 @@
               @if(in_array("/finance/payment", Session::get('user_accesses')))
                   <li class="nav-item">
                     <a href="/finance/payment" class="nav-link" id="financePayment">
-                      <i class="fa fa-receipt text-purple"></i>
+                      <i class="fa fa-list-ul text-purple"></i>
                       <span class="nav-link-text">课时购买记录</span>
                     </a>
                   </li>
@@ -165,7 +181,7 @@
               @if(in_array("/finance/daycareRecord", Session::get('user_accesses')))
                 <li class="nav-item">
                   <a href="/finance/daycareRecord" class="nav-link" id="financeDaycareRecord">
-                    <i class="fa fa-receipt text-purple"></i>
+                    <i class="fa fa-list-ul text-purple"></i>
                     <span class="nav-link-text">晚托缴费记录</span>
                   </a>
                 </li>
@@ -191,6 +207,14 @@
                   <a href="/finance/expenditure" class="nav-link" id="financeExpenditure">
                     <i class="fa fa-hand-holding-usd text-purple"></i>
                     <span class="nav-link-text">费用支出记录</span>
+                  </a>
+                </li>
+              @endif
+              @if(in_array("/finance/receipt", Session::get('user_accesses')))
+                <li class="nav-item">
+                  <a href="/finance/receipt" class="nav-link" id="financeReceipt">
+                    <i class="fa fa-receipt text-purple"></i>
+                    <span class="nav-link-text">发票申请记录</span>
                   </a>
                 </li>
               @endif
@@ -258,6 +282,7 @@
             </ul>
           </div>
         </li>
+        @if(in_array("统计中心", Session::get('access_categories')))
         <li class="nav-item">
           <a class="nav-link" href="#navbar-statistic" data-toggle="collapse" aria-expanded="false" role="button" aria-controls="navbar-statistic" id="link-statistic">
             <i class="fa fa-chart-bar text-gray-dark"></i>
@@ -300,6 +325,7 @@
             </ul>
           </div>
         </li>
+        @endif
       </ul>
       <!-- Divider -->
       <hr class="my-3">

@@ -89,37 +89,6 @@
             </li>
             @endforeach
           </ul>
-          <form action="/student/member/add" method="get" onsubmit="submitButtonDisable('submitButton1')">
-            <div class="card-body p-0 mt-3">
-              <div class="row">
-                <div class="col-12">
-                  <div class="form-group mb-2">
-                    <select class="form-control" name="input_member_class" data-toggle="select" required>
-                      <option value=''>加入班级...</option>
-                      @if(count($same_grade_classes)>0)
-                        <optgroup label="{{$student->grade_name}}班级">
-                          @foreach ($same_grade_classes as $class)
-                            <option value="{{ $class->class_id }}">[ {{ $class->grade_name }} ] {{ $class->class_name }}</option>
-                          @endforeach
-                        </optgroup>
-                      @endif
-                      @if(count($diff_grade_classes)>0)
-                        <optgroup label="其它年级">
-                          @foreach ($diff_grade_classes as $class)
-                            <option value="{{ $class->class_id }}">[ {{ $class->grade_name }} ] {{ $class->class_name }}</option>
-                          @endforeach
-                        </optgroup>
-                      @endif
-                    </select>
-                  </div>
-                </div>
-                <div class="col-12">
-                  <input type="hidden" name="input_member_student" value="{{ $student->student_id }}">
-                  <input type="submit" class="form-control btn btn-warning btn-block" value="加入" id="submitButton1">
-                </div>
-              </div>
-            </div>
-          </form>
         </div>
       </div>
     </div>
@@ -151,14 +120,13 @@
                 <thead class="thead-light">
                   <tr>
                     <th style='width:40px;'>序号</th>
-                    <th style='width:125px;'>班级</th>
+                    <th style='width:220px;'>班级</th>
                     <th style='width:35px;'>状态</th>
-                    <th style='width:195px;'>扣除课时</th>
+                    <th style='width:160px;'>扣除课时</th>
                     <th style='width:70px;'>教师</th>
                     <th style='width:35px;'>年级</th>
                     <th style='width:35px;'>科目</th>
                     <th style='width:150px;'>时间</th>
-                    <th style='width:80px;'>操作管理</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -191,9 +159,6 @@
                     <td>{{ $lesson['subject_name'] }}</td>
                     <td>
                       {{ date('m-d', strtotime($lesson['lesson_date'])) }} {{ dateToDay($lesson['lesson_date']) }} | {{ date('H:i', strtotime($lesson['lesson_start'])) }}
-                    </td>
-                    <td>
-                      <a href='/file/document/download?id={{encode($lesson['lesson_document'], 'document_id')}}'><button type="button" class="btn btn-primary btn-sm">下载教案</button></a>
                     </td>
                   </tr>
                   @endforeach
@@ -378,13 +343,10 @@
                 </div>
                 <hr class="my-3">
                 <div class="row">
-                  <div class="col-lg-3 col-md-5 col-sm-12">
-                    <a href="javascript:history.go(-1)" ><button type="button" class="btn btn-outline-primary btn-block">返回</button></a>
-                  </div>
-                  <div class="col-lg-6 col-md-2 col-sm-12 my-2"></div>
+                  <div class="col-lg-9 col-md-7 col-sm-12 my-2"></div>
                   <div class="col-lg-3 col-md-5 col-sm-12">
                     <input type="hidden" name="input_student_id" value="{{ $student->student_id }}">
-                    <input type="submit" id="submitButton2" class="btn btn-warning btn-block" value="提交">
+                    <input type="submit" id="submitButton2" class="btn btn-warning btn-block" value="修改">
                   </div>
                 </div>
               </div>

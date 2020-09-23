@@ -58,16 +58,16 @@
             <thead class="thead-light">
               <tr>
                 <th style='width:20px;'></th>
-                <th style='width:40px;'>序号</th>
                 <th style='width:60px;'>校区</th>
                 <th style='width:100px;'>学生</th>
                 <th style='width:180px;'>晚托类型</th>
-                <th style='width:210px;'>晚托时间</th>
-                <th style='width:80px;' class="text-right">合计优惠</th>
-                <th style='width:80px;' class="text-right">合计金额</th>
+                <th style='width:130px;'>晚托开始时间</th>
+                <th style='width:90px;' class="text-right">合计优惠</th>
+                <th style='width:90px;' class="text-right">合计金额</th>
                 <th style='width:90px;'>购买日期</th>
                 <th style='width:60px;'>登记用户</th>
                 <th style='width:60px;'>复核用户</th>
+                <th style='width:65px;'>发票信息</th>
                 <th style='width:60px;'>操作管理</th>
               </tr>
             </thead>
@@ -82,7 +82,6 @@
                     </div>
                   @endif
                 </td>
-                <td>{{ $loop->iteration }}</td>
                 <td>{{ $daycare_record['department_name'] }}</td>
                 <td>
                   @if($daycare_record['student_gender']=="男")
@@ -93,7 +92,7 @@
                   <a href="/student?id={{encode($daycare_record['student_id'], 'student_id')}}">{{ $daycare_record['student_name'] }}</a>
                 </td>
                 <td>{{ $daycare_record['daycare_name'] }}</td>
-                <td>{{ date('y.m.d', strtotime($daycare_record['daycare_record_start'])) }} ~ {{ date('y.m.d', strtotime($daycare_record['daycare_record_end'])) }} [ {{$daycare_record['daycare_record_month']}}月 ]</td>
+                <td>{{ date('y.m.d', strtotime($daycare_record['daycare_record_start'])) }} [ {{$daycare_record['daycare_record_month']}}月 ]</td>
 
                 @if($daycare_record['daycare_record_discount_total']==0)
                   <td class="text-right"> - </td>
@@ -114,6 +113,15 @@
                     @endif
                   @else
                     <a href="/user?id={{encode($daycare_record['review_user_id'], 'user_id')}}">{{ $daycare_record['review_user_name'] }}</a>
+                  @endif
+                </td>
+                <td>
+                  @if($daycare_record['daycare_record_receipt']=="")
+                    <a href="/finance/receipt/create?id={{encode($daycare_record['student_id'],'student_id')}}"><button type="button" class="btn btn-primary btn-sm">申请发票</button></a>
+                  @elseif($daycare_record['receipt_reviewed_status']==0)
+                    <span class="text-warning">申请中</span>
+                  @else
+                    <span class="text-success">已申请</span>
                   @endif
                 </td>
                 <td>

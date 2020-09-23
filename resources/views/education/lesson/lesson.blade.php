@@ -71,14 +71,14 @@
                 <th style='width:20px;'></th>
                 <th style='width:40px;'>序号</th>
                 <th style='width:60px;'>校区</th>
-                <th style='width:180px;'>班级</th>
-                <th style='width:80px;'>上课教师</th>
+                <th style='width:220px;'>班级</th>
+                <th style='width:65px;'>上课教师</th>
                 <th style='width:40px;'>年级</th>
                 <th style='width:40px;'>科目</th>
                 <th style='width:105px;'>实到/应到人数</th>
                 <th style='width:160px;'>时间</th>
-                <th style='width:80px;'>登记用户</th>
-                <th style='width:80px;'>复核用户</th>
+                <th style='width:65px;'>登记用户</th>
+                <th style='width:65px;'>复核用户</th>
                 <th style='width:130px;'>操作管理</th>
               </tr>
             </thead>
@@ -95,7 +95,7 @@
                 </td>
                 <td>{{ $loop->iteration }}</td>
                 <td>{{ $lesson['department_name'] }}</td>
-                <td>
+                <td title="{{$lesson['class_name']}}">
                   <a href="/class?id={{encode($lesson['class_id'], 'class_id')}}">{{ $lesson['class_name'] }}</a>
                 </td>
                 <td>
@@ -174,9 +174,7 @@
                 </td>
                 <td>
                   <a href='/file/document/download?id={{encode($lesson['lesson_document'], 'document_id')}}'><button type="button" class="btn btn-primary btn-sm">下载教案</button></a>
-                  @if($lesson['review_user_name']=="")
-                    <button type="button" class="btn btn-outline-danger btn-sm delete-button" id='delete_button_{{$loop->iteration}}' onclick="buttonConfirm('delete_button_{{$loop->iteration}}', '/education/lesson/delete?id={{encode($lesson['lesson_id'], 'lesson_id')}}', '删除后将返还学生所用课时。是否确认删除上课记录？')">删除</button>
-                  @endif
+                  <button type="button" class="btn btn-outline-danger btn-sm delete-button" id='delete_button_{{$loop->iteration}}' onclick="buttonConfirm('delete_button_{{$loop->iteration}}', '/education/lesson/delete?id={{encode($lesson['lesson_id'], 'lesson_id')}}', '删除后将返还学生所用课时。是否确认删除上课记录？')">删除</button>
                 </td>
               </tr>
               @endforeach

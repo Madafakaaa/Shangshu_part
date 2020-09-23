@@ -401,7 +401,7 @@
                     @endif
                   </tr>
                 @empty
-                   <tr><td colspan="7" class="text-center text-success"><strong>无</strong></td></tr>
+                   <tr><td colspan="8" class="text-center text-success"><strong>无</strong></td></tr>
                 @endforelse
               </tbody>
             </table>

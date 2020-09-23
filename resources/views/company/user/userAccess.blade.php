@@ -189,17 +189,5 @@
   linkActive('link-company');
   navbarActive('navbar-company');
   linkActive('companyUser');
-
-  function checkAll(id){
-      $("."+id).each(function(){
-          $(this).prop('checked',true);
-      });
-  }
-
-  function uncheckAll(id){
-      $("."+id).each(function(){
-          $(this).prop('checked',false);
-      });
-  }
 </script>
 @endsection

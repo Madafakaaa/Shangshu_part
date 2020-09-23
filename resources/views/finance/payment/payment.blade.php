@@ -58,19 +58,19 @@
             <thead class="thead-light">
               <tr>
                 <th style='width:20px;'></th>
-                <th style='width:40px;'>序号</th>
-                <th style='width:60px;'>校区</th>
-                <th style='width:100px;'>学生</th>
-                <th style='width:50px;'>类型</th>
-                <th style='width:140px;'>购买课程</th>
-                <th style='width:70px;' class="text-right">数量</th>
-                <th style='width:90px;' class="text-right">合计优惠</th>
-                <th style='width:80px;' class="text-right">资料费</th>
+                <th style='width:50px;'>校区</th>
+                <th style='width:95px;'>学生</th>
+                <th style='width:40px;'>类型</th>
+                <th style='width:125px;'>购买课程</th>
+                <th style='width:60px;' class="text-right">数量</th>
+                <th style='width:85px;' class="text-right">合计优惠</th>
+                <th style='width:60px;' class="text-right">资料费</th>
                 <th style='width:90px;' class="text-right">合计</th>
-                <th style='width:90px;'>购课日期</th>
-                <th style='width:70px;'>登记用户</th>
-                <th style='width:80px;'>复核用户</th>
-                <th style='width:70px;'>操作管理</th>
+                <th style='width:70px;'>购课日期</th>
+                <th style='width:65px;'>登记用户</th>
+                <th style='width:65px;'>复核用户</th>
+                <th style='width:65px;'>发票信息</th>
+                <th style='width:65px;'>操作管理</th>
               </tr>
             </thead>
             <tbody>
@@ -84,7 +84,6 @@
                     </div>
                   @endif
                 </td>
-                <td>{{ $loop->iteration }}</td>
                 <td>{{ $payment['department_name'] }}</td>
                 <td>
                   @if($payment['student_gender']=="男")
@@ -101,7 +100,7 @@
                     <span class="text-success">续费</span>
                   @endif
                 </td>
-                <td>{{ $payment['course_name'] }}</td>
+                <td title="{{$payment['course_name']}}">{{ $payment['course_name'] }}</td>
                 <td class="text-right">{{ $payment['payment_hour'] }} 课时</td>
                 @if($payment['payment_discount_total']==0)
                   <td class="text-right"> - </td>
@@ -114,7 +113,7 @@
                   <td class="text-right">{{ number_format($payment['payment_extra'], 1) }} 元</td>
                 @endif
                 <td class="text-right"><strong>{{ number_format($payment['payment_total_price'],1) }} 元</strong></td>
-                <td>{{ $payment['payment_date'] }}</td>
+                <td>{{ date('y-m-d', strtotime($payment['payment_date'])) }}</td>
                 <td>
                   <a href="/user?id={{encode($payment['create_user_id'], 'user_id')}}">{{ $payment['create_user_name'] }}</a>
                 </td>
@@ -130,7 +129,16 @@
                   @endif
                 </td>
                 <td>
-                  @if($payment['review_user_name']=="")
+                  @if($payment['payment_receipt']=="")
+                    <a href="/finance/receipt/create?id={{encode($payment['student_id'],'student_id')}}"><button type="button" class="btn btn-primary btn-sm">申请发票</button></a>
+                  @elseif($payment['receipt_reviewed_status']==0)
+                    <span class="text-warning">申请中</span>
+                  @else
+                    <span class="text-success">已申请</span>
+                  @endif
+                </td>
+                <td>
+                  @if($payment['review_user_name']==""&&$payment['payment_receipt']=="")
                     <button type="button" class="btn btn-outline-danger btn-sm" id='delete_button_{{$loop->iteration}}' onclick="buttonConfirm('delete_button_{{$loop->iteration}}', '/finance/payment/delete?id={{encode($payment['payment_id'], 'payment_id')}}', '确认删除所选购课记录？')">删除</button>
                   @endif
                 </td>

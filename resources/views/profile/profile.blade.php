@@ -44,7 +44,7 @@
                 <thead class="thead-light">
                   <tr>
                     <th style='width:35px;'>序号</th>
-                    <th style='width:130px;'>班级</th>
+                    <th style='width:240px;'>班级</th>
                     <th style='width:110px;'>上课学生</th>
                     <th style='width:45px;'>年级</th>
                     <th style='width:45px;'>科目</th>
@@ -312,7 +312,7 @@
               <div class="col-3">
                 <div class="card-profile-image mt-5">
                   <a href="#">
-                    <img src="{{ asset(_ASSETS_.'/avatar/male.png') }}" class="rounded-circle">
+                    <img src="{{ asset(_ASSETS_.'/avatar/male.png') }}" class="rounded-circle" style="height:100px; width:100px;">
                   </a>
                 </div>
               </div>
@@ -388,7 +388,7 @@
               <div class="col-3">
                 <div class="card-profile-image mt-5">
                   <a href="#">
-                    <img src="{{ asset(_ASSETS_.'/avatar/male.png') }}" class="rounded-circle">
+                    <img src="{{ asset(_ASSETS_.'/avatar/male.png') }}" class="rounded-circle" style="height:100px; width:100px;">
                   </a>
                 </div>
               </div>

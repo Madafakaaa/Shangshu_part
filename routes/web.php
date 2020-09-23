@@ -7,6 +7,19 @@ Route::get('/exit', 'LoginController@exit');
 Route::get('/home', 'HomeController@home');
 
 // 公司管理 ********************************************************************************
+    // 单位设置
+        // 查看单位 √
+        Route::get('/company/corporation', 'Company\CorporationController@corporation');
+        // 添加单位 √
+        Route::get('/company/corporation/create', 'Company\CorporationController@corporationCreate');
+        // 保存单位
+        Route::post('/company/corporation/store', 'Company\CorporationController@corporationStore');
+        // 修改单位 √
+        Route::get('/company/corporation/edit', 'Company\CorporationController@corporationEdit');
+        // 更新单位
+        Route::post('/company/corporation/update', 'Company\CorporationController@corporationUpdate');
+        // 删除单位 √
+        Route::get('/company/corporation/delete', 'Company\CorporationController@corporationDelete');
     // 校区设置
         // 查看校区 √
         Route::get('/company/department', 'Company\DepartmentController@department');
@@ -91,6 +104,15 @@ Route::get('/home', 'HomeController@home');
         Route::get('/company/salary/create2', 'Company\SalaryController@salaryCreate2');
         // 生成工资结算
         Route::post('/company/salary/store', 'Company\SalaryController@salaryStore');
+    // 发票管理
+        // 查看发票管理 √
+        Route::get('/company/receipt', 'Company\ReceiptController@receipt');
+        // 添加发票
+        Route::get('/company/receipt/create', 'Company\ReceiptController@receiptCreate');
+        // 保存发票
+        Route::post('/company/receipt/store', 'Company\ReceiptController@receiptStore');
+        // 删除发票
+        Route::get('/company/receipt/delete', 'Company\ReceiptController@receiptDelete');
 
 
 // 教务运营 ********************************************************************************
@@ -211,6 +233,17 @@ Route::get('/home', 'HomeController@home');
         Route::get('/finance/expenditure/review/all', 'Finance\ExpenditureController@expenditureReviewAll');
         // 删除支出记录 √
         Route::get('/finance/expenditure/delete', 'Finance\ExpenditureController@expenditureDelete');
+    // 发票申请记录
+        // 查看发票申请记录 √
+        Route::get('/finance/receipt', 'Finance\ReceiptController@receipt');
+        // 添加发票申请记录
+        Route::get('/finance/receipt/create', 'Finance\ReceiptController@receiptCreate');
+        // 保存发票申请记录
+        Route::post('/finance/receipt/store', 'Finance\ReceiptController@receiptStore');
+        // 审批发票申请记录
+        Route::get('/finance/receipt/review', 'Finance\ReceiptController@receiptReview');
+        // 保存审批发票申请记录
+        Route::post('/finance/receipt/review/store', 'Finance\ReceiptController@receiptReviewStore');
 
 
 // 文档资料 ********************************************************************************
@@ -301,3 +334,7 @@ Route::get('/home', 'HomeController@home');
     Route::get('/user', 'UserController@user');
     // 修改用户信息
     Route::post('/user/update', 'UserController@userUpdate');
+
+// 发票详情
+    // 查看发票详情 √
+    Route::get('/receipt', 'ReceiptController@receipt');

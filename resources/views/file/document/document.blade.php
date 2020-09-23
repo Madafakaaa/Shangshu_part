@@ -48,8 +48,8 @@
           <table class="table table-hover datatable-basic text-left table-bordered">
             <thead class="thead-light">
               <tr>
-                <th style='width:70px;'>序号</th>
-                <th style='width:450px;'>教案名称</th>
+                <th style='width:50px;'>序号</th>
+                <th style='width:500px;'>教案名称</th>
                 <th style='width:60px;'>年级</th>
                 <th style='width:60px;'>科目</th>
                 <th style='width:80px;'>校区</th>
@@ -71,7 +71,7 @@
                 <td><a href="/user?id={{encode($row->user_id,'user_id')}}">{{ $row->user_name }}</a></td>
                 <td>{{ date('Y-m-d', strtotime($row->document_create_time)) }}</td>
                 <td>
-                  <a href="/file/document/download?id={{encode($row->document_id, 'document_id')}}"><button type="button" class="btn btn-primary btn-sm">下载教案</button></a>
+                  <a href="/file/document/download?id={{encode($row->document_id, 'document_id')}}"><button type="button" class="btn btn-primary btn-sm">下载</button></a>
                 </td>
               </tr>
               @endforeach

@@ -45,6 +45,7 @@ class StudentController extends Controller
         foreach($members as $member){
             $member_class_ids[] = $member->member_class;
         }
+
         // 获取可添加班级信息
         $same_grade_classes = DB::table('class')
                       ->join('grade', 'class.class_grade', '=', 'grade.grade_id')
