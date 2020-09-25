@@ -107,46 +107,6 @@
       <div class="col-lg-3 col-md-6">
         <div class="card mb-3">
           <div class="card-body p-4">
-            <div class="text-primary h3 m-0">上课次数</div>
-            <div class="d-flex">
-              <div class="py-1 m-0 text-center text-primary display-3 counter-value"><span class="counter-value">{{$dashboard['dashboard_lesson_num']}}</span></div>
-              <div class="ml-auto">
-                <div class="icon icon-shape bg-primary text-white rounded-circle shadow">
-                  <i class="fa fa-chalkboard-teacher"></i>
-                </div>
-              </div>
-            </div>
-            <hr>
-            <div class="d-flex">
-              <div class="mr-auto"><small>{{$filters['filter_month']}}</small></div>
-              <div class="ml-auto"><small><i class="fa fa-map-marker-alt text-muted"></i> {{$dashboard['dashboard_department_name']}}</small></div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-lg-3 col-md-6">
-        <div class="card mb-3">
-          <div class="card-body p-4">
-            <div class="text-primary h3 m-0">上课人次</div>
-            <div class="d-flex">
-              <div class="py-1 m-0 text-center text-primary display-3 counter-value"><span class="counter-value">{{$dashboard['dashboard_lesson_student_num']}}</span></div>
-              <div class="ml-auto">
-                <div class="icon icon-shape bg-primary text-white rounded-circle shadow">
-                  <i class="fa fa-users"></i>
-                </div>
-              </div>
-            </div>
-            <hr>
-            <div class="d-flex">
-              <div class="mr-auto"><small>{{$filters['filter_month']}}</small></div>
-              <div class="ml-auto"><small><i class="fa fa-map-marker-alt text-muted"></i> {{$dashboard['dashboard_department_name']}}</small></div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-lg-3 col-md-6">
-        <div class="card mb-3">
-          <div class="card-body p-4">
             <div class="text-primary h3 m-0">消耗课时</div>
             <div class="d-flex">
               <div class="py-1 m-0 text-center text-primary display-3 counter-value"><span class="counter-value">{{$dashboard['dashboard_consumption_hour_amount']}}</span></div>
@@ -167,7 +127,7 @@
       <div class="col-lg-3 col-md-6">
         <div class="card mb-3">
           <div class="card-body p-4">
-            <div class="text-primary h3 m-0">消耗价值</div>
+            <div class="text-primary h3 m-0">课时价值</div>
             <div class="d-flex">
               <div class="py-1 m-0 text-center text-primary display-3 counter-value"><span class="counter-value">{{$dashboard['dashboard_consumption_hour_price']}}</span></div>
               <div class="ml-auto">
@@ -181,6 +141,101 @@
               <div class="mr-auto"><small>{{$filters['filter_month']}}</small></div>
               <div class="ml-auto"><small><i class="fa fa-map-marker-alt text-muted"></i> {{$dashboard['dashboard_department_name']}}</small></div>
             </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-6">
+        <div class="card mb-3">
+          <div class="card-body p-4">
+            <div class="text-primary h3 m-0">消耗晚托</div>
+            <div class="d-flex">
+              <div class="py-1 m-0 text-center text-primary display-3 counter-value"><span class="counter-value">{{$dashboard['dashboard_consumption_daycare_price']}}</span></div>
+              <div class="ml-auto">
+                <div class="icon icon-shape bg-primary text-white rounded-circle shadow">
+                  <i class="fa fa-yen-sign"></i>
+                </div>
+              </div>
+            </div>
+            <hr>
+            <div class="d-flex">
+              <div class="mr-auto"><small>{{$filters['filter_month']}}</small></div>
+              <div class="ml-auto"><small><i class="fa fa-map-marker-alt text-muted"></i> {{$dashboard['dashboard_department_name']}}</small></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-6">
+        <div class="card mb-3">
+          <div class="card-body p-4">
+            <div class="text-primary h3 m-0">合计消耗</div>
+            <div class="d-flex">
+              <div class="py-1 m-0 text-center text-primary display-3 counter-value"><span class="counter-value">{{$dashboard['dashboard_consumption_total_price']}}</span></div>
+              <div class="ml-auto">
+                <div class="icon icon-shape bg-primary text-white rounded-circle shadow">
+                  <i class="fa fa-yen-sign"></i>
+                </div>
+              </div>
+            </div>
+            <hr>
+            <div class="d-flex">
+              <div class="mr-auto"><small>{{$filters['filter_month']}}</small></div>
+              <div class="ml-auto"><small><i class="fa fa-map-marker-alt text-muted"></i> {{$dashboard['dashboard_department_name']}}</small></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  @endif
+  @if(in_array("发票申请审批", Session::get('user_dashboards')))
+    <div class="row">
+      <div class="col-12">
+        <div class="card mb-3">
+          <div class="card-header p-3">
+            <h4 class="mb-0">发票申请</h4>
+          </div>
+          <div class="table-responsive" style="max-height:220px;">
+            <table class="table table-hover table-bordered">
+              <thead class="thead-light">
+                <tr>
+                  <th style='width:40px;'>序号</th>
+                  <th style='width:70px;'>学生</th>
+                  <th style='width:50px;'>校区</th>
+                  <th style='width:200px;'>抬头</th>
+                  <th style='width:180px;'>税号</th>
+                  <th style='width:80px;' class="text-right">金额</th>
+                  <th style='width:65px;'>申请日期</th>
+                  <th style='width:65px;'>申请用户</th>
+                  <th style='width:60px;'>操作管理</th>
+                </tr>
+              </thead>
+              <tbody>
+                @foreach ($receipts as $receipt)
+                <tr>
+                  <td>{{ $loop->iteration }}</td>
+                  <td>
+                    @if($receipt->student_gender=="男")
+                      <img src="{{ asset(_ASSETS_.'/img/icons/male.png') }}" style="height:20px;">
+                    @else
+                      <img src="{{ asset(_ASSETS_.'/img/icons/female.png') }}" style="height:20px;">
+                    @endif
+                    <a href="/student?id={{encode($receipt->student_id, 'student_id')}}">{{ $receipt->student_name }}</a>
+                  </td>
+                  <td>{{ $receipt->department_name }}</td>
+                  <td>{{ $receipt->receipt_header }}</td>
+                  <td>{{ $receipt->receipt_tax_number }}</td>
+                  <td class="text-right">{{ $receipt->receipt_fee }} 元</td>
+                  <td>{{ date('y-m-d', strtotime($receipt->receipt_create_time)) }}</td>
+                  <td><a href="/user?id={{encode($receipt->user_id, 'user_id')}}">{{ $receipt->user_name }}</a></td>
+                  <td>
+                    <!-- <a href="/receipt?id={{encode($receipt->receipt_id, 'receipt_id')}}" target="_blank"><button type="button" class="btn btn-primary btn-sm">详情</button></a>-->
+                    @if($receipt->receipt_reviewed_status==0)
+                      <a href="/finance/receipt/review?id={{encode($receipt->receipt_id, 'receipt_id')}}"><button type="button" class="btn btn-warning btn-sm">审批</button></a>
+                    @endif
+                  </td>
+                </tr>
+                @endforeach
+              </tbody>
+            </table>
           </div>
         </div>
       </div>

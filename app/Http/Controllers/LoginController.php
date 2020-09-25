@@ -101,6 +101,23 @@ class LoginController extends Controller
             $access_categories[] = $db_access_category->access_category;
         }
 
+        // 获取通知
+        $db_announcements = DB::table('announcement')
+                           ->join('user', 'announcement.announcement_create_user', '=', 'user.user_id')
+                           ->where('announcement_level', '>=', $db_user->user_position)
+                           ->orderBy('announcement_id', 'desc')
+                           ->limit(5)
+                           ->get();
+        $announcements = array();
+        foreach($db_announcements as $db_announcement){
+            $temp=array();
+            $temp['user_name']=$db_announcement->user_name;
+            $temp['announcement_date']=date('Y-m-d', strtotime($db_announcement->announcement_create_time));
+            $temp['announcement_id']=$db_announcement->announcement_id;
+            $temp['announcement_name']=$db_announcement->announcement_name;
+            $temp['announcement_path']=$db_announcement->announcement_path;
+            $announcements[]=$temp;
+        }
         // 注册信息到Session中
         Session::put('login', true);
         Session::put('user_id', $db_user->user_id);
@@ -116,6 +133,7 @@ class LoginController extends Controller
         Session::put('user_dashboards', $user_dashboards);
         Session::put('user_accesses', $user_accesses);
         Session::put('access_categories', $access_categories);
+        Session::put('announcements', $announcements);
         // 返回主界面视图
         return redirect('/home')->with(['notify' => true,
                                         'type' => 'success',

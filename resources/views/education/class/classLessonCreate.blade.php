@@ -118,13 +118,13 @@
                 <label class="form-control-label"><span style="color:red">*</span>教案</label>
               </div>
               <div class="col-4 px-2 mb-2">
-                  <div class="input-group">
-                    <input id='location' class="form-control form-control-sm" aria-describedby="button-addon" disabled>
-                    <div class="input-group-append">
-                      <input type="button" id="i-check" value="浏览文件" class="btn btn-outline-primary btn-sm" onClick="$('#i-file').click();" style="margin:0;" id="button-addon" required>
-                      <input type="file" name='file' id='i-file' onChange="$('#location').val($('#i-file').val());" style="display: none">
-                    </div>
+                <div class="input-group">
+                  <input id='location' class="form-control form-control-sm" aria-describedby="button-addon" disabled>
+                  <div class="input-group-append">
+                    <input type="button" id="i-check" value="浏览文件" class="btn btn-outline-primary btn-sm" onClick="$('#i-file').click();" style="margin:0;" id="button-addon" required>
+                    <input type="file" name='file' id='i-file' onChange="$('#location').val($('#i-file').val());" style="display: none" required>
                   </div>
+                </div>
               </div>
             </div>
             <hr>

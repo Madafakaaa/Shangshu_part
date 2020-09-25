@@ -24,7 +24,9 @@ class HomeController extends Controller
         // 搜索条件
         $filters = array(
                         "filter_department" => null,
-                        "filter_month" => date('Y-m')
+                        "filter_month" => date('Y-m'),
+                        "filter_date_start" => date('Y-m-01'),
+                        "filter_date_end" => date('Y-m-d')
                     );
         // 校区
         if ($request->filled('filter_department')) {
@@ -37,10 +39,10 @@ class HomeController extends Controller
                              "dashboard_hour_price" => 0,
                              "dashboard_daycare_price" => 0,
                              "dashboard_total_price" => 0,
-                             "dashboard_lesson_student_num" => 0,
-                             "dashboard_lesson_num" => 0,
                              "dashboard_consumption_hour_amount" => 0,
                              "dashboard_consumption_hour_price" => 0,
+                             "dashboard_consumption_daycare_price" => 0,
+                             "dashboard_consumption_total_price" => 0,
                            );
         // 获取售课数量、金额
         $dashboard1 = DB::table('payment')
@@ -66,7 +68,7 @@ class HomeController extends Controller
         }
         $dashboard['dashboard_daycare_price']+=$dashboard2->dashboard_daycare_price;
         $dashboard['dashboard_total_price']+=$dashboard['dashboard_hour_price']+$dashboard['dashboard_daycare_price'];
-        // 获取上课次数、消耗课时价值
+        // 获取消耗课时数量、价值
         $dashboard3 = DB::table('lesson')
                       ->join('class', 'lesson.lesson_class', '=', 'class.class_id')
                       ->select(DB::raw('count(*) as dashboard_lesson_num, sum(lesson_attended_num) as dashboard_lesson_student_num, sum(lesson_hour_price) as dashboard_consumption_hour_price, sum(lesson_hour_amount) as dashboard_consumption_hour_amount'))
@@ -76,10 +78,65 @@ class HomeController extends Controller
         }else{
             $dashboard3 = $dashboard3->whereIn('class_department', $department_access)->first();
         }
-        $dashboard['dashboard_lesson_num']+=$dashboard3->dashboard_lesson_num;
-        $dashboard['dashboard_lesson_student_num']+=$dashboard3->dashboard_lesson_student_num;
         $dashboard['dashboard_consumption_hour_price']+=$dashboard3->dashboard_consumption_hour_price;
         $dashboard['dashboard_consumption_hour_amount']+=$dashboard3->dashboard_consumption_hour_amount;
+        // 获取消耗晚托价值
+        // 获取晚托数据
+        $db_daycare_records = DB::table('daycare_record')
+                                ->join('daycare', 'daycare_record.daycare_record_daycare', '=', 'daycare.daycare_id')
+                                ->join('student', 'daycare_record.daycare_record_student', '=', 'student.student_id')
+                                ->join('grade', 'student.student_grade', '=', 'grade.grade_id')
+                                ->join('department', 'student.student_department', '=', 'department.department_id')
+                                ->whereRaw('( (daycare_record_start >= ? AND daycare_record_start <= ?) OR
+                                              (daycare_record_end >= ? AND daycare_record_end <= ?) OR
+                                              (daycare_record_start <= ? AND daycare_record_end >= ?) )',
+                                           [$filters['filter_date_start'], $filters['filter_date_end'],
+                                            $filters['filter_date_start'], $filters['filter_date_end'],
+                                            $filters['filter_date_start'], $filters['filter_date_end']]);
+        if($request->filled('filter_department')){
+            $db_daycare_records = $db_daycare_records->where('student_department', $filters['filter_department'])->get();
+        }else{
+            $db_daycare_records = $db_daycare_records->whereIn('student_department', $department_access)->get();
+        }
+        foreach($db_daycare_records as $db_daycare_record){
+            $temp = array();
+            $temp['daycare_record_start'] = $db_daycare_record->daycare_record_start;
+            $temp['daycare_record_end'] = $db_daycare_record->daycare_record_end;
+            $temp['daycare_record_total_price'] = $db_daycare_record->daycare_record_total_price;
+            $temp['daycare_record_month'] = $db_daycare_record->daycare_record_month;
+            $temp['daycare_record_unit_price'] = round($db_daycare_record->daycare_record_total_price/$db_daycare_record->daycare_record_month/30, 2);
+            // 计算使用天数
+            // 计算统计天数
+            $date_start=date('Y-m-d', strtotime($filters['filter_date_start']));
+            $date_end=date('Y-m-d', strtotime($filters['filter_date_end']));
+            $Date_List_start=explode("-",$date_start);
+            $Date_List_end=explode("-",$date_end);
+            $d1=mktime(0,0,0,$Date_List_start[1],$Date_List_start[2],$Date_List_start[0]);
+            $d2=mktime(0,0,0,$Date_List_end[1],$Date_List_end[2],$Date_List_end[0]);
+            $temp['duration']=round(($d2-$d1)/3600/24)+1;
+            // 计算开始后未使用天数
+            if($filters['filter_date_start']<$temp['daycare_record_start']){
+                  $date_start=date('Y-m-d', strtotime($filters['filter_date_start']));
+                  $date_end=date('Y-m-d', strtotime($temp['daycare_record_start']));
+                  $Date_List_start=explode("-",$date_start);
+                  $Date_List_end=explode("-",$date_end);
+                  $d1=mktime(0,0,0,$Date_List_start[1],$Date_List_start[2],$Date_List_start[0]);
+                  $d2=mktime(0,0,0,$Date_List_end[1],$Date_List_end[2],$Date_List_end[0]);
+                  $temp['duration']-=round(($d2-$d1)/3600/24);
+            }
+            if($filters['filter_date_end']>$temp['daycare_record_end']){
+                  $date_start=date('Y-m-d', strtotime($temp['daycare_record_end']));
+                  $date_end=date('Y-m-d', strtotime($filters['filter_date_end']));
+                  $Date_List_start=explode("-",$date_start);
+                  $Date_List_end=explode("-",$date_end);
+                  $d1=mktime(0,0,0,$Date_List_start[1],$Date_List_start[2],$Date_List_start[0]);
+                  $d2=mktime(0,0,0,$Date_List_end[1],$Date_List_end[2],$Date_List_end[0]);
+                  $temp['duration']-=round(($d2-$d1)/3600/24);
+            }
+            $dashboard['dashboard_consumption_daycare_price'] += $temp['duration']*$temp['daycare_record_unit_price'];
+        }
+        // 计算总消耗价值
+        $dashboard['dashboard_consumption_total_price']=$dashboard['dashboard_consumption_hour_price']+$dashboard['dashboard_consumption_daycare_price'];
         // 获取当前校区名称
         if($request->filled('filter_department')){
             $dashboard['dashboard_department_name'] = DB::table('department')->where('department_id', $filters['filter_department'])->first()->department_name;
@@ -90,6 +147,15 @@ class HomeController extends Controller
                               ->whereIn('department_id', $department_access)
                               ->orderBy('department_id', 'asc')
                               ->get();
+        // 模块 发票申请 ----------------------------------------------------------------------------------
+        $receipts = DB::table('receipt')
+                         ->join('student', 'receipt.receipt_student', '=', 'student.student_id')
+                         ->join('user', 'receipt.receipt_create_user', '=', 'user.user_id')
+                         ->join('department', 'student.student_department', '=', 'department.department_id')
+                         ->join('grade', 'student.student_grade', '=', 'grade.grade_id')
+                         ->where('receipt_reviewed_status', 0)
+                         ->orderBy('receipt_create_time', 'asc')
+                         ->get();
         // 模块 退款申请 ----------------------------------------------------------------------------------
         $hour_refunds = DB::table('hour_refund')
                           ->join('student', 'hour_refund.hour_refund_student', '=', 'student.student_id')
@@ -136,6 +202,7 @@ class HomeController extends Controller
         return view('/dashboard', ['dashboard' => $dashboard,
                                    'filters' => $filters,
                                    'filter_departments' => $filter_departments,
+                                   'receipts' => $receipts,
                                    'hour_refunds' => $hour_refunds,
                                    'daycare_refunds' => $daycare_refunds,
                                    'hours' => $hours,

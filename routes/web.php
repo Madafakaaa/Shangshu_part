@@ -285,6 +285,17 @@ Route::get('/home', 'HomeController@home');
         Route::get('/teacher/assessment/manager/create', 'Teacher\AssessmentController@assessmentManagerCreate');
         // 保存分校长评
         Route::post('/teacher/assessment/manager/store', 'Teacher\AssessmentController@assessmentManagerStore');
+    // 通知文件
+        // 查看通知文件 √
+        Route::get('/teacher/announcement', 'Teacher\AnnouncementController@announcement');
+        // 新建通知文件
+        Route::get('/teacher/announcement/create', 'Teacher\AnnouncementController@announcementCreate');
+        // 保存通知文件
+        Route::post('/teacher/announcement/store', 'Teacher\AnnouncementController@announcementStore');
+        // 删除通知文件
+        Route::get('/teacher/announcement/delete', 'Teacher\AnnouncementController@announcementDelete');
+        // 下载通知文件
+        Route::get('/teacher/announcement/download', 'Teacher\AnnouncementController@announcementDownload');
 
 
 // 统计中心 ********************************************************************************
@@ -294,6 +305,9 @@ Route::get('/home', 'HomeController@home');
     // 课消统计
         // 查看课消统计 √
         Route::get('/statistic/consumption', 'Statistic\ConsumptionController@consumption');
+    // 晚托消耗
+        // 查看晚托消耗 √
+        Route::get('/statistic/daycare', 'Statistic\DaycareController@daycare');
     // 课时统计
         // 查看课时统计 √
         Route::get('/statistic/hour', 'Statistic\HourController@hour');

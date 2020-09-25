@@ -36,32 +36,35 @@
           <div class="dropdown-menu dropdown-menu-xl dropdown-menu-right py-0 overflow-hidden">
             <!-- Dropdown header -->
             <div class="px-3 py-3">
-              <h6 class="text-sm text-muted m-0">您有<strong class="text-primary">2</strong>个新通知.</h6>
+              <h6 class="text-sm text-muted m-0">近期有<strong class="text-primary">{{count(Session::get('announcements'))}}</strong>个通知.</h6>
             </div>
             <!-- List group -->
             <div class="list-group list-group-flush">
-              <a href="#!" class="list-group-item list-group-item-action">
-                <div class="row align-items-center">
-                  <div class="col-auto">
-                    <!-- Avatar -->
-                    <img alt="Image placeholder" src="{{ asset(_ASSETS_.'/avatar/male.png') }}" class="avatar rounded-circle">
-                  </div>
-                  <div class="col ml--2">
-                    <div class="d-flex justify-content-between align-items-center">
-                      <div>
-                        <h4 class="mb-0 text-sm">{{ Session::get('user_name') }}</h4>
-                      </div>
-                      <div class="text-right text-muted">
-                        <small>2019-09-29</small>
-                      </div>
+              @forelse(Session::get('announcements') as $announcement)
+                <a href="/files/announcement/{{$announcement['announcement_path']}}" class="list-group-item list-group-item-action" title="点击预览" target="_blank">
+                  <div class="row align-items-center">
+                    <div class="col-auto">
+                      <!-- Avatar -->
+                      <img alt="Image placeholder" src="{{ asset(_ASSETS_.'/avatar/male.png') }}" class="avatar rounded-circle">
                     </div>
-                    <p class="text-sm mb-0">最新通知2</p>
+                    <div class="col ml--2">
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                          <h4 class="mb-0 text-sm">{{$announcement['user_name']}}</h4>
+                        </div>
+                        <div class="text-right text-muted">
+                          <small>{{$announcement['announcement_date']}}</small>
+                        </div>
+                      </div>
+                      <p class="text-sm mb-0">{{$announcement['announcement_name']}}</p>
+                    </div>
                   </div>
-                </div>
-              </a>
+                </a>
+              @empty
+              @endforelse
             </div>
             <!-- View all -->
-            <a href="#!" class="dropdown-item text-center text-primary font-weight-bold py-3">查看全部</a>
+            <a href="/teacher/announcement" class="dropdown-item text-center text-primary font-weight-bold py-3">查看全部</a>
           </div>
         </li>
       </ul>

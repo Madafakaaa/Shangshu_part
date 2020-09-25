@@ -592,8 +592,20 @@ CREATE TABLE `receipt` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-ALTER TABLE daycare_record ADD `daycare_record_receipt` int(10) unsigned COMMENT '晚托记录发票';
-ALTER TABLE payment ADD `payment_receipt` int(10) unsigned COMMENT '购课记录发票';
+-- ----------------------------
+-- Table structure for `announcement`
+-- ----------------------------
+DROP TABLE IF EXISTS `announcement`;
+CREATE TABLE `announcement` (
+  `announcement_id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '通知id',
+  `announcement_name` varchar(20) NOT NULL COMMENT '通知名称',
+  `announcement_level` int(10) unsigned NOT NULL COMMENT '通知范围',
+  `announcement_path` varchar(40) NOT NULL COMMENT '通知文件路径',
+  `announcement_create_user` char(8) NOT NULL COMMENT '创建用户',
+  `announcement_create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  PRIMARY KEY (`announcement_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 -- ----------------------------
 -- Initial Records

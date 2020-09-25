@@ -105,7 +105,7 @@
                 <div class="col-2 text-center">
                   <label class="form-control-label">
                     课消提成
-                    <span class="btn-inner--icon" data-toggle="tooltip" data-original-title="本月校区课消金额：{{ $user['department_consumption'] }} * 课消提成比例(%)：{{ $user['user_salary_commission'] }}"><i class="fas fa-question-circle"></i></span>
+                    <span class="btn-inner--icon" data-toggle="tooltip" data-original-title="(校区月课消金额：{{ $user['department_consumption'] }} + 校区月晚托金额：{{$user['department_daycare']}}) * 课消提成比例：{{ $user['user_salary_commission'] }}%"><i class="fas fa-question-circle"></i></span>
                   </label>
                 </div>
                 <div class="col-2 px-2 mb-2">

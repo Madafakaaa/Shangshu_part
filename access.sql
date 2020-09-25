@@ -172,10 +172,18 @@ CREATE TABLE `access` (
 	VALUES ('财务中心', '发票申请记录', '审核', 'Finance\ReceiptController', 'receipt', '/finance/receipt/review');
 	
 
--- 统计中心 --
-	-- 收入统计 --
+-- 教师中心 --
+	-- 通知文件 --
 	INSERT INTO `access`(access_category, access_page, access_feature, access_controller, access_function, access_url) 
-	VALUES ('统计中心', '收入统计', '查看', 'Statistic\IncomeController', 'income', '/statistic/income');
+	VALUES ('教师中心', '通知文件', '添加', 'Teacher\AnnouncementController', 'announcementCreate', '/teacher/announcement/create');
+	INSERT INTO `access`(access_category, access_page, access_feature, access_controller, access_function, access_url) 
+	VALUES ('教师中心', '通知文件', '删除', 'Teacher\AnnouncementController', 'announcementDelete', '/teacher/announcement/delete');
+	
+	
+-- 统计中心 --
+	-- 收入支出 --
+	INSERT INTO `access`(access_category, access_page, access_feature, access_controller, access_function, access_url) 
+	VALUES ('统计中心', '收入支出', '查看', 'Statistic\IncomeController', 'income', '/statistic/income');
 	-- 课消统计 --
 	INSERT INTO `access`(access_category, access_page, access_feature, access_controller, access_function, access_url) 
 	VALUES ('统计中心', '课消统计', '查看', 'Statistic\ConsumptionController', 'income', '/statistic/consumption');

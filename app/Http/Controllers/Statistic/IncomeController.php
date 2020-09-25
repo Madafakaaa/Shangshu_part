@@ -57,9 +57,10 @@ class IncomeController extends Controller
                              "dashboard_dates" => null,
                              "dashboard_payment_hour" => 0,
                              "dashboard_payment_total_price" => 0,
-                             "dashboard_daycare_record_month" => 0,
                              "dashboard_daycare_record_total_price" => 0,
-                             "dashboard_total_price" => 0,
+                             "dashboard_total_income" => 0,
+                             "dashboard_expenditure_fee" => 0,
+                             "dashboard_actual_price" => 0
                            );
         $dashboard['dashboard_dates'] = date('Y.m.d', strtotime($filters['filter_date_start']))." - ".date('Y.m.d', strtotime($filters['filter_date_end']));
         if(date('Y', strtotime($filters['filter_date_start']))==date('Y', strtotime($filters['filter_date_end']))){
@@ -76,13 +77,19 @@ class IncomeController extends Controller
         foreach($db_departments as $db_department){
             $temp = array();
             $temp['department_name'] = $db_department->department_name;
+            // 获取支出金额
+            $temp['expenditure_fee'] = DB::table('expenditure')
+                                         ->where('expenditure_department', $db_department->department_id)
+                                         ->where('expenditure_date', '>=', $filters['filter_date_start'])
+                                         ->where('expenditure_date', '<=', $filters['filter_date_end'])
+                                         ->sum('expenditure_fee');
             // 获取课时数量
             $temp['payment_hour'] = DB::table('payment')
-                                             ->join('student', 'student.student_id', '=', 'payment.payment_student')
-                                             ->where('student_department', $db_department->department_id)
-                                             ->where('payment_date', '>=', $filters['filter_date_start'])
-                                             ->where('payment_date', '<=', $filters['filter_date_end'])
-                                             ->sum('payment_hour');
+                                       ->join('student', 'student.student_id', '=', 'payment.payment_student')
+                                       ->where('student_department', $db_department->department_id)
+                                       ->where('payment_date', '>=', $filters['filter_date_start'])
+                                       ->where('payment_date', '<=', $filters['filter_date_end'])
+                                       ->sum('payment_hour');
             // 获取课时收入
             $temp['payment_total_price'] = DB::table('payment')
                                              ->join('student', 'student.student_id', '=', 'payment.payment_student')
@@ -90,13 +97,6 @@ class IncomeController extends Controller
                                              ->where('payment_date', '>=', $filters['filter_date_start'])
                                              ->where('payment_date', '<=', $filters['filter_date_end'])
                                              ->sum('payment_total_price');
-            // 获取晚托月数
-            $temp['daycare_record_month'] = DB::table('daycare_record')
-                                              ->join('student', 'student.student_id', '=', 'daycare_record.daycare_record_student')
-                                              ->where('student_department', $db_department->department_id)
-                                              ->where('daycare_record_date', '>=', $filters['filter_date_start'])
-                                              ->where('daycare_record_date', '<=', $filters['filter_date_end'])
-                                              ->sum('daycare_record_month');
             // 获取晚托收入
             $temp['daycare_record_total_price'] = DB::table('daycare_record')
                                                     ->join('student', 'student.student_id', '=', 'daycare_record.daycare_record_student')
@@ -104,13 +104,15 @@ class IncomeController extends Controller
                                                     ->where('daycare_record_date', '>=', $filters['filter_date_start'])
                                                     ->where('daycare_record_date', '<=', $filters['filter_date_end'])
                                                     ->sum('daycare_record_total_price');
-            $temp['total_price'] = $temp['daycare_record_total_price']+$temp['payment_total_price'];
+            $temp['total_income'] = $temp['daycare_record_total_price']+$temp['payment_total_price'];
+            $temp['actual_price'] = $temp['daycare_record_total_price']+$temp['payment_total_price']-$temp['expenditure_fee'];
             $departments[] = $temp;
             $dashboard['dashboard_payment_hour']+=$temp['payment_hour'];
             $dashboard['dashboard_payment_total_price']+=$temp['payment_total_price'];
-            $dashboard['dashboard_daycare_record_month']+=$temp['daycare_record_month'];
             $dashboard['dashboard_daycare_record_total_price']+=$temp['daycare_record_total_price'];
-            $dashboard['dashboard_total_price']+=$temp['total_price'];
+            $dashboard['dashboard_total_income']+=$temp['total_income'];
+            $dashboard['dashboard_expenditure_fee']+=$temp['expenditure_fee'];
+            $dashboard['dashboard_actual_price']+=$temp['actual_price'];
         }
         // 获取校区、年级信息(筛选)
         $filter_departments = DB::table('department')->where('department_is_available', 1)->whereIn('department_id', $department_access)->orderBy('department_id', 'asc')->get();

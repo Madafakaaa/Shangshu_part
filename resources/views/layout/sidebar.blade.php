@@ -4,7 +4,7 @@
   <!-- Brand -->
   <div class="sidenav-header d-flex align-items-center">
     <a class="navbar-brand" href="/home">
-      <img src="{{ asset(_ASSETS_.'/img/brand/blue.png') }}" class="navbar-brand-img" alt="...">
+      <h2 class="mb-0" style="color:rgb(94,114,228);font-size:1.45rem;">上海尚书教育</h2>
     </a>
     <div class="ml-auto">
       <!-- Sidenav toggler -->
@@ -271,6 +271,12 @@
                   <span class="nav-link-text">教师考核</span>
                 </a>
               </li>
+              <li class="nav-item">
+                <a href="/teacher/announcement" class="nav-link" id="teacherAnnouncement">
+                  <i class="ni ni-notification-70 text-indigo"></i>
+                  <span class="nav-link-text">通知文件</span>
+                </a>
+              </li>
               <!--
               <li class="nav-item">
                 <a href="/teacher/summary" class="nav-link" id="teacherSummary">
@@ -291,36 +297,42 @@
           <div class="collapse" id="navbar-statistic">
             <ul class="nav nav-sm flex-column">
               @if(in_array("/statistic/income", Session::get('user_accesses')))
-              <li class="nav-item">
-                <a href="/statistic/income" class="nav-link" id="statisticIncome">
-                  <i class="ni ni-money-coins text-gray-dark"></i>
-                  <span class="nav-link-text">收入统计</span>
-                </a>
-              </li>
+                <li class="nav-item">
+                  <a href="/statistic/income" class="nav-link" id="statisticIncome">
+                    <i class="ni ni-money-coins text-gray-dark"></i>
+                    <span class="nav-link-text">收入支出</span>
+                  </a>
+                </li>
               @endif
               @if(in_array("/statistic/consumption", Session::get('user_accesses')))
-              <li class="nav-item">
-                <a href="/statistic/consumption" class="nav-link" id="statisticConsumption">
-                  <i class="fa fa-minus-square text-gray-dark"></i>
-                  <span class="nav-link-text">课消统计</span>
-                </a>
-              </li>
+                <li class="nav-item">
+                  <a href="/statistic/consumption" class="nav-link" id="statisticConsumption">
+                    <i class="fa fa-minus-square text-gray-dark"></i>
+                    <span class="nav-link-text">课消统计</span>
+                  </a>
+                </li>
               @endif
+                <li class="nav-item">
+                  <a href="/statistic/daycare" class="nav-link" id="statisticDaycare">
+                    <i class="fa fa-minus-square text-gray-dark"></i>
+                    <span class="nav-link-text">晚托消耗</span>
+                  </a>
+                </li>
               @if(in_array("/statistic/hour", Session::get('user_accesses')))
-              <li class="nav-item">
-                <a href="/statistic/hour" class="nav-link" id="statisticHour">
-                  <i class="fa fa-user-clock text-gray-dark"></i>
-                  <span class="nav-link-text">剩余课时</span>
-                </a>
-              </li>
+                <li class="nav-item">
+                  <a href="/statistic/hour" class="nav-link" id="statisticHour">
+                    <i class="fa fa-user-clock text-gray-dark"></i>
+                    <span class="nav-link-text">剩余课时</span>
+                  </a>
+                </li>
               @endif
               @if(in_array("/statistic/salary", Session::get('user_accesses')))
-              <li class="nav-item">
-                <a href="/statistic/salary" class="nav-link" id="statisticSalary">
-                  <i class="fa fa-address-card text-gray-dark"></i>
-                  <span class="nav-link-text">工资统计</span>
-                </a>
-              </li>
+                <li class="nav-item">
+                  <a href="/statistic/salary" class="nav-link" id="statisticSalary">
+                    <i class="fa fa-address-card text-gray-dark"></i>
+                    <span class="nav-link-text">工资统计</span>
+                  </a>
+                </li>
               @endif
             </ul>
           </div>

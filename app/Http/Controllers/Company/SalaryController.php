@@ -66,8 +66,8 @@ class SalaryController extends Controller
                       ->where('user_is_available', 1)
                       ->orderBy('user_teacher_type', 'asc')
                       ->get();
-        // 计算校区课消
         // 获取校区
+        // 计算校区课消
         $db_departments = DB::table('department')
                            ->orderBy('department_id', 'asc')
                            ->get();
@@ -86,6 +86,61 @@ class SalaryController extends Controller
         foreach($db_lessons as $db_lesson){
             $department_consumptions[$db_lesson->department_id] = $db_lesson->department_consumption;
         }
+        $month_date_start=$salary_month."-01";
+        $month_date_end=date('Y-m-t',strtotime($salary_month));
+        // 计算校区晚托消耗
+        $department_daycares = array();
+        foreach($db_departments as $db_department){
+            $department_daycares[$db_department->department_id] = 0;
+            $db_daycare_records = DB::table('daycare_record')
+                                    ->join('student', 'daycare_record.daycare_record_student', '=', 'student.student_id')
+                                    ->whereRaw('( (daycare_record_start >= ? AND daycare_record_start <= ?) OR
+                                                  (daycare_record_end >= ? AND daycare_record_end <= ?) OR
+                                                  (daycare_record_start <= ? AND daycare_record_end >= ?) )',
+                                               [$month_date_start, $month_date_end,
+                                                $month_date_start, $month_date_end,
+                                                $month_date_start, $month_date_end])
+                                    ->where('student_department', $db_department->department_id)
+                                    ->get();
+            foreach($db_daycare_records as $db_daycare_record){
+                $temp = array();
+                $temp['daycare_record_start'] = $db_daycare_record->daycare_record_start;
+                $temp['daycare_record_end'] = $db_daycare_record->daycare_record_end;
+                $temp['daycare_record_total_price'] = $db_daycare_record->daycare_record_total_price;
+                $temp['daycare_record_month'] = $db_daycare_record->daycare_record_month;
+                $temp['daycare_record_unit_price'] = round($db_daycare_record->daycare_record_total_price/$db_daycare_record->daycare_record_month/30, 2);
+                // 计算使用天数
+                // 计算统计天数
+                $date_start=date('Y-m-d', strtotime($month_date_start));
+                $date_end=date('Y-m-d', strtotime($month_date_end));
+                $Date_List_start=explode("-",$date_start);
+                $Date_List_end=explode("-",$date_end);
+                $d1=mktime(0,0,0,$Date_List_start[1],$Date_List_start[2],$Date_List_start[0]);
+                $d2=mktime(0,0,0,$Date_List_end[1],$Date_List_end[2],$Date_List_end[0]);
+                $temp['duration']=round(($d2-$d1)/3600/24)+1;
+                // 计算开始后未使用天数
+                if($month_date_start<$temp['daycare_record_start']){
+                      $date_start=date('Y-m-d', strtotime($month_date_start));
+                      $date_end=date('Y-m-d', strtotime($temp['daycare_record_start']));
+                      $Date_List_start=explode("-",$date_start);
+                      $Date_List_end=explode("-",$date_end);
+                      $d1=mktime(0,0,0,$Date_List_start[1],$Date_List_start[2],$Date_List_start[0]);
+                      $d2=mktime(0,0,0,$Date_List_end[1],$Date_List_end[2],$Date_List_end[0]);
+                      $temp['duration']-=round(($d2-$d1)/3600/24);
+                }
+                if($month_date_end>$temp['daycare_record_end']){
+                      $date_start=date('Y-m-d', strtotime($temp['daycare_record_end']));
+                      $date_end=date('Y-m-d', strtotime($month_date_end));
+                      $Date_List_start=explode("-",$date_start);
+                      $Date_List_end=explode("-",$date_end);
+                      $d1=mktime(0,0,0,$Date_List_start[1],$Date_List_start[2],$Date_List_start[0]);
+                      $d2=mktime(0,0,0,$Date_List_end[1],$Date_List_end[2],$Date_List_end[0]);
+                      $temp['duration']-=round(($d2-$d1)/3600/24);
+                }
+                $department_daycares[$db_department->department_id] += round($temp['duration']*$temp['daycare_record_unit_price'], 2);
+            }
+        }
+
         // 计算用户课时费等
         $users = array();
         foreach($db_users as $db_user){
@@ -108,7 +163,8 @@ class SalaryController extends Controller
             $temp['user_salary_method'] = $db_user->user_salary_method;
             $temp['user_salary_basic'] = $db_user->user_salary_basic;
             $temp['department_consumption'] = $department_consumptions[$db_user->department_id];
-            $temp['user_salary_commission_actual'] = round($db_user->user_salary_commission*$department_consumptions[$db_user->department_id])/100;
+            $temp['department_daycare'] = round($department_daycares[$db_user->department_id], 2);
+            $temp['user_salary_commission_actual'] = round($db_user->user_salary_commission*($department_consumptions[$db_user->department_id]+$department_daycares[$db_user->department_id]))/100;
             // 计算课时费
             $temp['lesson_teacher_fee'] = 0;
             $temp_lessons = DB::table('lesson')
