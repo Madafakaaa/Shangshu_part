@@ -227,5 +227,7 @@ INSERT INTO `dashboard_access`(dashboard_access_name) VALUES ('收入/课消数�
 INSERT INTO `dashboard_access`(dashboard_access_name) VALUES ('课时/晚托退款申请');
 -- 提示模块 --
 INSERT INTO `dashboard_access`(dashboard_access_name) VALUES ('课时/晚托剩余提醒');
+-- 发票申请 --
+INSERT INTO `dashboard_access`(dashboard_access_name) VALUES ('发票申请审批');
 	
 	

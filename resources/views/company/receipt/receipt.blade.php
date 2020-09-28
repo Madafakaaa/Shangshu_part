@@ -1,12 +1,12 @@
 @extends('main')
 
 @section('nav')
-<h2 class="text-white d-inline-block mb-0">发票管理</h2>
+<h2 class="text-white d-inline-block mb-0">票据管理</h2>
 <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
   <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
     <li class="breadcrumb-item"><a href="/home"><i class="fas fa-home"></i></a></li>
     <li class="breadcrumb-item active">公司管理</li>
-    <li class="breadcrumb-item active">发票管理</li>
+    <li class="breadcrumb-item active">票据管理</li>
   </ol>
 </nav>
 @endsection
@@ -15,9 +15,9 @@
 <div class="container-fluid mt-3">
   <div class="row mb-3">
     <div class="col-auto">
-      <a href="/company/receipt/create" class="btn btn-sm btn-neutral btn-round btn-icon" data-toggle="tooltip" data-original-title="添加发票">
+      <a href="/company/receipt/create" class="btn btn-sm btn-neutral btn-round btn-icon" data-toggle="tooltip" data-original-title="添加票据">
         <span class="btn-inner--icon"><i class="fas fa-user-edit"></i></span>
-        <span class="btn-inner--text">添加发票</span>
+        <span class="btn-inner--text">添加票据</span>
       </a>
     </div>
   </div>
@@ -47,7 +47,7 @@
                 <th style='width:180px;'>抬头-税号</th>
                 <th style='width:80px;' class="text-right">金额</th>
                 <th style='width:150px;'>开票公司</th>
-                <th style='width:100px;'>发票号</th>
+                <th style='width:100px;'>票据号</th>
                 <th style='width:65px;'>开票日期</th>
                 <th style='width:80px;'>添加/审核用户</th>
                 <th style='width:60px;'>类型</th>
@@ -74,7 +74,7 @@
                 <td><a href="/user?id={{encode($receipt['receipt_reviewed_user_id'], 'user_id')}}">{{ $receipt['receipt_reviewed_user_name'] }}</a></td>
                 <td>{{ $receipt['receipt_type'] }}</td>
                 <td>
-                  <button type="button" class="btn btn-outline-danger btn-sm delete-button" id='delete_button_{{$loop->iteration}}' onclick="buttonConfirm('delete_button_{{$loop->iteration}}', '/company/receipt/delete?id={{encode($receipt['receipt_id'], 'receipt_id')}}', '确认删除发票？')">删除</button>
+                  <button type="button" class="btn btn-outline-danger btn-sm delete-button" id='delete_button_{{$loop->iteration}}' onclick="buttonConfirm('delete_button_{{$loop->iteration}}', '/company/receipt/delete?id={{encode($receipt['receipt_id'], 'receipt_id')}}', '确认删除票据？')">删除</button>
                 </td>
               </tr>
               @endforeach

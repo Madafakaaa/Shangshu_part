@@ -69,7 +69,7 @@
                 <th style='width:70px;'>购课日期</th>
                 <th style='width:65px;'>登记用户</th>
                 <th style='width:65px;'>复核用户</th>
-                <th style='width:65px;'>发票信息</th>
+                <th style='width:65px;'>票据信息</th>
                 <th style='width:65px;'>操作管理</th>
               </tr>
             </thead>
@@ -130,7 +130,7 @@
                 </td>
                 <td>
                   @if($payment['payment_receipt']=="")
-                    <a href="/finance/receipt/create?id={{encode($payment['student_id'],'student_id')}}"><button type="button" class="btn btn-primary btn-sm">申请发票</button></a>
+                    <a href="/finance/receipt/create?id={{encode($payment['student_id'],'student_id')}}"><button type="button" class="btn btn-primary btn-sm">申请票据</button></a>
                   @elseif($payment['receipt_reviewed_status']==0)
                     <span class="text-warning">申请中</span>
                   @else

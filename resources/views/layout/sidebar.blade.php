@@ -96,7 +96,7 @@
                   <li class="nav-item">
                     <a href="/company/receipt" class="nav-link" id="companyReceipt">
                       <i class="fa fa-receipt text-green"></i>
-                      <span class="nav-link-text">发票管理</span>
+                      <span class="nav-link-text">票据管理</span>
                     </a>
                   </li>
                 @endif

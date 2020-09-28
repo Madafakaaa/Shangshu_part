@@ -67,7 +67,7 @@
                 <th style='width:90px;'>购买日期</th>
                 <th style='width:60px;'>登记用户</th>
                 <th style='width:60px;'>复核用户</th>
-                <th style='width:65px;'>发票信息</th>
+                <th style='width:65px;'>票据信息</th>
                 <th style='width:60px;'>操作管理</th>
               </tr>
             </thead>
@@ -117,7 +117,7 @@
                 </td>
                 <td>
                   @if($daycare_record['daycare_record_receipt']=="")
-                    <a href="/finance/receipt/create?id={{encode($daycare_record['student_id'],'student_id')}}"><button type="button" class="btn btn-primary btn-sm">申请发票</button></a>
+                    <a href="/finance/receipt/create?id={{encode($daycare_record['student_id'],'student_id')}}"><button type="button" class="btn btn-primary btn-sm">申请票据</button></a>
                   @elseif($daycare_record['receipt_reviewed_status']==0)
                     <span class="text-warning">申请中</span>
                   @else
