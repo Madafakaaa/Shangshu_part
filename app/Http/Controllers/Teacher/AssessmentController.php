@@ -37,7 +37,6 @@ class AssessmentController extends Controller
         // 获取用户数据
         $db_users = DB::table('user')
                      ->join('department', 'user.user_department', '=', 'department.department_id')
-                     ->whereIn('user_department', $department_access)
                      ->where('user_is_available', 1);
         // 搜索条件
         $filters = array(
@@ -53,9 +52,12 @@ class AssessmentController extends Controller
         if($position==5){
             $db_users = $db_users->where('user_id', Session::get('user_id'));
         }
+        // 教务及以上 语序查看有权限校区用户
+        if($position>5){
+            $db_users = $db_users->whereIn('user_department', $department_access);
+        }
         $db_users = $db_users->orderBy('user_department', 'asc')
                              ->get();
-
         $users = array();
         foreach($db_users as $db_user){
             $temp_user=array();
