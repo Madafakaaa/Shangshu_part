@@ -120,7 +120,7 @@
                 <thead class="thead-light">
                   <tr>
                     <th style='width:40px;'>序号</th>
-                    <th style='width:220px;'>班级</th>
+                    <th style='width:210px;'>班级</th>
                     <th style='width:35px;'>状态</th>
                     <th style='width:160px;'>扣除课时</th>
                     <th style='width:70px;'>教师</th>
@@ -142,7 +142,7 @@
                       @elseif($lesson['participant_attend_status']==2)
                         <span class="text-warning">请假</span>
                       @else
-                        <span class="text-danger">旷课</span>
+                        <span class="text-danger">补课</span>
                       @endif
                     </td>
                     <td>
@@ -158,7 +158,7 @@
                     <td>{{ $lesson['grade_name'] }}</td>
                     <td>{{ $lesson['subject_name'] }}</td>
                     <td>
-                      {{ date('m-d', strtotime($lesson['lesson_date'])) }} {{ dateToDay($lesson['lesson_date']) }} | {{ date('H:i', strtotime($lesson['lesson_start'])) }}
+                      {{ date('m-d', strtotime($lesson['participant_secondary_date'])) }} {{ dateToDay($lesson['participant_secondary_date']) }} | {{ date('H:i', strtotime($lesson['participant_secondary_start'])) }}
                     </td>
                   </tr>
                   @endforeach

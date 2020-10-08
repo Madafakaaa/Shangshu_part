@@ -100,6 +100,8 @@ class StudentController extends Controller
             $temp['course_name']=$db_lesson->course_name;
             $temp['participant_amount']=$db_lesson->participant_amount;
             $temp['participant_attend_status']=$db_lesson->participant_attend_status;
+            $temp['participant_secondary_date']=$db_lesson->participant_secondary_date;
+            $temp['participant_secondary_start']=$db_lesson->participant_secondary_start;
             $lessons[]=$temp;
         }
 

@@ -104,7 +104,11 @@
                 <td>{{ $lesson['grade_name'] }}</td>
                 <td>{{ $lesson['subject_name'] }}</td>
                 <td>
-                  {{ $lesson['lesson_attended_num'] }} / {{ $lesson['lesson_attended_num']+$lesson['lesson_leave_num']+$lesson['lesson_absence_num'] }}人
+                  @if($lesson['lesson_leave_num']+$lesson['lesson_absence_num']==0)
+                    <span class="text-success">{{ $lesson['lesson_attended_num'] }} / {{ $lesson['lesson_attended_num']+$lesson['lesson_leave_num']+$lesson['lesson_absence_num'] }}人</span>
+                  @else
+                    <span class="text-warning">{{ $lesson['lesson_attended_num'] }} / {{ $lesson['lesson_attended_num']+$lesson['lesson_leave_num']+$lesson['lesson_absence_num'] }}人</span>
+                  @endif
                   <button type="button" class="btn btn-outline-primary btn-sm" data-toggle="modal" data-target="#modal-{{$loop->iteration}}-1">查看</button>
                   <div class="modal fade" id="modal-{{$loop->iteration}}-1" tabindex="-1" role="dialog" aria-labelledby="modal-default" aria-hidden="true">
                     <div class="modal-dialog modal- modal-dialog-centered modal-" role="document">
@@ -137,7 +141,7 @@
                                       <small>请假</small>
                                     @else
                                       <span class="text-danger">●</span>
-                                      <small>旷课 | {{ $participant['course_name'] }} [ {{ $participant['participant_amount'] }} 课时 ]</small>
+                                      <small>补课 | {{ $participant['course_name'] }} [ {{ $participant['participant_amount'] }} 课时 ] | {{ date('m-d', strtotime($participant['participant_secondary_date'])) }} {{ date('H:i', strtotime($participant['participant_secondary_start'])) }}</small>
                                     @endif
                                   </div>
                                   <div class="col-auto">

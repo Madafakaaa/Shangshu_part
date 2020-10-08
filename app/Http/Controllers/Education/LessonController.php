@@ -100,6 +100,8 @@ class LessonController extends Controller
                 $participant_temp['course_name'] = $participant->course_name;
                 $participant_temp['participant_amount'] = $participant->participant_amount;
                 $participant_temp['participant_attend_status'] = $participant->participant_attend_status;
+                $participant_temp['participant_secondary_date'] = $participant->participant_secondary_date;
+                $participant_temp['participant_secondary_start'] = $participant->participant_secondary_start;
                 $temp['participants'][] = $participant_temp;
             }
             $lessons[]=$temp;

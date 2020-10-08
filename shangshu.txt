@@ -273,6 +273,8 @@ CREATE TABLE `participant` (
   `participant_attend_status` int(10) unsigned NOT NULL DEFAULT '1' COMMENT '学生考勤状态(1：正常，2：请假，3：旷课)',
   `participant_course` int(10) unsigned NOT NULL COMMENT '扣除课程id',
   `participant_amount` int(10) unsigned NOT NULL COMMENT '扣除课程课时数量',
+  `participant_secondary_date` date COMMENT '上课/补课日期',
+  `participant_secondary_start` time COMMENT '上课/补课时间',
   `participant_create_user` char(8) NOT NULL COMMENT '添加用户',
   `participant_create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '添加时间',
   PRIMARY KEY (`participant_id`)

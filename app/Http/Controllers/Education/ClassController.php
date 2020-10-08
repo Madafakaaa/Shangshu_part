@@ -420,7 +420,7 @@ class ClassController extends Controller
         // 统计上课人数
         $lesson_attended_num = 0; // 正常
         $lesson_leave_num = 0; // 请假
-        $lesson_absence_num = 0; // 旷课
+        $lesson_absence_num = 0; // 补课
 
         DB::beginTransaction();
         try{
@@ -453,6 +453,8 @@ class ClassController extends Controller
             for($i=1;$i<=$lesson_student_num;$i++){
                 $participant_student = $request->input('input_student_id_'.$i);
                 $participant_attend_status = $request->input('input_student_status_'.$i);
+                $participant_secondary_date = $request->input('input_student_date_'.$i);
+                $participant_secondary_start = $request->input('input_student_time_'.$i);
                 if($participant_attend_status==1){ // 正常（计课时）
                     // 判断学生是否有课程冲突
                     if(
@@ -474,15 +476,17 @@ class ClassController extends Controller
                     }
                     $participant_course = $request->input('input_student_course_'.$i);
                     $participant_amount = $request->input('input_student_amount_'.$i);
+                    $participant_secondary_date = $lesson_date;
+                    $participant_secondary_start = $lesson_start;
                     $lesson_attended_num = $lesson_attended_num + 1; // 增加正常上课人数
                 }else if($participant_attend_status==2){ // 请假（不计课时）
                     $participant_course = 0;
                     $participant_amount = 0;
                     $lesson_leave_num = $lesson_leave_num + 1; // 增加请假人数
-                }else { // 旷课（计课时）
+                }else { // 补课（计课时）
                     $participant_course = $request->input('input_student_course_'.$i);
                     $participant_amount = $request->input('input_student_amount_'.$i);
-                    $lesson_absence_num = $lesson_absence_num + 1; // 增加旷课人数
+                    $lesson_absence_num = $lesson_absence_num + 1; // 增加补课人数
                 }
                 // 扣除剩余课时
                 if($participant_attend_status!=2){
@@ -512,6 +516,8 @@ class ClassController extends Controller
                      'participant_attend_status' => $participant_attend_status,
                      'participant_course' => $participant_course,
                      'participant_amount' => $participant_amount,
+                     'participant_secondary_date' => $participant_secondary_date,
+                     'participant_secondary_start' => $participant_secondary_start,
                      'participant_create_user' => Session::get('user_id')]
                 );
             }
@@ -522,7 +528,7 @@ class ClassController extends Controller
                                         ->join('user', 'user.user_teacher_type', 'deduction.deduction_teacher_type')
                                         ->where('user_id', $lesson_teacher)
                                         ->where('deduction_grade', $class->class_grade)
-                                        ->where('deduction_student_num', $lesson_attended_num)
+                                        ->where('deduction_student_num', ($lesson_attended_num+$lesson_absence_num))
                                         ->first()
                                         ->deduction_fee;
             }
@@ -543,6 +549,7 @@ class ClassController extends Controller
         // 捕获异常
         catch(Exception $e){
             DB::rollBack();
+            return $e;
             // 返回第一步
             return redirect("/education/class/lesson/create?id=".encode($lesson_class, 'class_id'))
                    ->with(['notify' => true,

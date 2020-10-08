@@ -194,7 +194,7 @@
                                           <small>请假</small>
                                         @else
                                           <span class="text-danger">●</span>
-                                          <small>旷课 | {{ $participant['course_name'] }} [ {{ $participant['participant_amount'] }} 课时 ]</small>
+                                          <small>补课 | {{ $participant['course_name'] }} [ {{ $participant['participant_amount'] }} 课时 ] | {{ date('m-d', strtotime($participant['participant_secondary_date'])) }} {{ date('H:i', strtotime($participant['participant_secondary_start'])) }}</small>
                                         @endif
                                       </div>
                                       <div class="col-auto">

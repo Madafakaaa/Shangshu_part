@@ -101,7 +101,7 @@
               </div>
               <div class="col-4 px-2 mb-2">
                 <div class="form-group mb-1">
-                  <select class="form-control form-control-sm" name="input_lesson_start" data-toggle="select" required>
+                  <select class="form-control form-control-sm" name="input_lesson_start" data-toggle="selectNoFilter" required>
                     <option style='display: none' value=''>上课时间...</option>
                     <option value='07:30'>07:30 - 09:00</option>
                     <option value='09:00'>09:00 - 10:30</option>
@@ -149,7 +149,7 @@
                 <div class="col-2 text-right">
                   <label class="form-control-label">
                     <span style="color:red">*</span>
-                    <span class="btn-inner--icon" data-toggle="tooltip" data-original-title="正常和旷课扣除课时，请假不扣除课时。"><i class="fas fa-question-circle"></i></span>
+                    <span class="btn-inner--icon" data-toggle="tooltip" data-original-title="正常和补课扣除课时，请假不扣除课时。"><i class="fas fa-question-circle"></i></span>
                     点名
                   </label>
                 </div>
@@ -165,7 +165,7 @@
                     </div>
                     <div class="custom-control custom-radio custom-control-inline ml-2 mr-4">
                       <input type="radio" id="radio{{ $loop->iteration }}_3" name="input_student_status_{{ $loop->iteration }}" class="custom-control-input" value="3" onchange="disableInput({{ $loop->iteration }});">
-                      <label class="custom-control-label" for="radio{{ $loop->iteration }}_3">旷课</label>
+                      <label class="custom-control-label" for="radio{{ $loop->iteration }}_3">补课</label>
                     </div>
                   </div>
                 </div>
@@ -195,6 +195,33 @@
                       <option value='1' selected>1 课时</option>
                       <option value='2'>2 课时</option>
                       <option value='3'>3 课时</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="row" id="participant_secondary_{{ $loop->iteration }}" style="display:none;">
+                <div class="col-2 text-right">
+                  <label class="form-control-label"><span style="color:red">*</span>补课日期</label>
+                </div>
+                <div class="col-4 px-2 mb-2">
+                  <div class="form-group mb-1">
+                    <input class="form-control form-control-sm datepicker" type="text" name="input_student_date_{{ $loop->iteration }}" value="{{ date('Y-m-d') }}" required>
+                  </div>
+                </div>
+                <div class="col-2 text-right">
+                  <label class="form-control-label"><span style="color:red">*</span>补课时间</label>
+                </div>
+                <div class="col-4 px-2 mb-2">
+                  <div class="form-group mb-1">
+                    <select class="form-control form-control-sm" name="input_student_time_{{ $loop->iteration }}" data-toggle="selectNoFilter" required>
+                      <option value='07:30' selected>07:30 - 09:00</option>
+                      <option value='09:00'>09:00 - 10:30</option>
+                      <option value='10:30'>10:30 - 12:00</option>
+                      <option value='13:00'>13:00 - 14:30</option>
+                      <option value='14:30'>14:30 - 16:00</option>
+                      <option value='16:00'>16:00 - 17:30</option>
+                      <option value='18:00'>18:00 - 19:30</option>
+                      <option value='19:30'>19:30 - 21:00</option>
                     </select>
                   </div>
                 </div>
@@ -233,6 +260,11 @@
     }else{
       $("#input_student_course_"+a).removeAttr("disabled");
       $("#input_student_amount_"+a).removeAttr("disabled");
+    }
+    if($("input[name='input_student_status_"+a+"']:checked").val()==3){
+      $("#participant_secondary_"+a).css('display','flex');
+    }else{
+      $("#participant_secondary_"+a).css('display','none');
     }
   }
 </script>
