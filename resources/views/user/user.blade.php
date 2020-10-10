@@ -124,9 +124,12 @@
                                         @elseif($participant['participant_attend_status']==2)
                                           <span class="text-warning">●</span>
                                           <small>请假</small>
+                                        @elseif($participant['participant_attend_status']==3)
+                                          <span class="text-info">●</span>
+                                          <small>补课 | {{ $participant['course_name'] }} [ {{ $participant['participant_amount'] }} 课时 ] | {{ date('m-d', strtotime($participant['participant_secondary_date'])) }} {{ date('H:i', strtotime($participant['participant_secondary_start'])) }}</small>
                                         @else
                                           <span class="text-danger">●</span>
-                                          <small>补课 | {{ $participant['course_name'] }} [ {{ $participant['participant_amount'] }} 课时 ] | {{ date('m-d', strtotime($participant['participant_secondary_date'])) }} {{ date('H:i', strtotime($participant['participant_secondary_start'])) }}</small>
+                                          <small>旷课 | {{ $participant['course_name'] }} [ {{ $participant['participant_amount'] }} 课时 ]</small>
                                         @endif
                                       </div>
                                       <div class="col-auto">

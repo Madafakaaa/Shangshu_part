@@ -141,8 +141,10 @@
                         <span class="text-success">正常</span>
                       @elseif($lesson['participant_attend_status']==2)
                         <span class="text-warning">请假</span>
+                      @elseif($lesson['participant_attend_status']==3)
+                        <span class="text-info">补课</span>
                       @else
-                        <span class="text-danger">补课</span>
+                        <span class="text-danger">旷课</span>
                       @endif
                     </td>
                     <td>

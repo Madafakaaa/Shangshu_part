@@ -178,6 +178,10 @@ class LessonController extends Controller
                 DB::table('lesson')
                   ->where('lesson_id', $lesson_id)
                   ->delete();
+                // 删除上课成员信息 ？？
+                DB::table('participant')
+                  ->where('participant_lesson', $lesson_id)
+                  ->delete();
                 // 更新班级上课记录数量
                 DB::table('class')
                   ->where('class_id', $lesson->lesson_class)

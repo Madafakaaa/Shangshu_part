@@ -133,7 +133,7 @@
                 <div class="col-2 text-right">
                   <label class="form-control-label">学生 {{ $loop->iteration }}</label>
                 </div>
-                <div class="col-4 px-2 mb-2">
+                <div class="col-3 px-2 mb-2">
                   <div class="form-group mb-1">
                     <label>
                       <a href="/student?id={{encode($member[0]->student_id,'student_id')}}">{{ $member[0]->student_name }}</a> <small>[ {{ $member[0]->student_id }} ]</small>
@@ -149,11 +149,11 @@
                 <div class="col-2 text-right">
                   <label class="form-control-label">
                     <span style="color:red">*</span>
-                    <span class="btn-inner--icon" data-toggle="tooltip" data-original-title="正常和补课扣除课时，请假不扣除课时。"><i class="fas fa-question-circle"></i></span>
+                    <span class="btn-inner--icon" data-toggle="tooltip" data-original-title="正常、补课、旷课扣除学生课时，请假不扣学生除课时。正常、补课计入上课人数，请假、旷课不计入上课人数。"><i class="fas fa-question-circle"></i></span>
                     点名
                   </label>
                 </div>
-                <div class="col-4 px-2 mb-2">
+                <div class="col-5 px-2 mb-2">
                   <div class="form-group mb-1">
                     <div class="custom-control custom-radio custom-control-inline ml-2 mr-4">
                       <input type="radio" id="radio{{ $loop->iteration }}_1" name="input_student_status_{{ $loop->iteration }}"  class="custom-control-input" value="1" checked onchange="disableInput({{ $loop->iteration }});">
@@ -167,6 +167,10 @@
                       <input type="radio" id="radio{{ $loop->iteration }}_3" name="input_student_status_{{ $loop->iteration }}" class="custom-control-input" value="3" onchange="disableInput({{ $loop->iteration }});">
                       <label class="custom-control-label" for="radio{{ $loop->iteration }}_3">补课</label>
                     </div>
+                    <div class="custom-control custom-radio custom-control-inline ml-2 mr-4">
+                      <input type="radio" id="radio{{ $loop->iteration }}_4" name="input_student_status_{{ $loop->iteration }}" class="custom-control-input" value="4" onchange="disableInput({{ $loop->iteration }});">
+                      <label class="custom-control-label" for="radio{{ $loop->iteration }}_4">旷课</label>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -174,7 +178,7 @@
                 <div class="col-2 text-right">
                   <label class="form-control-label"><span style="color:red">*</span>扣除课程</label>
                 </div>
-                <div class="col-4 px-2 mb-2">
+                <div class="col-3 px-2 mb-2">
                   <div class="form-group mb-1">
                     <select class="form-control form-control-sm" name="input_student_course_{{ $loop->iteration }}" id="input_student_course_{{ $loop->iteration }}" data-toggle="select" required>
                       <option value=''>选择扣除课程...</option>
@@ -189,7 +193,7 @@
                 <div class="col-2 text-right">
                   <label class="form-control-label"><span style="color:red">*</span>扣除课时</label>
                 </div>
-                <div class="col-4 px-2 mb-2">
+                <div class="col-3 px-2 mb-2">
                   <div class="form-group mb-1">
                     <select class="form-control form-control-sm" name="input_student_amount_{{ $loop->iteration }}" id="input_student_amount_{{ $loop->iteration }}" required data-toggle="selectNoFilter">
                       <option value='1' selected>1 课时</option>
@@ -203,7 +207,7 @@
                 <div class="col-2 text-right">
                   <label class="form-control-label"><span style="color:red">*</span>补课日期</label>
                 </div>
-                <div class="col-4 px-2 mb-2">
+                <div class="col-3 px-2 mb-2">
                   <div class="form-group mb-1">
                     <input class="form-control form-control-sm datepicker" type="text" name="input_student_date_{{ $loop->iteration }}" value="{{ date('Y-m-d') }}" required>
                   </div>
@@ -211,7 +215,7 @@
                 <div class="col-2 text-right">
                   <label class="form-control-label"><span style="color:red">*</span>补课时间</label>
                 </div>
-                <div class="col-4 px-2 mb-2">
+                <div class="col-3 px-2 mb-2">
                   <div class="form-group mb-1">
                     <select class="form-control form-control-sm" name="input_student_time_{{ $loop->iteration }}" data-toggle="selectNoFilter" required>
                       <option value='07:30' selected>07:30 - 09:00</option>

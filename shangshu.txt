@@ -270,7 +270,7 @@ CREATE TABLE `participant` (
   `participant_id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '上课成员记录id',
   `participant_lesson` int(10) unsigned NOT NULL COMMENT '课程安排id',
   `participant_student` char(10) NOT NULL COMMENT '学生成员id',
-  `participant_attend_status` int(10) unsigned NOT NULL DEFAULT '1' COMMENT '学生考勤状态(1：正常，2：请假，3：旷课)',
+  `participant_attend_status` int(10) unsigned NOT NULL DEFAULT '1' COMMENT '学生考勤状态(1：正常，2：请假，3：补课，4：旷课)',
   `participant_course` int(10) unsigned NOT NULL COMMENT '扣除课程id',
   `participant_amount` int(10) unsigned NOT NULL COMMENT '扣除课程课时数量',
   `participant_secondary_date` date COMMENT '上课/补课日期',
