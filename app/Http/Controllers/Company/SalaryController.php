@@ -25,14 +25,38 @@ class SalaryController extends Controller
         }
         // 获取数据
         $salaries = DB::table('salary')
+                      ->select('salary_month')
+                      ->groupBy('salary_month')
+                      ->orderBy('salary_month', 'desc')
+                      ->get();
+        // 返回列表视图
+        return view('/company/salary/salary', ['salaries' => $salaries]);
+    }
+
+    /**
+     * 课程设置
+     * URL: GET /company/course
+     */
+    public function salaryMonth(Request $request){
+        // 检查登录状态
+        if(!Session::has('login')){
+            return loginExpired(); // 未登录，返回登陆视图
+        }
+        // 检测用户权限
+        if(!in_array("/company/salary", Session::get('user_accesses'))){
+           return back()->with(['notify' => true,'type' => 'danger','title' => '您的账户没有访问权限']);
+        }
+        $month = $request->input('month');
+        // 获取数据
+        $salaries = DB::table('salary')
                       ->join('user', 'salary.salary_user', '=', 'user.user_id')
                       ->join('department', 'user.user_department', '=', 'department.department_id')
-                      ->orderBy('salary_month', 'desc')
+                      ->where('salary_month', $month)
                       ->orderBy('user_teacher_type', 'asc')
                       ->orderBy('user_department', 'asc')
                       ->get();
         // 返回列表视图
-        return view('/company/salary/salary', ['salaries' => $salaries]);
+        return view('/company/salary/salaryMonth', ['salaries' => $salaries, 'month' => $month]);
     }
 
     /**
