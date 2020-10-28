@@ -100,6 +100,8 @@ Route::get('/home', 'HomeController@home');
         Route::get('/company/salary', 'Company\SalaryController@salary');
         // 查看员工工资详情 √
         Route::get('/company/salary/month', 'Company\SalaryController@salaryMonth');
+        // 查看员工课时详情 √
+        Route::get('/company/salary/month/lesson', 'Company\SalaryController@salaryMonthLesson');
         // 结算工资 √
         Route::get('/company/salary/create', 'Company\SalaryController@salaryCreate');
         // 结算工资2-工资信息

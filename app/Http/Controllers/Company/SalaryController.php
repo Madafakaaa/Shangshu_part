@@ -46,17 +46,198 @@ class SalaryController extends Controller
         if(!in_array("/company/salary", Session::get('user_accesses'))){
            return back()->with(['notify' => true,'type' => 'danger','title' => '您的账户没有访问权限']);
         }
+        // 获取用户校区权限
+        $department_access = Session::get('department_access');
+        // 获取月份
         $month = $request->input('month');
-        // 获取数据
-        $salaries = DB::table('salary')
-                      ->join('user', 'salary.salary_user', '=', 'user.user_id')
-                      ->join('department', 'user.user_department', '=', 'department.department_id')
-                      ->where('salary_month', $month)
-                      ->orderBy('user_teacher_type', 'asc')
-                      ->orderBy('user_department', 'asc')
-                      ->get();
+        // 搜索条件
+        $filters = array("filter_department" => null);
+        // 校区
+        if ($request->filled('filter_department')) {
+            $filters['filter_department']=$request->input("filter_department");
+        }
+        $salaries = array();
+        if(!isset($filters['filter_department'])){
+            // 获取工资
+            $db_salaries = DB::table('salary')
+                          ->join('user', 'salary.salary_user', '=', 'user.user_id')
+                          ->join('department', 'user.user_department', '=', 'department.department_id')
+                          ->where('salary_month', $month)
+                          ->whereIn('user_department', $department_access)
+                          ->orderBy('user_teacher_type', 'asc')
+                          ->orderBy('user_department', 'asc')
+                          ->get();
+            foreach($db_salaries as $db_salary){
+                $temp = array();
+                $temp['salary_month'] = $db_salary->salary_month;
+                $temp['department_name'] = $db_salary->department_name;
+                $temp['user_id'] = $db_salary->user_id;
+                $temp['user_name'] = $db_salary->user_name;
+                $temp['salary_basic'] = $db_salary->salary_basic;
+                $temp['salary_housing'] = $db_salary->salary_housing;
+                $temp['salary_lesson'] = $db_salary->salary_lesson;
+                $temp['salary_performance'] = $db_salary->salary_performance;
+                $temp['salary_commission'] = $db_salary->salary_commission;
+                $temp['salary_total'] = $db_salary->salary_total;
+                $temp['salary_pension'] = $db_salary->salary_pension;
+                $temp['salary_medical'] = $db_salary->salary_medical;
+                $temp['salary_unemployment'] = $db_salary->salary_unemployment;
+                $temp['salary_provident'] = $db_salary->salary_provident;
+                $temp['salary_children'] = $db_salary->salary_children;
+                $temp['salary_elderly'] = $db_salary->salary_elderly;
+                $temp['salary_penalty'] = $db_salary->salary_penalty;
+                $temp['salary_tax'] = $db_salary->salary_tax;
+                $temp['salary_actual_total'] = $db_salary->salary_actual_total;
+                $salaries[] = $temp;
+            }
+            // 获取工资
+            $db_salaries = DB::table('salary_commission')
+                            ->join('user', 'salary_commission.salary_commission_user', '=', 'user.user_id')
+                            ->join('department', 'user.user_department', '=', 'department.department_id')
+                            ->where('salary_commission_month', $month)
+                            ->whereNotIn('user_department', $department_access)
+                            ->whereIn('salary_commission_department', $department_access)
+                            ->orderBy('user_teacher_type', 'asc')
+                            ->orderBy('user_department', 'asc')
+                            ->get();
+            foreach($db_salaries as $db_salary){
+                $temp = array();
+                $temp['salary_month'] = $db_salary->salary_commission_month;
+                $temp['department_name'] = $db_salary->department_name;
+                $temp['user_id'] = $db_salary->user_id;
+                $temp['user_name'] = $db_salary->user_name;
+                $temp['salary_basic'] = 0;
+                $temp['salary_housing'] = 0;
+                $temp['salary_lesson'] = $db_salary->salary_commission_commission;
+                $temp['salary_performance'] = 0;
+                $temp['salary_commission'] = 0;
+                $temp['salary_total'] = $db_salary->salary_commission_commission;
+                $temp['salary_pension'] = 0;
+                $temp['salary_medical'] = 0;
+                $temp['salary_unemployment'] = 0;
+                $temp['salary_provident'] = 0;
+                $temp['salary_children'] = 0;
+                $temp['salary_elderly'] = 0;
+                $temp['salary_penalty'] = 0;
+                $temp['salary_tax'] = 0;
+                $temp['salary_actual_total'] = $db_salary->salary_commission_commission;
+                $salaries[] = $temp;
+            }
+        }else{
+            // 获取工资
+            $db_salaries = DB::table('salary')
+                          ->join('user', 'salary.salary_user', '=', 'user.user_id')
+                          ->join('department', 'user.user_department', '=', 'department.department_id')
+                          ->where('salary_month', $month)
+                          ->where('user_department', $request->input("filter_department"))
+                          ->orderBy('user_teacher_type', 'asc')
+                          ->orderBy('user_department', 'asc')
+                          ->get();
+            foreach($db_salaries as $db_salary){
+                $temp = array();
+                $temp['salary_month'] = $db_salary->salary_month;
+                $temp['department_name'] = $db_salary->department_name;
+                $temp['user_id'] = $db_salary->user_id;
+                $temp['user_name'] = $db_salary->user_name;
+                $temp['salary_basic'] = $db_salary->salary_basic;
+                $temp['salary_housing'] = $db_salary->salary_housing;
+                $temp['salary_lesson'] = $db_salary->salary_lesson;
+                $temp['salary_performance'] = $db_salary->salary_performance;
+                $temp['salary_commission'] = $db_salary->salary_commission;
+                $temp['salary_total'] = $db_salary->salary_total;
+                $temp['salary_pension'] = $db_salary->salary_pension;
+                $temp['salary_medical'] = $db_salary->salary_medical;
+                $temp['salary_unemployment'] = $db_salary->salary_unemployment;
+                $temp['salary_provident'] = $db_salary->salary_provident;
+                $temp['salary_children'] = $db_salary->salary_children;
+                $temp['salary_elderly'] = $db_salary->salary_elderly;
+                $temp['salary_penalty'] = $db_salary->salary_penalty;
+                $temp['salary_tax'] = $db_salary->salary_tax;
+                $temp['salary_actual_total'] = $db_salary->salary_actual_total;
+                $salaries[] = $temp;
+            }
+            // 获取工资
+            $db_salaries = DB::table('salary_commission')
+                            ->join('user', 'salary_commission.salary_commission_user', '=', 'user.user_id')
+                            ->join('department', 'user.user_department', '=', 'department.department_id')
+                            ->where('salary_commission_month', $month)
+                            ->where('user_department', '!=', $request->input("filter_department"))
+                            ->where('salary_commission_department', $request->input("filter_department"))
+                            ->orderBy('user_teacher_type', 'asc')
+                            ->orderBy('user_department', 'asc')
+                            ->get();
+            foreach($db_salaries as $db_salary){
+                $temp = array();
+                $temp['salary_month'] = $db_salary->salary_commission_month;
+                $temp['department_name'] = $db_salary->department_name;
+                $temp['user_id'] = $db_salary->user_id;
+                $temp['user_name'] = $db_salary->user_name;
+                $temp['salary_basic'] = 0;
+                $temp['salary_housing'] = 0;
+                $temp['salary_lesson'] = $db_salary->salary_commission_commission;
+                $temp['salary_performance'] = 0;
+                $temp['salary_commission'] = 0;
+                $temp['salary_total'] = $db_salary->salary_commission_commission;
+                $temp['salary_pension'] = 0;
+                $temp['salary_medical'] = 0;
+                $temp['salary_unemployment'] = 0;
+                $temp['salary_provident'] = 0;
+                $temp['salary_children'] = 0;
+                $temp['salary_elderly'] = 0;
+                $temp['salary_penalty'] = 0;
+                $temp['salary_tax'] = 0;
+                $temp['salary_actual_total'] = $db_salary->salary_commission_commission;
+                $salaries[] = $temp;
+            }
+
+        }
+        // 筛选条件
+        $filter_departments = DB::table('department')->where('department_is_available', 1)->whereIn('department_id', $department_access)->orderBy('department_id', 'asc')->get();
         // 返回列表视图
-        return view('/company/salary/salaryMonth', ['salaries' => $salaries, 'month' => $month]);
+        return view('/company/salary/salaryMonth', ['salaries' => $salaries,
+                                                    'month' => $month,
+                                                    'filters' => $filters,
+                                                    'filter_departments' => $filter_departments]);
+    }
+
+    /**
+     * 课程设置
+     * URL: GET /company/course
+     */
+    public function salaryMonthLesson(Request $request){
+        // 检查登录状态
+        if(!Session::has('login')){
+            return loginExpired(); // 未登录，返回登陆视图
+        }
+        // 获取用户校区权限
+        $department_access = Session::get('department_access');
+        // 获取月份
+        $month = $request->input('month');
+        // 获取用户
+        $user_id = $request->input('user_id');
+        // 获取上课记录
+        $db_lessons = DB::table('lesson')
+                        ->join('user', 'lesson.lesson_teacher', '=', 'user.user_id')
+                        ->join('class', 'lesson.lesson_class', '=', 'class.class_id')
+                        ->join('department', 'class.class_department', '=', 'department.department_id')
+                        ->join('grade', 'class.class_grade', '=', 'grade.grade_id')
+                        ->join('subject', 'class.class_subject', '=', 'subject.subject_id')
+                        ->where('lesson_teacher', $user_id)
+                        ->where('lesson_date', 'like', $month.'%')
+                        ->orderBy('department_id', 'asc')
+                        ->orderBy('lesson_date', 'asc')
+                        ->get();
+        // 获取上课记录统计
+        $summary_lessons = DB::table('lesson')
+                              ->join('class', 'lesson.lesson_class', '=', 'class.class_id')
+                              ->join('department', 'class.class_department', '=', 'department.department_id')
+                              ->select(DB::raw('count(*) as count_lesson, sum(lesson_teacher_fee) as sum_lesson_teacher_fee, department_name'))
+                              ->where('lesson_teacher', $user_id)
+                              ->where('lesson_date', 'like', $month.'%')
+                              ->groupBy('class_department')
+                              ->get();
+        // 返回列表视图
+        return view('/company/salary/salaryMonthLesson', ['month' => $month, 'db_lessons' => $db_lessons, 'summary_lessons' => $summary_lessons]);
     }
 
     /**
@@ -249,6 +430,9 @@ class SalaryController extends Controller
         DB::beginTransaction();
         try{
            // 删除已有工资单
+           DB::table('salary_commission')
+             ->where('salary_commission_month', $salary_month)
+             ->delete();
            DB::table('salary')
              ->where('salary_month', $salary_month)
              ->delete();
@@ -292,6 +476,21 @@ class SalaryController extends Controller
                      'salary_method' => $salary_method,
                      'salary_create_user' => Session::get('user_id')]
                );
+               $temp_lessons = DB::table('lesson')
+                                 ->join('class', 'lesson.lesson_class', '=', 'class.class_id')
+                                 ->select(DB::raw('class_department, sum(lesson_teacher_fee) as salary_commission_commission'))
+                                 ->where('lesson_teacher', $salary_user)
+                                 ->where('lesson_date', 'like', $salary_month."%")
+                                 ->groupBy('class_department')
+                                 ->get();
+               foreach($temp_lessons as $temp_lesson){
+                   DB::table('salary_commission')->insert(
+                        ['salary_commission_user' => $salary_user,
+                         'salary_commission_month' => $salary_month,
+                         'salary_commission_department' => $temp_lesson->class_department,
+                         'salary_commission_commission' => $temp_lesson->salary_commission_commission]
+                   );
+               }
            }
         }
         // 捕获异常

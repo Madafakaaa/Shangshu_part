@@ -443,6 +443,18 @@ CREATE TABLE `salary` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
+-- Table structure for `salary_commission`
+-- ----------------------------
+DROP TABLE IF EXISTS `salary_commission`;
+CREATE TABLE `salary_commission` (
+  `salary_commission_user` char(8) NOT NULL COMMENT '课时费用户',
+  `salary_commission_month` varchar(10) NOT NULL COMMENT '课时费月份',
+  `salary_commission_department` int(10) unsigned NOT NULL COMMENT '课时费所在校区',
+  `salary_commission_commission` decimal(10,2) unsigned NOT NULL DEFAULT 0 COMMENT '课时费金额',
+  PRIMARY KEY (`salary_commission_user`, `salary_commission_month`, `salary_commission_department`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
 -- Table structure for `hour_refund`
 -- ----------------------------
 DROP TABLE IF EXISTS `hour_refund`;
