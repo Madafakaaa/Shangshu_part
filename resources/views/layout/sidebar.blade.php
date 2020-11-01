@@ -296,11 +296,19 @@
           </a>
           <div class="collapse" id="navbar-statistic">
             <ul class="nav nav-sm flex-column">
+              @if(in_array("/statistic/statistic", Session::get('user_accesses')))
+                <li class="nav-item">
+                  <a href="/statistic/statistic" class="nav-link" id="statisticStatistic">
+                    <i class="ni ni-money-coins text-gray-dark"></i>
+                    <span class="nav-link-text">综合统计</span>
+                  </a>
+                </li>
+              @endif
               @if(in_array("/statistic/income", Session::get('user_accesses')))
                 <li class="nav-item">
                   <a href="/statistic/income" class="nav-link" id="statisticIncome">
                     <i class="ni ni-money-coins text-gray-dark"></i>
-                    <span class="nav-link-text">收入支出</span>
+                    <span class="nav-link-text">收入统计</span>
                   </a>
                 </li>
               @endif
@@ -312,12 +320,14 @@
                   </a>
                 </li>
               @endif
+              @if(in_array("/statistic/daycare", Session::get('user_accesses')))
                 <li class="nav-item">
                   <a href="/statistic/daycare" class="nav-link" id="statisticDaycare">
                     <i class="fa fa-minus-square text-gray-dark"></i>
                     <span class="nav-link-text">晚托消耗</span>
                   </a>
                 </li>
+              @endif
               @if(in_array("/statistic/hour", Session::get('user_accesses')))
                 <li class="nav-item">
                   <a href="/statistic/hour" class="nav-link" id="statisticHour">

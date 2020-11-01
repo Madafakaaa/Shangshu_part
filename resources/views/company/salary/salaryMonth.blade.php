@@ -26,7 +26,7 @@
                 <thead class="thead-light">
                   <tr>
                     <th rowspan="2" style='width:45px;'><strong>月份</strong></th>
-                    <th rowspan="2" style='width:80px;'><strong>员工</strong></th>
+                    <th rowspan="2" style='width:60px;'><strong>员工</strong></th>
                     <th rowspan="2" style='width:45px;'><strong>基本</strong></th>
                     <th rowspan="2" style='width:45px;'><strong>住房</strong></th>
                     <th rowspan="2" style='width:50px;'><strong>课时</strong></th>
@@ -52,7 +52,7 @@
                   @foreach ($salaries as $salary)
                   <tr>
                     <td style="font-size: 0.8rem">{{ date('y-m', strtotime($salary['salary_month'])) }}</td>
-                    <td style="font-size: 0.8rem">[ {{ $salary['department_name'] }} ] {{ $salary['user_name'] }}</td>
+                    <td style="font-size: 0.8rem">{{ $salary['user_name'] }}</td>
                     <!-- 基本 -->
                     @if($salary['salary_basic']!=0)
                       <td class="text-right" style="font-size: 0.8rem">{{ floatval($salary['salary_basic']) }}</td>

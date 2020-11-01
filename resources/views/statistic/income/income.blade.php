@@ -1,12 +1,12 @@
 @extends('main')
 
 @section('nav')
-<h2 class="text-white d-inline-block mb-0">收入支出</h2>
+<h2 class="text-white d-inline-block mb-0">收入统计</h2>
 <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
   <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
     <li class="breadcrumb-item"><a href="/home"><i class="fas fa-home"></i></a></li>
     <li class="breadcrumb-item active">统计中心</li>
-    <li class="breadcrumb-item active">收入支出</li>
+    <li class="breadcrumb-item active">收入统计</li>
   </ol>
 </nav>
 @endsection

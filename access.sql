@@ -181,12 +181,18 @@ CREATE TABLE `access` (
 	
 	
 -- 统计中心 --
+	-- 综合统计 --
+	INSERT INTO `access`(access_category, access_page, access_feature, access_controller, access_function, access_url) 
+	VALUES ('统计中心', '综合统计', '查看', 'Statistic\StatisticController', 'statistic', '/statistic/statistic');
 	-- 收入支出 --
 	INSERT INTO `access`(access_category, access_page, access_feature, access_controller, access_function, access_url) 
-	VALUES ('统计中心', '收入支出', '查看', 'Statistic\IncomeController', 'income', '/statistic/income');
+	VALUES ('统计中心', '收入统计', '查看', 'Statistic\IncomeController', 'income', '/statistic/income');
 	-- 课消统计 --
 	INSERT INTO `access`(access_category, access_page, access_feature, access_controller, access_function, access_url) 
 	VALUES ('统计中心', '课消统计', '查看', 'Statistic\ConsumptionController', 'income', '/statistic/consumption');
+	-- 晚托消耗 --
+	INSERT INTO `access`(access_category, access_page, access_feature, access_controller, access_function, access_url) 
+	VALUES ('统计中心', '晚托消耗', '查看', 'Statistic\DaycareController', 'daycare', '/statistic/daycare');
 	-- 剩余课时 --
 	INSERT INTO `access`(access_category, access_page, access_feature, access_controller, access_function, access_url) 
 	VALUES ('统计中心', '剩余课时', '查看', 'Statistic\HourController', 'income', '/statistic/hour');

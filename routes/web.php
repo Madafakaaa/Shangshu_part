@@ -303,6 +303,9 @@ Route::get('/home', 'HomeController@home');
 
 
 // 统计中心 ********************************************************************************
+    // 综合统计
+        // 查看综合统计 √
+        Route::get('/statistic/statistic', 'Statistic\StatisticController@statistic');
     // 收入统计
         // 查看收入统计 √
         Route::get('/statistic/income', 'Statistic\IncomeController@income');

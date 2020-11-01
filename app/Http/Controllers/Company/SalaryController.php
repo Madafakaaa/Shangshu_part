@@ -57,139 +57,41 @@ class SalaryController extends Controller
             $filters['filter_department']=$request->input("filter_department");
         }
         $salaries = array();
-        if(!isset($filters['filter_department'])){
-            // 获取工资
-            $db_salaries = DB::table('salary')
-                          ->join('user', 'salary.salary_user', '=', 'user.user_id')
-                          ->join('department', 'user.user_department', '=', 'department.department_id')
-                          ->where('salary_month', $month)
-                          ->whereIn('user_department', $department_access)
-                          ->orderBy('user_teacher_type', 'asc')
-                          ->orderBy('user_department', 'asc')
-                          ->get();
-            foreach($db_salaries as $db_salary){
-                $temp = array();
-                $temp['salary_month'] = $db_salary->salary_month;
-                $temp['department_name'] = $db_salary->department_name;
-                $temp['user_id'] = $db_salary->user_id;
-                $temp['user_name'] = $db_salary->user_name;
-                $temp['salary_basic'] = $db_salary->salary_basic;
-                $temp['salary_housing'] = $db_salary->salary_housing;
-                $temp['salary_lesson'] = $db_salary->salary_lesson;
-                $temp['salary_performance'] = $db_salary->salary_performance;
-                $temp['salary_commission'] = $db_salary->salary_commission;
-                $temp['salary_total'] = $db_salary->salary_total;
-                $temp['salary_pension'] = $db_salary->salary_pension;
-                $temp['salary_medical'] = $db_salary->salary_medical;
-                $temp['salary_unemployment'] = $db_salary->salary_unemployment;
-                $temp['salary_provident'] = $db_salary->salary_provident;
-                $temp['salary_children'] = $db_salary->salary_children;
-                $temp['salary_elderly'] = $db_salary->salary_elderly;
-                $temp['salary_penalty'] = $db_salary->salary_penalty;
-                $temp['salary_tax'] = $db_salary->salary_tax;
-                $temp['salary_actual_total'] = $db_salary->salary_actual_total;
-                $salaries[] = $temp;
-            }
-            // 获取工资
-            $db_salaries = DB::table('salary_commission')
-                            ->join('user', 'salary_commission.salary_commission_user', '=', 'user.user_id')
-                            ->join('department', 'user.user_department', '=', 'department.department_id')
-                            ->where('salary_commission_month', $month)
-                            ->whereNotIn('user_department', $department_access)
-                            ->whereIn('salary_commission_department', $department_access)
-                            ->orderBy('user_teacher_type', 'asc')
-                            ->orderBy('user_department', 'asc')
-                            ->get();
-            foreach($db_salaries as $db_salary){
-                $temp = array();
-                $temp['salary_month'] = $db_salary->salary_commission_month;
-                $temp['department_name'] = $db_salary->department_name;
-                $temp['user_id'] = $db_salary->user_id;
-                $temp['user_name'] = $db_salary->user_name;
-                $temp['salary_basic'] = 0;
-                $temp['salary_housing'] = 0;
-                $temp['salary_lesson'] = $db_salary->salary_commission_commission;
-                $temp['salary_performance'] = 0;
-                $temp['salary_commission'] = 0;
-                $temp['salary_total'] = $db_salary->salary_commission_commission;
-                $temp['salary_pension'] = 0;
-                $temp['salary_medical'] = 0;
-                $temp['salary_unemployment'] = 0;
-                $temp['salary_provident'] = 0;
-                $temp['salary_children'] = 0;
-                $temp['salary_elderly'] = 0;
-                $temp['salary_penalty'] = 0;
-                $temp['salary_tax'] = 0;
-                $temp['salary_actual_total'] = $db_salary->salary_commission_commission;
-                $salaries[] = $temp;
-            }
-        }else{
-            // 获取工资
-            $db_salaries = DB::table('salary')
-                          ->join('user', 'salary.salary_user', '=', 'user.user_id')
-                          ->join('department', 'user.user_department', '=', 'department.department_id')
-                          ->where('salary_month', $month)
-                          ->where('user_department', $request->input("filter_department"))
-                          ->orderBy('user_teacher_type', 'asc')
-                          ->orderBy('user_department', 'asc')
-                          ->get();
-            foreach($db_salaries as $db_salary){
-                $temp = array();
-                $temp['salary_month'] = $db_salary->salary_month;
-                $temp['department_name'] = $db_salary->department_name;
-                $temp['user_id'] = $db_salary->user_id;
-                $temp['user_name'] = $db_salary->user_name;
-                $temp['salary_basic'] = $db_salary->salary_basic;
-                $temp['salary_housing'] = $db_salary->salary_housing;
-                $temp['salary_lesson'] = $db_salary->salary_lesson;
-                $temp['salary_performance'] = $db_salary->salary_performance;
-                $temp['salary_commission'] = $db_salary->salary_commission;
-                $temp['salary_total'] = $db_salary->salary_total;
-                $temp['salary_pension'] = $db_salary->salary_pension;
-                $temp['salary_medical'] = $db_salary->salary_medical;
-                $temp['salary_unemployment'] = $db_salary->salary_unemployment;
-                $temp['salary_provident'] = $db_salary->salary_provident;
-                $temp['salary_children'] = $db_salary->salary_children;
-                $temp['salary_elderly'] = $db_salary->salary_elderly;
-                $temp['salary_penalty'] = $db_salary->salary_penalty;
-                $temp['salary_tax'] = $db_salary->salary_tax;
-                $temp['salary_actual_total'] = $db_salary->salary_actual_total;
-                $salaries[] = $temp;
-            }
-            // 获取工资
-            $db_salaries = DB::table('salary_commission')
-                            ->join('user', 'salary_commission.salary_commission_user', '=', 'user.user_id')
-                            ->join('department', 'user.user_department', '=', 'department.department_id')
-                            ->where('salary_commission_month', $month)
-                            ->where('user_department', '!=', $request->input("filter_department"))
-                            ->where('salary_commission_department', $request->input("filter_department"))
-                            ->orderBy('user_teacher_type', 'asc')
-                            ->orderBy('user_department', 'asc')
-                            ->get();
-            foreach($db_salaries as $db_salary){
-                $temp = array();
-                $temp['salary_month'] = $db_salary->salary_commission_month;
-                $temp['department_name'] = $db_salary->department_name;
-                $temp['user_id'] = $db_salary->user_id;
-                $temp['user_name'] = $db_salary->user_name;
-                $temp['salary_basic'] = 0;
-                $temp['salary_housing'] = 0;
-                $temp['salary_lesson'] = $db_salary->salary_commission_commission;
-                $temp['salary_performance'] = 0;
-                $temp['salary_commission'] = 0;
-                $temp['salary_total'] = $db_salary->salary_commission_commission;
-                $temp['salary_pension'] = 0;
-                $temp['salary_medical'] = 0;
-                $temp['salary_unemployment'] = 0;
-                $temp['salary_provident'] = 0;
-                $temp['salary_children'] = 0;
-                $temp['salary_elderly'] = 0;
-                $temp['salary_penalty'] = 0;
-                $temp['salary_tax'] = 0;
-                $temp['salary_actual_total'] = $db_salary->salary_commission_commission;
-                $salaries[] = $temp;
-            }
-
+        // 获取工资
+        $db_salaries = DB::table('salary')
+                      ->join('user', 'salary.salary_user', '=', 'user.user_id')
+                      ->join('department', 'user.user_department', '=', 'department.department_id')
+                      ->where('salary_month', $month)
+                      ->whereIn('user_department', $department_access);
+        // 筛选校区
+        if ($request->filled('filter_department')) {
+             $db_salaries = $db_salaries->where('user_department', $request->input("filter_department"));
+        }
+        $db_salaries = $db_salaries->orderBy('user_department', 'asc')
+                                    ->orderBy('user_teacher_type', 'asc')
+                                    ->get();
+        foreach($db_salaries as $db_salary){
+            $temp = array();
+            $temp['salary_month'] = $db_salary->salary_month;
+            $temp['department_name'] = $db_salary->department_name;
+            $temp['user_id'] = $db_salary->user_id;
+            $temp['user_name'] = $db_salary->user_name;
+            $temp['salary_basic'] = $db_salary->salary_basic;
+            $temp['salary_housing'] = $db_salary->salary_housing;
+            $temp['salary_lesson'] = $db_salary->salary_lesson;
+            $temp['salary_performance'] = $db_salary->salary_performance;
+            $temp['salary_commission'] = $db_salary->salary_commission;
+            $temp['salary_total'] = $db_salary->salary_total;
+            $temp['salary_pension'] = $db_salary->salary_pension;
+            $temp['salary_medical'] = $db_salary->salary_medical;
+            $temp['salary_unemployment'] = $db_salary->salary_unemployment;
+            $temp['salary_provident'] = $db_salary->salary_provident;
+            $temp['salary_children'] = $db_salary->salary_children;
+            $temp['salary_elderly'] = $db_salary->salary_elderly;
+            $temp['salary_penalty'] = $db_salary->salary_penalty;
+            $temp['salary_tax'] = $db_salary->salary_tax;
+            $temp['salary_actual_total'] = $db_salary->salary_actual_total;
+            $salaries[] = $temp;
         }
         // 筛选条件
         $filter_departments = DB::table('department')->where('department_is_available', 1)->whereIn('department_id', $department_access)->orderBy('department_id', 'asc')->get();
