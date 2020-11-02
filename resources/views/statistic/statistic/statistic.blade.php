@@ -44,25 +44,24 @@
           <table class="table table-hover text-center table-bordered" id="table-1">
             <thead class="thead-light">
               <tr>
-                <th style='width:45px;'>序号</th>
                 <th style='width:80px;'>月份</th>
                 <th style='width:60px;'>校区</th>
                 <th style='width:90px;'>课时收入</th>
                 <th style='width:90px;'>晚托收入</th>
-                <th style='width:90px;'>合计收入</th>
-                <th style='width:90px;'>课时消耗</th>
+                <th style='width:100px;'>合计收入</th>
+                <th style='width:100px;'>课时消耗</th>
                 <th style='width:90px;'>晚托消耗</th>
-                <th style='width:90px;'>合计消耗</th>
-                <th style='width:90px;'>工资支出</th>
+                <th style='width:100px;'>合计消耗</th>
+                <th style='width:100px;'>工资支出</th>
                 <th style='width:90px;'>其它支出</th>
-                <th style='width:90px;'>合计支出</th>
-                <th style='width:110px;'>毛利润</th>
+                <th style='width:100px;'>合计支出</th>
+                <th style='width:100px;'>毛利润</th>
+                <th style='width:100px;'>纯利润</th>
               </tr>
             </thead>
             <tbody>
               @foreach ($departments as $department)
                 <tr>
-                  <td>{{ $loop->iteration }}</td>
                   <td>{{ $department['month'] }}</td>
                   <td>{{ $department['department_name'] }}</td>
                   <td>{{ $department['course_income'] }}</td>
@@ -74,11 +73,12 @@
                   <td>{{ $department['salary_expenditure'] }}</td>
                   <td>{{ $department['other_expenditure'] }}</td>
                   <td>{{ $department['expenditure'] }}</td>
-                  <td>{{ $department['profit'] }}</td>
+                  <td>{{ $department['gross_profit'] }}</td>
+                  <td>{{ $department['net_profit'] }}</td>
                 </tr>
               @endforeach
               <tr>
-                <td colspan="3"><strong>合计</strong></td>
+                <td colspan="2"><strong>合计</strong></td>
                 <td><strong>{{ $total['total_course_income'] }}</strong></td>
                 <td><strong>{{ $total['total_daycare_income'] }}</strong></td>
                 <td><strong>{{ $total['total_income'] }}</strong></td>
@@ -88,7 +88,8 @@
                 <td><strong>{{ $total['total_salary_expenditure'] }}</strong></td>
                 <td><strong>{{ $total['total_other_expenditure'] }}</strong></td>
                 <td><strong>{{ $total['total_expenditure'] }}</strong></td>
-                <td><strong>{{ $total['total_profit'] }}</strong></td>
+                <td><strong>{{ $total['total_gross_profit'] }}</strong></td>
+                <td><strong>{{ $total['total_net_profit'] }}</strong></td>
               </tr>
             </tbody>
           </table>

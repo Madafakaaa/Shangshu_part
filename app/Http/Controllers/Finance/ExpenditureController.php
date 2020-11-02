@@ -42,7 +42,11 @@ class ExpenditureController extends Controller
         if(!in_array("/finance/expenditure/create", Session::get('user_accesses'))){
            return back()->with(['notify' => true,'type' => 'danger','title' => '您的账户没有访问权限']);
         }
-        return view('finance/expenditure/expenditureCreate');
+        // 获取用户校区权限
+        $department_access = Session::get('department_access');
+        // 获取校区
+        $departments = DB::table('department')->where('department_is_available', 1)->whereIn('department_id', $department_access)->orderBy('department_id', 'asc')->get();
+        return view('finance/expenditure/expenditureCreate', ['departments' => $departments]);
     }
 
     public function expenditureStore(Request $request){
@@ -51,6 +55,7 @@ class ExpenditureController extends Controller
             return loginExpired(); // 未登录，返回登陆视图
         }
         // 获取表单输入
+        $expenditure_department = $request->input('expenditure_department');
         $expenditure_fee = $request->input('expenditure_fee');
         $expenditure_remark = $request->input('expenditure_remark');
         $expenditure_date = $request->input('expenditure_date');
@@ -61,7 +66,7 @@ class ExpenditureController extends Controller
                 ['expenditure_fee' => $expenditure_fee,
                  'expenditure_remark' => $expenditure_remark,
                  'expenditure_date' => $expenditure_date,
-                 'expenditure_department' => Session::get('user_department'),
+                 'expenditure_department' => $expenditure_department,
                  'expenditure_create_user' => Session::get('user_id')]
             );
         }

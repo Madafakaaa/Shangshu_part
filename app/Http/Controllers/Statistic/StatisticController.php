@@ -32,7 +32,8 @@ class StatisticController extends Controller
                         "total_salary_expenditure" => 0,
                         "total_other_expenditure" => 0,
                         "total_expenditure" => 0,
-                        "total_profit" => 0,
+                        "total_gross_profit" => 0,
+                        "total_net_profit" => 0,
                     );
         // 搜索条件
         $filters = array(
@@ -167,9 +168,12 @@ class StatisticController extends Controller
             // 合计支出
             $temp['expenditure'] = $temp['salary_expenditure'] + $temp['other_expenditure'];
             $total['total_expenditure'] += $temp['expenditure'];
-            // 毛利润（消耗-支出）
-            $temp['profit'] = $temp['consumption'] - $temp['expenditure'];
-            $total['total_profit'] += $temp['profit'];
+            // 纯利润（消耗-支出）
+            $temp['net_profit'] = $temp['consumption'] - $temp['expenditure'];
+            $total['total_net_profit'] += $temp['net_profit'];
+            // 毛利润（收入-支出）
+            $temp['gross_profit'] = $temp['income'] - $temp['expenditure'];
+            $total['total_gross_profit'] += $temp['gross_profit'];
             $departments[] = $temp;
         }
         // 返回列表视图
