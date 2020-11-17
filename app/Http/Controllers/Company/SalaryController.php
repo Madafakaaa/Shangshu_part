@@ -70,6 +70,22 @@ class SalaryController extends Controller
         $db_salaries = $db_salaries->orderBy('user_department', 'asc')
                                     ->orderBy('user_teacher_type', 'asc')
                                     ->get();
+        $total = array();
+        $total['salary_basic'] = 0;
+        $total['salary_housing'] = 0;
+        $total['salary_lesson'] = 0;
+        $total['salary_performance'] = 0;
+        $total['salary_commission'] = 0;
+        $total['salary_total'] = 0;
+        $total['salary_pension'] = 0;
+        $total['salary_medical'] = 0;
+        $total['salary_unemployment'] = 0;
+        $total['salary_provident'] = 0;
+        $total['salary_children'] = 0;
+        $total['salary_elderly'] = 0;
+        $total['salary_penalty'] = 0;
+        $total['salary_tax'] = 0;
+        $total['salary_actual_total'] = 0;
         foreach($db_salaries as $db_salary){
             $temp = array();
             $temp['salary_month'] = $db_salary->salary_month;
@@ -91,6 +107,23 @@ class SalaryController extends Controller
             $temp['salary_penalty'] = $db_salary->salary_penalty;
             $temp['salary_tax'] = $db_salary->salary_tax;
             $temp['salary_actual_total'] = $db_salary->salary_actual_total;
+
+            $total['salary_basic'] += $db_salary->salary_basic;
+            $total['salary_housing'] += $db_salary->salary_housing;
+            $total['salary_lesson'] += $db_salary->salary_lesson;
+            $total['salary_performance'] += $db_salary->salary_performance;
+            $total['salary_commission'] += $db_salary->salary_commission;
+            $total['salary_total'] += $db_salary->salary_total;
+            $total['salary_pension'] += $db_salary->salary_pension;
+            $total['salary_medical'] += $db_salary->salary_medical;
+            $total['salary_unemployment'] += $db_salary->salary_unemployment;
+            $total['salary_provident'] += $db_salary->salary_provident;
+            $total['salary_children'] += $db_salary->salary_children;
+            $total['salary_elderly'] += $db_salary->salary_elderly;
+            $total['salary_penalty'] += $db_salary->salary_penalty;
+            $total['salary_tax'] += $db_salary->salary_tax;
+            $total['salary_actual_total'] += $db_salary->salary_actual_total;
+
             $salaries[] = $temp;
         }
         // 筛选条件
@@ -98,6 +131,7 @@ class SalaryController extends Controller
         // 返回列表视图
         return view('/company/salary/salaryMonth', ['salaries' => $salaries,
                                                     'month' => $month,
+                                                    'total' => $total,
                                                     'filters' => $filters,
                                                     'filter_departments' => $filter_departments]);
     }

@@ -536,6 +536,14 @@ class ClassController extends Controller
                                         ->first()
                                         ->deduction_fee;
             }
+            // 如果为高二生物+50
+            if($class->class_subject==6&&$class->class_grade==11&&$lesson_attended_num!=0){
+                $lesson_teacher_fee += 50;
+            }
+            // 如果为高二地理+50
+            if($class->class_subject==8&&$class->class_grade==11&&$lesson_attended_num!=0){
+                $lesson_teacher_fee += 50;
+            }
             // 完善上课记录
             DB::table('lesson')
               ->where('lesson_id', $lesson_id)

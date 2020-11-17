@@ -139,6 +139,24 @@
                     <td class="text-right" style="font-size: 0.8rem">{{ floatval($salary['salary_actual_total']) }}</td>
                   </tr>
                   @endforeach
+                  <tr>
+                    <td colspan="2"><strong>合计</strong></td>
+                    <td class="text-right" style="font-size: 0.8rem">{{ floatval($total['salary_basic']) }}</td>
+                    <td class="text-right" style="font-size: 0.8rem">{{ floatval($total['salary_housing']) }}</td>
+                    <td class="text-right" style="font-size: 0.8rem">{{ floatval($total['salary_lesson']) }}</td>
+                    <td class="text-right" style="font-size: 0.8rem">{{ floatval($total['salary_performance']) }}</td>
+                    <td class="text-right" style="font-size: 0.8rem">{{ floatval($total['salary_commission']) }}</td>
+                    <td class="text-right" style="font-size: 0.8rem">{{ floatval($total['salary_total']) }}</td>
+                    <td class="text-right" style="font-size: 0.8rem">{{ floatval($total['salary_pension']) }}</td>
+                    <td class="text-right" style="font-size: 0.8rem">{{ floatval($total['salary_medical']) }}</td>
+                    <td class="text-right" style="font-size: 0.8rem">{{ floatval($total['salary_unemployment']) }}</td>
+                    <td class="text-right" style="font-size: 0.8rem">{{ floatval($total['salary_provident']) }}</td>
+                    <td class="text-right" style="font-size: 0.8rem">{{ floatval($total['salary_children']) }}</td>
+                    <td class="text-right" style="font-size: 0.8rem">{{ floatval($total['salary_elderly']) }}</td>
+                    <td class="text-right" style="font-size: 0.8rem">{{ floatval($total['salary_penalty']) }}</td>
+                    <td class="text-right" style="font-size: 0.8rem">{{ floatval($total['salary_tax']) }}</td>
+                    <td class="text-right" style="font-size: 0.8rem">{{ floatval($total['salary_actual_total']) }}</td>
+                  </tr>
                 </tbody>
               </table>
               <!--endprint-->
