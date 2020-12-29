@@ -129,6 +129,26 @@ class StudentController extends Controller
                       ->orderBy('payment_id', 'desc')
                       ->get();
 
+        // 获取家长会记录
+        $meetings = DB::table('meeting')
+                         ->join('student', 'meeting.meeting_student', '=', 'student.student_id')
+                         ->join('department', 'student.student_department', '=', 'department.department_id')
+                         ->join('grade', 'student.student_grade', '=', 'grade.grade_id')
+                         ->join('user', 'meeting.meeting_teacher', '=', 'user.user_id')
+                         ->join('subject', 'meeting.meeting_subject', '=', 'subject.subject_id')
+                         ->where('student_id', $student_id)
+                         ->get();
+
+        // 获取成绩记录
+        $scores = DB::table('score')
+                       ->join('student', 'score.score_student', '=', 'student.student_id')
+                       ->join('department', 'student.student_department', '=', 'department.department_id')
+                       ->join('grade', 'student.student_grade', '=', 'grade.grade_id')
+                       ->join('user', 'score.score_create_user', '=', 'user.user_id')
+                       ->join('subject', 'score.score_subject', '=', 'subject.subject_id')
+                       ->where('student_id', $student_id)
+                       ->get();
+
         // 获取年级信息用于修改
         $grades = DB::table('grade')->orderBy('grade_id', 'asc')->get();
 
@@ -140,6 +160,8 @@ class StudentController extends Controller
                                         'hours' => $hours,
                                         'daycare_records' => $daycare_records,
                                         'payments' => $payments,
+                                        'meetings' => $meetings,
+                                        'scores' => $scores,
                                         'grades' => $grades]);
     }
 

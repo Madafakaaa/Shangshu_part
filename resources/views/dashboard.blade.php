@@ -186,6 +186,35 @@
       </div>
     </div>
   @endif
+
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="h3 mb-0">通知文件</h5>
+        </div>
+        <div class="card-body p-0">
+          <ul class="list-group list-group-flush" data-toggle="checklist">
+            @foreach ($announcements as $announcement)
+              <li class="checklist-entry list-group-item flex-column align-items-start py-4 px-4">
+                <div class="checklist-item checklist-item-success">
+                  <div class="checklist-info">
+                    <h5 class="checklist-title mb-0"><a href="/files/announcement/{{ $announcement->announcement_path }}" target="_blank">{{ $announcement->announcement_name }}</a></h5>
+                    <small>{{ date('Y-m-d', strtotime($announcement->announcement_create_time)) }}</small>
+                  </div>
+                  <div>
+                    <a href="/files/announcement/{{ $announcement->announcement_path }}" target="_blank"><button type="button" class="btn btn-primary btn-sm">预览</button></a>
+                    <a href='/teacher/announcement/download?id={{encode($announcement->announcement_id, 'announcement_id')}}'><button type="button" class="btn btn-primary btn-sm">下载文件</button></a>
+                  </div>
+                </div>
+              </li>
+            @endforeach
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
   @if(in_array("发票申请审批", Session::get('user_dashboards')))
     <div class="row">
       <div class="col-12">

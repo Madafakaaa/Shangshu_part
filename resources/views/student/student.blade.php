@@ -108,6 +108,12 @@
             <a class="nav-link mb-3" id="payments-tab" data-toggle="tab" href="#payments" role="tab" aria-controls="payments" aria-selected="false"><i class="ni ni-money-coins mr-2"></i>购课记录</a>
           </li>
           <li class="nav-item">
+            <a class="nav-link mb-3" id="meetings-tab" data-toggle="tab" href="#meetings" role="tab" aria-controls="meetings" aria-selected="false"><i class="fa fa-comments mr-2"></i>家长会记录</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link mb-3" id="scores-tab" data-toggle="tab" href="#scores" role="tab" aria-controls="scores" aria-selected="false"><i class="fa fa-comments mr-2"></i>学生成绩</a>
+          </li>
+          <li class="nav-item">
             <a class="nav-link mb-3" id="edit-tab" data-toggle="tab" href="#edit" role="tab" aria-controls="edit" aria-selected="false"><i class="fa fa-cog mr-2"></i>修改信息</a>
           </li>
         </ul>
@@ -271,6 +277,84 @@
                     @endif
                     <td class="text-right"><strong>{{ number_format($payment->payment_total_price,1) }} 元</strong></td>
                     <td>{{ $payment->payment_date }}</td>
+                  </tr>
+                  @endforeach
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="meetings" role="tabpanel" aria-labelledby="meetings-tab">
+          <div class="card">
+            <div class="table-responsive py-4">
+              <table class="table table-hover datatable-basic text-left table-bordered">
+                <thead class="thead-light">
+                  <tr>
+                    <th style='width:40px;'>序号</th>
+                    <th style='width:60px;'>教师</th>
+                    <th style='width:45px;'>年级</th>
+                    <th style='width:45px;'>科目</th>
+                    <th style='width:80px;'>日期</th>
+                    <th style='width:180px;'>备注</th>
+                    <th style='width:80px;'>操作管理</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @foreach ($meetings as $meeting)
+                  <tr>
+                    <td>{{ $loop->iteration }}</td>
+                    <td>
+                      <a href="/user?id={{encode($meeting->user_id, 'user_id')}}">{{ $meeting->user_name }}</a>
+                    </td>
+                    <td>{{ $meeting->grade_name }}</td>
+                    <td>{{ $meeting->subject_name }}</td>
+                    <td>{{ $meeting->meeting_date }}</td>
+                    <td title="{{ $meeting->meeting_comment }}">{{ $meeting->meeting_comment }}</td>
+                    <td>
+                      <a href="/files/meeting/{{$meeting->meeting_path}}" target="_blank"><button type="button" class="btn btn-primary btn-sm">查看记录文件</button></a>
+                    </td>
+                  </tr>
+                  @endforeach
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="scores" role="tabpanel" aria-labelledby="scores-tab">
+          <div class="card">
+            <div class="table-responsive py-4">
+              <table class="table table-hover datatable-basic text-left table-bordered">
+                <thead class="thead-light">
+                  <tr>
+                    <th style='width:35px;'>序号</th>
+                    <th style='width:200px;'>考试</th>
+                    <th style='width:60px;'>科目</th>
+                    <th style='width:80px;'>日期</th>
+                    <th style='width:60px;'>分数</th>
+                    <th style='width:60px;'>登记人</th>
+                    <th style='width:100px;'>操作管理</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @foreach ($scores as $score)
+                  <tr>
+                    <td>{{ $loop->iteration }}</td>
+                    <td>{{ $score->score_test_name }}</td>
+                    <td>{{ $score->subject_name }}</td>
+                    <td>{{ $score->score_test_date }}</td>
+                    <td >{{ $score->score_mark }}</td>
+                    <td>
+                      <a href="/user?id={{encode($score->user_id, 'user_id')}}">{{ $score->user_name }}</a>
+                    </td>
+                    <td>
+                      @if($score->score_path!="")
+                        <a href="/files/score/{{$score->score_path}}" target="_blank"><button type="button" class="btn btn-primary btn-sm">查看图片</button></a>
+                      @else
+                        <a><button type="button" class="btn btn-primary btn-sm" disabled>查看图片</button></a>
+                      @endif
+                    </td>
                   </tr>
                   @endforeach
                 </tbody>

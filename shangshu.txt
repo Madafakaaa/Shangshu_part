@@ -275,6 +275,8 @@ CREATE TABLE `participant` (
   `participant_amount` int(10) unsigned NOT NULL COMMENT '扣除课程课时数量',
   `participant_secondary_date` date COMMENT '上课/补课日期',
   `participant_secondary_start` time COMMENT '上课/补课时间',
+  `participant_test_mark` varchar(10) DEFAULT '' COMMENT '入门测成绩',
+  `participant_test_path` varchar(40) DEFAULT '' COMMENT '入门测成绩图片',
   `participant_create_user` char(8) NOT NULL COMMENT '添加用户',
   `participant_create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '添加时间',
   PRIMARY KEY (`participant_id`)
@@ -620,6 +622,78 @@ CREATE TABLE `announcement` (
   PRIMARY KEY (`announcement_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+
+-- ----------------------------
+-- Table structure for `meeting`
+-- ----------------------------
+DROP TABLE IF EXISTS `meeting`;
+CREATE TABLE `meeting` (
+  `meeting_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `meeting_student` char(10) NOT NULL,
+  `meeting_teacher` char(8) NOT NULL,
+  `meeting_path` varchar(40) NOT NULL,
+  `meeting_subject` int(10) unsigned NOT NULL,
+  `meeting_date` date NOT NULL,
+  `meeting_comment` varchar(255) NOT NULL,
+  `meeting_create_user` char(8) NOT NULL,
+  `meeting_create_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`meeting_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for `score`
+-- ----------------------------
+DROP TABLE IF EXISTS `score`;
+CREATE TABLE `score` (
+  `score_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `score_student` char(10) NOT NULL,
+  `score_subject` int(10) unsigned NOT NULL,
+  `score_test_name` varchar(255) NOT NULL,
+  `score_test_type` varchar(5) NOT NULL COMMENT '考试类型：考试、入门测',
+  `score_test_date` date NOT NULL,
+  `score_mark` varchar(10) DEFAULT '',
+  `score_path` varchar(40) DEFAULT '',
+  `score_create_user` char(8) NOT NULL,
+  `score_create_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`score_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+-- ----------------------------
+-- Table structure for `standard_document`
+-- ----------------------------
+DROP TABLE IF EXISTS `standard_document`;
+CREATE TABLE `standard_document` (
+  `standard_document_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `standard_document_name` varchar(50) NOT NULL,
+  `standard_document_subject` int(10) unsigned NOT NULL,
+  `standard_document_grade` int(10) unsigned NOT NULL,
+  `standard_document_semester` varchar(10) NOT NULL,
+  `standard_document_document` varchar(50) NOT NULL,
+  `standard_document_answer` varchar(50) NOT NULL,
+  `standard_document_create_user` char(8) NOT NULL,
+  `standard_document_create_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`standard_document_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for `paper`
+-- ----------------------------
+DROP TABLE IF EXISTS `paper`;
+CREATE TABLE `paper` (
+  `paper_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `paper_name` varchar(40) NOT NULL,
+  `paper_subject` int(10) unsigned NOT NULL,
+  `paper_grade` int(10) unsigned NOT NULL,
+  `paper_semester` varchar(10) NOT NULL,
+  `paper_document` varchar(50) NOT NULL,
+  `paper_create_user` char(8) NOT NULL,
+  `paper_create_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`paper_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+ALTER TABLE participant ADD participant_test_mark varchar(10) DEFAULT '' COMMENT '入门测成绩';
+ALTER TABLE participant ADD participant_test_path varchar(40) DEFAULT '' COMMENT '入门测成绩图片';
 
 -- ----------------------------
 -- Initial Records

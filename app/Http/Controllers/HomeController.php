@@ -199,6 +199,14 @@ class HomeController extends Controller
                              ->orderBy('student_department', 'asc')
                              ->orderBy('daycare_record_end', 'asc')
                              ->get();
+
+        // 模块 通知文件 ----------------------------------------------------------------------------------
+        $announcements = DB::table('announcement')
+                           ->where('announcement_level', '>=', Session::get('user_position'))
+                           ->orderBy('announcement_id', 'desc')
+                           ->limit(5)
+                           ->get();
+
         return view('/dashboard', ['dashboard' => $dashboard,
                                    'filters' => $filters,
                                    'filter_departments' => $filter_departments,
@@ -206,6 +214,7 @@ class HomeController extends Controller
                                    'hour_refunds' => $hour_refunds,
                                    'daycare_refunds' => $daycare_refunds,
                                    'hours' => $hours,
+                                   'announcements' => $announcements,
                                    'daycare_records' => $daycare_records]);
     }
 

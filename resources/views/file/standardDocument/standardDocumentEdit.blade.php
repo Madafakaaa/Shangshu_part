@@ -1,13 +1,13 @@
 @extends('main')
 
 @section('nav')
-<h2 class="text-white d-inline-block mb-0">添加标准教案</h2>
+<h2 class="text-white d-inline-block mb-0">标准教案</h2>
 <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
   <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
     <li class="breadcrumb-item"><a href="/home"><i class="fas fa-home"></i></a></li>
     <li class="breadcrumb-item active">教务中心</li>
-    <li class="breadcrumb-item"><a href="/file/paper">标准教案</a></li>
-    <li class="breadcrumb-item active">添加标准教案</li>
+    <li class="breadcrumb-item"><a href="/file/standardDocument">标准教案</a></li>
+    <li class="breadcrumb-item active">修改标准教案</li>
   </ol>
 </nav>
 @endsection
@@ -17,51 +17,35 @@
   <div class="row justify-content-center">
     <div class="col-lg-8 col-md-10 col-sm-12">
       <div class="card">
-        <form action="/file/standardDocument/store" method="post" enctype="multipart/form-data" onsubmit="submitButtonDisable('submitButton1')">
+        <form action="/file/standardDocument/update" method="post" enctype="multipart/form-data" onsubmit="submitButtonDisable('submitButton1')">
           @csrf
           <div class="card-header">
-            <h3 class="mb-0">添加标准教案</h3>
+            <h3 class="mb-0">修改标准教案</h3>
           </div>
           <div class="card-body">
             <div class="row">
               <div class="col-12">
                 <div class="form-group">
                   <label class="form-control-label">教案名称<span style="color:red">*</span></label>
-                  <input class="form-control" type="text" name="input_standard_document_name" placeholder="教案名称..."  maxlength="40" required autocomplete="off">
+                  <input class="form-control" type="text" value="{{$standard_document->standard_document_name}}" readonly>
                 </div>
               </div>
               <div class="col-12">
                 <div class="form-group">
                   <label class="form-control-label">年级<span style="color:red">*</span></label>
-                  <select class="form-control" name="input_standard_document_grade" data-toggle="select" required autocomplete="off">
-                    <option value=''>选择年级...</option>
-                    @foreach ($grades as $grade)
-                      <option value="{{ $grade->grade_id }}">{{ $grade->grade_name }}</option>
-                    @endforeach
-                  </select>
+                  <input class="form-control" type="text" value="{{$standard_document->grade_name}}" readonly>
                 </div>
               </div>
               <div class="col-12">
                 <div class="form-group">
                   <label class="form-control-label">科目<span style="color:red">*</span></label>
-                  <select class="form-control" name="input_standard_document_subject" data-toggle="select" required autocomplete="off">
-                    <option value=''>选择科目...</option>
-                    @foreach ($subjects as $subject)
-                      <option value="{{ $subject->subject_id }}">{{ $subject->subject_name }}</option>
-                    @endforeach
-                  </select>
+                  <input class="form-control" type="text" value="{{$standard_document->subject_name}}" readonly>
                 </div>
               </div>
               <div class="col-12">
                 <div class="form-group">
                   <label class="form-control-label">学期<span style="color:red">*</span></label>
-                  <select class="form-control" name="input_standard_document_semester" data-toggle="select" required autocomplete="off">
-                    <option value=''>选择学期...</option>
-                    <option value="秋季班">秋季班</option>
-                    <option value="春季班">春季班</option>
-                    <option value="寒假班">寒假班</option>
-                    <option value="暑假班">暑假班</option>
-                  </select>
+                  <input class="form-control" type="text" value="{{$standard_document->standard_document_semester}}" readonly>
                 </div>
               </div>
               <div class="col-12">
@@ -97,6 +81,7 @@
               <div class="col-lg-6 col-md-2 col-sm-12 my-2"></div>
               <div class="col-lg-3 col-md-5 col-sm-12">
                 <input type="submit" id="submitButton1" class="btn btn-warning btn-block" value="提交">
+                <input type="hidden" name="input_standard_document_id" value="{{$standard_document->standard_document_id}}">
               </div>
             </div>
           </div>

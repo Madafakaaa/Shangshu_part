@@ -152,6 +152,22 @@
                   </a>
                 </li>
               @endif
+              @if(in_array("/education/meeting", Session::get('user_accesses')))
+                <li class="nav-item">
+                  <a href="/education/meeting" class="nav-link" id="educationMeeting">
+                    <i class="fa fa-comments text-warning"></i>
+                    <span class="nav-link-text">家长会记录</span>
+                  </a>
+                </li>
+              @endif
+              @if(in_array("/education/score", Session::get('user_accesses')))
+                <li class="nav-item">
+                  <a href="/education/score" class="nav-link" id="educationScore">
+                    <i class="fa fa-chart-bar text-warning"></i>
+                    <span class="nav-link-text">成绩档案</span>
+                  </a>
+                </li>
+              @endif
               <!-- <li class="nav-item">
                 <a href="/education/schedule" class="nav-link" id="educationSchedule">
                   <i class="ni ni-calendar-grid-58 text-warning"></i>
@@ -222,42 +238,42 @@
           </div>
         </li>
         @endif
-        <li class="nav-item">
-          <a class="nav-link" href="#navbar-file" data-toggle="collapse" aria-expanded="false" role="button" aria-controls="navbar-file" id="link-file">
-            <i class="fa fa-folder-open text-info"></i>
-            <span class="nav-link-text">文档资料</span>
-          </a>
-          <div class="collapse" id="navbar-file">
-            <ul class="nav nav-sm flex-column">
-              <li class="nav-item">
-                <a href="/file/document" class="nav-link" id="fileDocument">
-                  <i class="fa fa-file-alt text-info"></i>
-                  <span class="nav-link-text">上课教案</span>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="/file/standardDocument" class="nav-link" id="fileStandardDocument">
-                  <i class="fa fa-file-word text-info"></i>
-                  <span class="nav-link-text">标准教案</span>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="/file/paper" class="nav-link" id="filePaper">
-                  <i class="fa fa-file-powerpoint text-info"></i>
-                  <span class="nav-link-text">试卷资料</span>
-                </a>
-              </li>
-              <!--
-              <li class="nav-item">
-                <a href="/file/previousDocument" class="nav-link" id="filePreviousDocument">
-                  <i class="fa fa-file-import text-info"></i>
-                  <span class="nav-link-text">原系统教案</span>
-                </a>
-              </li>
-              -->
-            </ul>
-          </div>
-        </li>
+        @if(in_array("文档资料", Session::get('access_categories')))
+          <li class="nav-item">
+            <a class="nav-link" href="#navbar-file" data-toggle="collapse" aria-expanded="false" role="button" aria-controls="navbar-file" id="link-file">
+              <i class="fa fa-folder-open text-info"></i>
+              <span class="nav-link-text">文档资料</span>
+            </a>
+            <div class="collapse" id="navbar-file">
+              <ul class="nav nav-sm flex-column">
+                @if(in_array("/file/document", Session::get('user_accesses')))
+                  <li class="nav-item">
+                    <a href="/file/document" class="nav-link" id="fileDocument">
+                      <i class="fa fa-file-alt text-info"></i>
+                      <span class="nav-link-text">上课教案</span>
+                    </a>
+                  </li>
+                @endif
+                @if(in_array("/file/standardDocument", Session::get('user_accesses')))
+                  <li class="nav-item">
+                    <a href="/file/standardDocument" class="nav-link" id="fileStandardDocument">
+                      <i class="fa fa-file-word text-info"></i>
+                      <span class="nav-link-text">标准教案</span>
+                    </a>
+                  </li>
+                @endif
+                @if(in_array("/file/paper", Session::get('user_accesses')))
+                  <li class="nav-item">
+                    <a href="/file/paper" class="nav-link" id="filePaper">
+                      <i class="fa fa-file-powerpoint text-info"></i>
+                      <span class="nav-link-text">试卷资料</span>
+                    </a>
+                  </li>
+                @endif
+              </ul>
+            </div>
+          </li>
+        @endif
         <li class="nav-item">
           <a class="nav-link" href="#navbar-teacher" data-toggle="collapse" aria-expanded="false" role="button" aria-controls="navbar-teacher" id="link-teacher">
             <i class="fa fa-address-card text-indigo"></i>

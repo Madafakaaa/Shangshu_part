@@ -97,9 +97,19 @@
                                           <span class="text-danger">●</span>
                                           <small>旷课 | {{ $participant['course_name'] }} [ {{ $participant['participant_amount'] }} 课时 ]</small>
                                         @endif
+                                        @if($participant['participant_test_mark']!="")
+                                          @if($participant['participant_test_path']!="")
+                                            <small> | <a href="/files/score/{{$participant['participant_test_path']}}" target="_blank">成绩：{{ $participant['participant_test_mark'] }}</a></small>
+                                          @else
+                                            <small> | 成绩：{{ $participant['participant_test_mark'] }}</small>
+                                          @endif
+                                        @endif
                                       </div>
                                       <div class="col-auto">
-                                        <a href="/student?id={{encode($participant['student_id'], 'student_id')}}"><button type="button" class="btn btn-primary btn-sm">详情</button></a>
+                                        @if($participant['participant_test_mark']=="")
+                                          <a href="/education/score/lesson/create?id={{encode($participant['participant_id'], 'participant_id')}}"><button type="button" class="btn btn-outline-primary btn-sm">添加成绩</button></a>
+                                        @endif
+                                        <a href="/student?id={{encode($participant['student_id'], 'student_id')}}"><button type="button" class="btn btn-primary btn-sm">学生详情</button></a>
                                       </div>
                                     </div>
                                   </li>

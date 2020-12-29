@@ -13,6 +13,14 @@
 
 @section('content')
 <div class="container-fluid mt-3">
+  <div class="row mb-3">
+    <div class="col-auto">
+      <a href="/file/paper/create" class="btn btn-sm btn-neutral btn-round btn-icon" data-toggle="tooltip" data-original-title="添加试卷">
+        <span class="btn-inner--icon"><i class="fas fa-user-edit"></i></span>
+        <span class="btn-inner--text">添加试卷</span>
+      </a>
+    </div>
+  </div>
   <div class="row justify-content-center">
     <div class="col-12">
       <div class="card mb-4">
@@ -39,10 +47,10 @@
           <a href="?@foreach($filters as $key => $value) @if($key!='filter_semester') {{$key}}={{$value}}& @endif @endforeach">
             <button type="button" @if(!isset($filters['filter_semester'])) class="btn btn-primary btn-sm" disabled @else class="btn btn-sm" @endif>全部</button>
           </a>
-          <a href="?@foreach($filters as $key => $value) @if($key!='filter_semester') {{$key}}={{$value}}& @endif @endforeach filter_semester=1"><button type="button" @if($filters['filter_semester']=='1') class="btn btn-primary btn-sm" disabled @else class="btn btn-sm" @endif>秋季班</button></a>
-          <a href="?@foreach($filters as $key => $value) @if($key!='filter_semester') {{$key}}={{$value}}& @endif @endforeach filter_semester=2"><button type="button" @if($filters['filter_semester']=='2') class="btn btn-primary btn-sm" disabled @else class="btn btn-sm" @endif>春季班</button></a>
-          <a href="?@foreach($filters as $key => $value) @if($key!='filter_semester') {{$key}}={{$value}}& @endif @endforeach filter_semester=3"><button type="button" @if($filters['filter_semester']=='3') class="btn btn-primary btn-sm" disabled @else class="btn btn-sm" @endif>寒假班</button></a>
-          <a href="?@foreach($filters as $key => $value) @if($key!='filter_semester') {{$key}}={{$value}}& @endif @endforeach filter_semester=4"><button type="button" @if($filters['filter_semester']=='4') class="btn btn-primary btn-sm" disabled @else class="btn btn-sm" @endif>暑假班</button></a>
+          <a href="?@foreach($filters as $key => $value) @if($key!='filter_semester') {{$key}}={{$value}}& @endif @endforeach filter_semester=秋季班"><button type="button" @if($filters['filter_semester']=='秋季班') class="btn btn-primary btn-sm" disabled @else class="btn btn-sm" @endif>秋季班</button></a>
+          <a href="?@foreach($filters as $key => $value) @if($key!='filter_semester') {{$key}}={{$value}}& @endif @endforeach filter_semester=春季班"><button type="button" @if($filters['filter_semester']=='春季班') class="btn btn-primary btn-sm" disabled @else class="btn btn-sm" @endif>春季班</button></a>
+          <a href="?@foreach($filters as $key => $value) @if($key!='filter_semester') {{$key}}={{$value}}& @endif @endforeach filter_semester=寒假班"><button type="button" @if($filters['filter_semester']=='寒假班') class="btn btn-primary btn-sm" disabled @else class="btn btn-sm" @endif>寒假班</button></a>
+          <a href="?@foreach($filters as $key => $value) @if($key!='filter_semester') {{$key}}={{$value}}& @endif @endforeach filter_semester=暑假班"><button type="button" @if($filters['filter_semester']=='暑假班') class="btn btn-primary btn-sm" disabled @else class="btn btn-sm" @endif>暑假班</button></a>
         </div>
         <hr>
         <div class="table-responsive pb-4">
@@ -65,18 +73,12 @@
                 <td><a href="/file/paper/download?id={{encode($row->paper_id, 'paper_id')}}">{{ $row->paper_name }}</a></td>
                 <td>{{ $row->subject_name }}</td>
                 <td>{{ $row->grade_name }}</td>
-                @if($row->paper_semester==1)
-                  <td>秋季班</td>
-                @elseif($row->paper_semester==2)
-                  <td>春季班</td>
-                @elseif($row->paper_semester==3)
-                  <td>寒假班</td>
-                @else
-                  <td>暑假班</td>
-                @endif
+                <td>{{ $row->paper_semester }}</td>
                 <td>{{ date('Y-m-d', strtotime($row->paper_create_time)) }}</td>
                 <td>
-                  <a href="/file/paper/download?id={{encode($row->paper_id, 'paper_id')}}"><button type="button" class="btn btn-primary btn-sm">下载试卷</button></a>
+                  <a href="/file/paper/download?id={{encode($row->paper_id, 'paper_id')}}"><button type="button" class="btn btn-primary btn-sm">下载</button></a>
+                  <a href="/file/paper/edit?id={{encode($row->paper_id, 'paper_id')}}"><button type="button" class="btn btn-primary btn-sm">修改</button></a>
+                  <button type="button" class="btn btn-outline-danger btn-sm delete-button" id='delete_button_{{$loop->iteration}}' onclick="buttonConfirm('delete_button_{{$loop->iteration}}', '/file/paper/delete?id={{encode($row->paper_id, 'paper_id')}}', '是否确认删除所选试卷？')">删除</button>
                 </td>
               </tr>
               @endforeach

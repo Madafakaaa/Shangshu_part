@@ -185,6 +185,28 @@ Route::get('/home', 'HomeController@home');
         Route::get('/education/lesson/review/all', 'Education\LessonController@lessonReviewAll');
         // 删除上课记录 √
         Route::get('/education/lesson/delete', 'Education\LessonController@lessonDelete');
+    // 家长会记录
+        // 查看家长会记录 √
+        Route::get('/education/meeting', 'Education\MeetingController@meeting');
+        // 添加家长会记录 √
+        Route::get('/education/meeting/create', 'Education\MeetingController@meetingCreate');
+        // 保存家长会记录 √
+        Route::post('/education/meeting/store', 'Education\MeetingController@meetingStore');
+        // 删除家长会记录 √
+        Route::get('/education/meeting/delete', 'Education\MeetingController@meetingDelete');
+    // 学生成绩
+        // 查看学生成绩 √
+        Route::get('/education/score', 'Education\ScoreController@score');
+        // 添加学生成绩 √
+        Route::get('/education/score/create', 'Education\ScoreController@scoreCreate');
+        // 保存学生成绩 √
+        Route::post('/education/score/store', 'Education\ScoreController@scoreStore');
+        // 删除学生成绩 √
+        Route::get('/education/score/delete', 'Education\ScoreController@scoreDelete');
+        // 添加学生入门测成绩 √
+        Route::get('/education/score/lesson/create', 'Education\ScoreController@scoreLessonCreate');
+        // 保存学生入门测成绩 √
+        Route::post('/education/score/lesson/store', 'Education\ScoreController@scoreLessonStore');
 
 
 // 财务中心 ********************************************************************************
@@ -261,16 +283,33 @@ Route::get('/home', 'HomeController@home');
         Route::get('/file/standardDocument', 'File\StandardDocumentController@standardDocument');
         // 下载标准教案 √
         Route::get('/file/standardDocument/download', 'File\StandardDocumentController@standardDocumentDownload');
+        // 下载标准教案答案 √
+        Route::get('/file/standardDocument/answer/download', 'File\StandardDocumentController@standardDocumentAnswerDownload');
+        // 添加标准教案 √
+        Route::get('/file/standardDocument/create', 'File\StandardDocumentController@standardDocumentCreate');
+        // 添加标准教案 √
+        Route::post('/file/standardDocument/store', 'File\StandardDocumentController@standardDocumentStore');
+        // 修改标准教案 √
+        Route::get('/file/standardDocument/edit', 'File\StandardDocumentController@standardDocumentEdit');
+        // 更新标准教案 √
+        Route::post('/file/standardDocument/update', 'File\StandardDocumentController@standardDocumentUpdate');
+        // 删除标准教案 √
+        Route::get('/file/standardDocument/delete', 'File\StandardDocumentController@standardDocumentDelete');
     // 试卷资料
         // 查看试卷资料 √
         Route::get('/file/paper', 'File\PaperController@paper');
         // 下载试卷 √
         Route::get('/file/paper/download', 'File\PaperController@paperDownload');
-    // 原系统教案查询
-        // 查看原系统教案 √
-        Route::get('/file/document', 'File\DocumentController@document');
-        // 下载教案 √
-        Route::get('/file/document/download', 'File\DocumentController@documentDownload');
+        // 添加试卷资料 √
+        Route::get('/file/paper/create', 'File\PaperController@paperCreate');
+        // 保存试卷资料 √
+        Route::post('/file/paper/store', 'File\PaperController@paperStore');
+        // 修改试卷资料 √
+        Route::get('/file/paper/edit', 'File\PaperController@paperEdit');
+        // 更新试卷资料 √
+        Route::post('/file/paper/update', 'File\PaperController@paperUpdate');
+        // 删除试卷资料 √
+        Route::get('/file/paper/delete', 'File\PaperController@paperDelete');
 
 
 // 教师中心 ********************************************************************************

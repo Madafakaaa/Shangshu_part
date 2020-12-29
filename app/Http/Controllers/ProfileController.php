@@ -76,8 +76,11 @@ class ProfileController extends Controller
                 $participant_temp['student_name'] = $participant->student_name;
                 $participant_temp['grade_name'] = $participant->grade_name;
                 $participant_temp['course_name'] = $participant->course_name;
+                $participant_temp['participant_id'] = $participant->participant_id;
                 $participant_temp['participant_amount'] = $participant->participant_amount;
                 $participant_temp['participant_attend_status'] = $participant->participant_attend_status;
+                $participant_temp['participant_test_mark'] = $participant->participant_test_mark;
+                $participant_temp['participant_test_path'] = $participant->participant_test_path;
                 $temp['participants'][] = $participant_temp;
             }
             $lessons[]=$temp;

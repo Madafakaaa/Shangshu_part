@@ -129,6 +129,20 @@ CREATE TABLE `access` (
 	VALUES ('教务运营', '上课记录', '复核', 'Education\LessonController', 'lessonReview', '/education/lesson/review');
 	INSERT INTO `access`(access_category, access_page, access_feature, access_controller, access_function, access_url) 
 	VALUES ('教务运营', '上课记录', '删除', 'Education\LessonController', 'lessonDelete', '/education/lesson/delete');
+	-- 家长会记录 --
+	INSERT INTO `access`(access_category, access_page, access_feature, access_controller, access_function, access_url) 
+	VALUES ('教务运营', '家长会记录', '查看', 'Education\MeetingController', 'meeting', '/education/meeting');
+	INSERT INTO `access`(access_category, access_page, access_feature, access_controller, access_function, access_url) 
+	VALUES ('教务运营', '家长会记录', '添加', 'Education\MeetingController', 'meetingCreate', '/education/meeting/create');
+	INSERT INTO `access`(access_category, access_page, access_feature, access_controller, access_function, access_url) 
+	VALUES ('教务运营', '家长会记录', '删除', 'Education\MeetingController', 'meetingDelete', '/education/meeting/delete');
+	-- 成绩档案 --
+	INSERT INTO `access`(access_category, access_page, access_feature, access_controller, access_function, access_url) 
+	VALUES ('教务运营', '成绩档案', '查看', 'Education\ScoreController', 'score', '/education/score');
+	INSERT INTO `access`(access_category, access_page, access_feature, access_controller, access_function, access_url) 
+	VALUES ('教务运营', '成绩档案', '添加', 'Education\ScoreController', 'scoreCreate', '/education/score/create');
+	INSERT INTO `access`(access_category, access_page, access_feature, access_controller, access_function, access_url) 
+	VALUES ('教务运营', '成绩档案', '删除', 'Education\ScoreController', 'scoreDelete', '/education/score/delete');
 	
 	
 -- 财务中心 --
@@ -178,6 +192,30 @@ CREATE TABLE `access` (
 	VALUES ('教师中心', '通知文件', '添加', 'Teacher\AnnouncementController', 'announcementCreate', '/teacher/announcement/create');
 	INSERT INTO `access`(access_category, access_page, access_feature, access_controller, access_function, access_url) 
 	VALUES ('教师中心', '通知文件', '删除', 'Teacher\AnnouncementController', 'announcementDelete', '/teacher/announcement/delete');
+	
+	
+-- 文档资料 --
+	-- 上课教案 --
+	INSERT INTO `access`(access_category, access_page, access_feature, access_controller, access_function, access_url) 
+	VALUES ('文档资料', '上课教案', '查看', 'File\DocumentController', 'document', '/file/document');
+	-- 标准教案 --
+	INSERT INTO `access`(access_category, access_page, access_feature, access_controller, access_function, access_url) 
+	VALUES ('文档资料', '标准教案', '查看', 'File\StandardDocumentController', 'standardDocument', '/file/standardDocument');
+	INSERT INTO `access`(access_category, access_page, access_feature, access_controller, access_function, access_url) 
+	VALUES ('文档资料', '标准教案', '添加', 'File\StandardDocumentController', 'standardDocumentCreate', '/file/standardDocument/create');
+	INSERT INTO `access`(access_category, access_page, access_feature, access_controller, access_function, access_url) 
+	VALUES ('文档资料', '标准教案', '修改', 'File\StandardDocumentController', 'standardDocumentEdit', '/file/standardDocument/edit');
+	INSERT INTO `access`(access_category, access_page, access_feature, access_controller, access_function, access_url) 
+	VALUES ('文档资料', '标准教案', '删除', 'File\StandardDocumentController', 'standardDocumentDelete', '/file/standardDocument/delete');
+	-- 试卷资料 --
+	INSERT INTO `access`(access_category, access_page, access_feature, access_controller, access_function, access_url) 
+	VALUES ('文档资料', '试卷资料', '查看', 'File\PaperController', 'paper', '/file/paper');
+	INSERT INTO `access`(access_category, access_page, access_feature, access_controller, access_function, access_url) 
+	VALUES ('文档资料', '试卷资料', '添加', 'File\PaperController', 'paperCreate', '/file/paper/create');
+	INSERT INTO `access`(access_category, access_page, access_feature, access_controller, access_function, access_url) 
+	VALUES ('文档资料', '试卷资料', '修改', 'File\PaperController', 'paperEdit', '/file/paper/edit');
+	INSERT INTO `access`(access_category, access_page, access_feature, access_controller, access_function, access_url) 
+	VALUES ('文档资料', '试卷资料', '删除', 'File\PaperController', 'paperDelete', '/file/paper/delete');
 	
 	
 -- 统计中心 --
