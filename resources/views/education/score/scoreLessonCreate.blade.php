@@ -70,7 +70,7 @@
                     <input id='location' class="form-control" aria-describedby="button-addon" disabled>
                     <div class="input-group-append">
                       <input type="button" id="i-check" value="浏览文件" class="btn btn-outline-primary btn-sm" onClick="$('#i-file').click();" style="margin:0;" id="button-addon" required>
-                      <input type="file" name='file' id='i-file' onChange="$('#location').val($('#i-file').val());" style="display: none" accept="image/*">
+                      <input type="file" name='file' id='i-file' onChange="$('#location').val($('#i-file').val());" style="display: none">
                     </div>
                   </div>
                 </div>

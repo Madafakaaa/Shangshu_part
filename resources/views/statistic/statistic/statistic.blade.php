@@ -20,10 +20,16 @@
           <div class="card-header p-3" style="border-bottom:0px;">
             <div class="row">
               <div class="col-lg-1 col-md-2 col-sm-4 text-center">
-                <small class="text-muted font-weight-bold px-2">月份</small>
+                <small class="text-muted font-weight-bold px-2">起始月份</small>
               </div>
               <div class="col-lg-2 col-md-4 col-sm-8 mb-1">
-                <input class="form-control form-control-sm monthpicker" name="filter_month" type="text" value="{{$filters['filter_month']}}" autocomplete="off">
+                <input class="form-control form-control-sm monthpicker" name="filter_month_start" type="text" value="{{$filters['filter_month_start']}}" autocomplete="off">
+              </div>
+              <div class="col-lg-1 col-md-2 col-sm-4 text-center">
+                <small class="text-muted font-weight-bold px-2">截止月份</small>
+              </div>
+              <div class="col-lg-2 col-md-4 col-sm-8 mb-1">
+                <input class="form-control form-control-sm monthpicker" name="filter_month_end" type="text" value="{{$filters['filter_month_end']}}" autocomplete="off">
               </div>
               <div class="col-lg-7 col-md-2 col-sm-4">
               </div>
@@ -40,11 +46,10 @@
     <div class="col-12">
       <div class="card mb-4">
         <div class="table-responsive">
-          <button type="button" class="btn btn-waring btn-block" onclick="table_export('table-1', '综合统计 - {{$filters['filter_month']}})')">导出表格</button>
+          <button type="button" class="btn btn-waring btn-block" onclick="table_export('table-1', '综合统计 - {{$filters['filter_month_start']}}~{{$filters['filter_month_end']}})')">导出表格</button>
           <table class="table table-hover text-center table-bordered" id="table-1">
             <thead class="thead-light">
               <tr>
-                <th style='width:80px;'>月份</th>
                 <th style='width:60px;'>校区</th>
                 <th style='width:90px;'>课时收入</th>
                 <th style='width:90px;'>晚托收入</th>
@@ -62,7 +67,6 @@
             <tbody>
               @foreach ($departments as $department)
                 <tr>
-                  <td>{{ $department['month'] }}</td>
                   <td>{{ $department['department_name'] }}</td>
                   <td>{{ $department['course_income'] }}</td>
                   <td>{{ $department['daycare_income'] }}</td>
@@ -78,7 +82,7 @@
                 </tr>
               @endforeach
               <tr>
-                <td colspan="2"><strong>合计</strong></td>
+                <td><strong>合计</strong></td>
                 <td><strong>{{ $total['total_course_income'] }}</strong></td>
                 <td><strong>{{ $total['total_daycare_income'] }}</strong></td>
                 <td><strong>{{ $total['total_income'] }}</strong></td>

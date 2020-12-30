@@ -25,19 +25,22 @@
               <table class="table text-left table-bordered" id="table-1">
                 <thead class="thead-light">
                   <tr>
-                    <th rowspan="2" style='width:45px;'><strong>月份</strong></th>
+                    <th colspan="17" class="text-center"><strong>{{$month}}工资单</strong></th>
+                  </tr>
+                  <tr>
+                    <th rowspan="2" style='width:30px;'><strong>#</strong></th>
                     <th rowspan="2" style='width:60px;'><strong>员工</strong></th>
-                    <th rowspan="2" style='width:45px;'><strong>基本</strong></th>
+                    <th rowspan="2" style='width:50px;'><strong>基本</strong></th>
                     <th rowspan="2" style='width:45px;'><strong>住房</strong></th>
                     <th rowspan="2" style='width:50px;'><strong>课时</strong></th>
                     <th rowspan="2" style='width:50px;'><strong>绩效</strong></th>
                     <th rowspan="2" style='width:60px;'><strong>课消</strong></th>
-                    <th rowspan="2" style='width:62px;'><strong>应发</strong></th>
+                    <th rowspan="2" style='width:65px;'><strong>应发</strong></th>
                     <th colspan="4" style='width:232px;'><strong>代扣款项</strong></th>
                     <th colspan="2" style='width:106px;'><strong>六项专项扣除</strong></th>
                     <th rowspan="2" style='width:45px;'><strong>处罚</strong></th>
                     <th rowspan="2" style='width:50px;'><strong>所得税</strong></th>
-                    <th rowspan="2" style='width:62px;'><strong>实发</strong></th>
+                    <th rowspan="2" style='width:65px;'><strong>实发</strong></th>
                   </tr>
                   <tr>
                     <th><strong>养老</strong></th>
@@ -51,7 +54,7 @@
                 <tbody>
                   @foreach ($salaries as $salary)
                   <tr>
-                    <td style="font-size: 0.8rem">{{ date('y-m', strtotime($salary['salary_month'])) }}</td>
+                    <td style="font-size: 0.8rem">{{ $loop->iteration }}</td>
                     <td style="font-size: 0.8rem">{{ $salary['user_name'] }}</td>
                     <!-- 基本 -->
                     @if($salary['salary_basic']!=0)

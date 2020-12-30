@@ -37,15 +37,17 @@ class StatisticController extends Controller
                     );
         // 搜索条件
         $filters = array(
-                        "filter_month" => date('Y-m'),
+                        "filter_month_start" => date('Y-m'),
+                        "filter_month_end" => date('Y-m'),
                         "filter_date_start" => date('Y-m')."-01",
                         "filter_date_end" => date('Y-m-t'),
                     );
         // 月份
-        if ($request->filled('filter_month')) {
-            $filters['filter_month']=$request->input("filter_month");
-            $filters['filter_date_start']=$request->input("filter_month")."-01";
-            $filters['filter_date_end']=date('Y-m-t',strtotime($request->input("filter_month")));
+        if ($request->filled('filter_month_start')) {
+            $filters['filter_month_start']=$request->input("filter_month_start");
+            $filters['filter_month_end']=$request->input("filter_month_end");
+            $filters['filter_date_start']=$request->input("filter_month_start")."-01";
+            $filters['filter_date_end']=date('Y-m-t',strtotime($request->input("filter_month_end")));
         }
         // 获取校区
         $db_departments = DB::table('department')
@@ -55,14 +57,15 @@ class StatisticController extends Controller
         $departments = array();
         foreach($db_departments as $db_department){
             $temp = array();
-            $temp['month'] = $filters['filter_month'];
+            $temp['month'] = $filters['filter_month_start']."~".$filters['filter_month_end'];
             $temp['department_name'] = $db_department->department_name;
             // 课时收入
             $temp['course_income'] = 0;
             $temp_payment = DB::table('payment')
                               ->join('student', 'payment.payment_student', '=', 'student.student_id')
                               ->select(DB::raw('sum(payment_total_price) as sum_hour_price'))
-                              ->where('payment_date', 'like', $filters['filter_month'].'%')
+                              ->where('payment_date', '>=', $filters['filter_date_start'])
+                              ->where('payment_date', '<=', $filters['filter_date_end'])
                               ->where('student_department', $db_department->department_id)
                               ->first();
             $temp['course_income'] += round($temp_payment->sum_hour_price,2);
@@ -72,7 +75,8 @@ class StatisticController extends Controller
             $temp_daycare_record = DB::table('daycare_record')
                                       ->join('student', 'daycare_record.daycare_record_student', '=', 'student.student_id')
                                       ->select(DB::raw('sum(daycare_record_total_price) as sum_daycare_price'))
-                                      ->where('daycare_record_date', 'like', $filters['filter_month'].'%')
+                                      ->where('daycare_record_date', '>=', $filters['filter_date_start'])
+                                      ->where('daycare_record_date', '<=', $filters['filter_date_end'])
                                       ->where('student_department', $db_department->department_id)
                                       ->first();
             $temp['daycare_income'] += round($temp_daycare_record->sum_daycare_price,2);
@@ -85,7 +89,8 @@ class StatisticController extends Controller
             $temp_lesson = DB::table('lesson')
                           ->join('class', 'lesson.lesson_class', '=', 'class.class_id')
                           ->select(DB::raw('sum(lesson_hour_price) as sum_consumption_hour_price'))
-                          ->where('lesson_date', 'like', $filters['filter_month'].'%')
+                          ->where('lesson_date', '>=', $filters['filter_date_start'])
+                          ->where('lesson_date', '<=', $filters['filter_date_end'])
                           ->where('class_department', $db_department->department_id)
                           ->first();
             $temp['course_consumption'] += round($temp_lesson->sum_consumption_hour_price,2);
@@ -151,7 +156,8 @@ class StatisticController extends Controller
             $temp_salary = DB::table('salary')
                              ->join('user', 'salary.salary_user', '=', 'user.user_id')
                              ->select(DB::raw('sum(salary_actual_total) as sum_salary_actual_total'))
-                             ->where('salary_month', $filters['filter_month'])
+                             ->where('salary_month', '>=', $filters['filter_month_start'])
+                             ->where('salary_month', '<=', $filters['filter_month_end'])
                              ->where('user_department', $db_department->department_id)
                              ->first();
             $temp['salary_expenditure'] += round($temp_salary->sum_salary_actual_total,2);
@@ -160,7 +166,8 @@ class StatisticController extends Controller
             $temp['other_expenditure'] = 0;
             $temp_expenditure = DB::table('expenditure')
                                    ->select(DB::raw('sum(expenditure_fee) as sum_expenditure_fee'))
-                                   ->where('expenditure_date', 'like', $filters['filter_month']."%")
+                                   ->where('expenditure_date', '>=', $filters['filter_date_start'])
+                                   ->where('expenditure_date', '<=', $filters['filter_date_end'])
                                    ->where('expenditure_department', $db_department->department_id)
                                    ->first();
             $temp['other_expenditure'] += round($temp_expenditure->sum_expenditure_fee,2);
