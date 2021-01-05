@@ -68,6 +68,8 @@ CREATE TABLE `access` (
 	VALUES ('公司管理', '用户管理', '删除', 'Company\UserController', 'userDelete', '/company/user/delete');
 	INSERT INTO `access`(access_category, access_page, access_feature, access_controller, access_function, access_url) 
 	VALUES ('公司管理', '用户管理', '权限', 'Company\UserController', 'userAccess', '/company/user/access');
+	INSERT INTO `access`(access_category, access_page, access_feature, access_controller, access_function, access_url) 
+	VALUES ('公司管理', '用户管理', '密码', 'Company\UserController', 'userPassword', '/company/user/password');
 	-- 教师评级 --
 	INSERT INTO `access`(access_category, access_page, access_feature, access_controller, access_function, access_url) 
 	VALUES ('公司管理', '教师评级', '查看', 'Company\TeacherTypeController', 'teacherType', '/company/teacherType');

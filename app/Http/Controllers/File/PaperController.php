@@ -92,8 +92,10 @@ class paperController extends Controller
         // 获取试卷数据信息
         $paper = DB::table('paper')->where('paper_id', $paper_id)->first();
         // 获取文件名和路径
-        $file_path = "files/paper/".$paper->paper_document;
-        $file_name = $paper->paper_name;
+        $file_path = "files/".$paper->paper_document;
+        $arr = explode('.', $file_path);
+        $ext = end($arr);
+        $file_name = $paper->paper_name.".".$ext;
         // 下载文件
         if (file_exists($file_path)) {// 文件存在
             // 返回文件
@@ -151,7 +153,7 @@ class paperController extends Controller
         $document_path = "P".date('ymdHis').rand(1000000000,9999999999).".".$document_ext;
 
         // 获取表单输入
-        $paper_name = $request->input('input_paper_name').".".$document_ext;
+        $paper_name = $request->input('input_paper_name');
         $paper_subject = $request->input('input_paper_subject');
         $paper_grade = $request->input('input_paper_grade');
         $paper_semester = $request->input('input_paper_semester');
@@ -162,7 +164,7 @@ class paperController extends Controller
                                         'paper_subject' => $paper_subject,
                                         'paper_grade' => $paper_grade,
                                         'paper_semester' => $paper_semester,
-                                        'paper_document' => $document_path,
+                                        'paper_document' => "paper/".$document_path,
                                         'paper_create_user' => Session::get('user_id')]);
         }
         // 捕获异常
@@ -246,17 +248,16 @@ class paperController extends Controller
         $document_ext = $tmp_file->getClientOriginalExtension();
         // 生成路径
         $document_path = "P".date('ymdHis').rand(1000000000,9999999999).".".$document_ext;
-        $paper_name = substr($paper->paper_name, 0, strrpos($paper->paper_name, ".")).".".$document_ext;
         DB::beginTransaction();
         try{
             // 删除教案文件
-            if (file_exists("files/paper/".$paper->paper_document)) {
-                unlink("files/paper/".$paper->paper_document);
+            if (file_exists("files/".$paper->paper_document)) {
+                unlink("files/".$paper->paper_document);
             }
             // 修改记录
             DB::table('paper')
               ->where('paper_id', $paper_id)
-              ->update(['paper_document' => $document_path, 'paper_name' => $paper_name]);
+              ->update(['paper_document' => "paper/".$document_path]);
         }
         // 捕获异常
         catch(Exception $e){
@@ -301,8 +302,8 @@ class paperController extends Controller
         DB::beginTransaction();
         try{
             // 删除教案文件
-            if (file_exists("files/paper/".$paper->paper_document)) {
-                unlink("files/paper/".$paper->paper_document);
+            if (file_exists("files/".$paper->paper_document)) {
+                unlink("files/".$paper->paper_document);
             }
             // 修改记录
             DB::table('paper')

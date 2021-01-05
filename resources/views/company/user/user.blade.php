@@ -28,13 +28,13 @@
           <table class="table table-hover datatable-basic text-center table-bordered">
             <thead class="thead-light">
               <tr>
-                <th style='width:40px;'>序号</th>
-                <th style='width:100px;'>姓名</th>
-                <th style='width:100px;'>账号</th>
-                <th style='width:100px;'>校区</th>
-                <th style='width:100px;'>级别</th>
-                <th style='width:100px;'>教师评级</th>
-                <th style='width:200px;' class="text-left">操作管理</th>
+                <th style='width:30px;'>序号</th>
+                <th style='width:80px;'>姓名</th>
+                <th style='width:70px;'>账号</th>
+                <th style='width:60px;'>校区</th>
+                <th style='width:60px;'>级别</th>
+                <th style='width:70px;'>教师评级</th>
+                <th style='width:320px;' class="text-left">操作管理</th>
               </tr>
             </thead>
             <tbody>
@@ -57,6 +57,7 @@
                   <a href='/user?id={{encode($user->user_id, 'user_id')}}'><button type="button" class="btn btn-primary btn-sm">详情</button></a>
                   <a href='/company/user/edit?id={{encode($user->user_id, 'user_id')}}'><button type="button" class="btn btn-primary btn-sm">基本设置</button></a>
                   <a href='/company/user/access?id={{encode($user->user_id, 'user_id')}}'><button type="button" class="btn btn-primary btn-sm">权限设置</button></a>
+                  <a href='/company/user/password?id={{encode($user->user_id, 'user_id')}}'><button type="button" class="btn btn-primary btn-sm">重置密码</button></a>
                   <button type="button" class="btn btn-outline-danger btn-sm delete-button" id='delete_button_{{$loop->iteration}}' onclick="buttonConfirm('delete_button_{{$loop->iteration}}', '/company/user/delete?id={{encode($user->user_id, 'user_id')}}', '确认删除用户？')">删除</button>
                 </td>
               </tr>

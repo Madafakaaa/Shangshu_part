@@ -448,6 +448,39 @@ class UserController extends Controller
         return view('company/user/userAccessSuccess', ['user_id' => $user_id]);
     }
 
+    public function userPassword(Request $request){
+        // 检查登录状态
+        if(!Session::has('login')){
+            return loginExpired(); // 未登录，返回登陆视图
+        }
+        // 检测用户权限
+        if(!in_array("/company/user/password", Session::get('user_accesses'))){
+           return back()->with(['notify' => true,'type' => 'danger','title' => '您的账户没有访问权限']);
+        }
+        // 获取user_id
+        $user_id = decode($request->input('id'), 'user_id');
+        // 删除数据
+        try{
+            DB::table('user')
+              ->where('user_id', $user_id)
+              ->update(['user_password' => '000000']);
+        }
+        // 捕获异常
+        catch(Exception $e){
+            return redirect("/company/user")
+                   ->with(['notify' => true,
+                         'type' => 'danger',
+                         'title' => '密码重置失败',
+                         'message' => '密码重置失败，错误码:116']);
+        }
+        // 返回用户列表
+        return redirect("/company/user")
+                 ->with(['notify' => true,
+                         'type' => 'success',
+                         'title' => '密码重置成功',
+                         'message' => '密码重置成功']);
+    }
+
     /**
      * 删除用户
      * URL: DELETE /company/user/{id}

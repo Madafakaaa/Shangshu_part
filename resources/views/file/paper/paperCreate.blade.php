@@ -57,10 +57,10 @@
                   <label class="form-control-label">学期<span style="color:red">*</span></label>
                   <select class="form-control" name="input_paper_semester" data-toggle="select" required autocomplete="off">
                     <option value=''>选择学期...</option>
-                    <option value="秋季班">秋季班</option>
-                    <option value="春季班">春季班</option>
-                    <option value="寒假班">寒假班</option>
-                    <option value="暑假班">暑假班</option>
+                    <option value="1">秋季班</option>
+                    <option value="2">春季班</option>
+                    <option value="3">寒假班</option>
+                    <option value="4">暑假班</option>
                   </select>
                 </div>
               </div>

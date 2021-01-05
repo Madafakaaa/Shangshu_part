@@ -45,7 +45,15 @@
               <div class="col-12">
                 <div class="form-group">
                   <label class="form-control-label">学期<span style="color:red">*</span></label>
-                  <input class="form-control" type="text" value="{{$paper->paper_semester}}" readonly>
+                  @if($paper->paper_semester==1)
+                    <input class="form-control" type="text" value="秋季班" readonly>
+                  @elseif($paper->paper_semester==2)
+                    <input class="form-control" type="text" value="春季班" readonly>
+                  @elseif($paper->paper_semester==3)
+                    <input class="form-control" type="text" value="寒假班" readonly>
+                  @else
+                    <input class="form-control" type="text" value="暑假班" readonly>
+                  @endif
                 </div>
               </div>
               <div class="col-12">

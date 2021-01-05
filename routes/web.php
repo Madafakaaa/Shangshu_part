@@ -84,6 +84,8 @@ Route::get('/home', 'HomeController@home');
         Route::post('/company/user/access/update', 'Company\UserController@userAccessUpdate');
         // 用户权限更新成功
         Route::get('/company/user/access/success', 'Company\UserController@userAccessSuccess');
+        // 重置密码
+        Route::get('/company/user/password', 'Company\UserController@userPassword');
     // 教师评级
         // 查看教师评级 √
         Route::get('/company/teacherType', 'Company\TeacherTypeController@teacherType');
