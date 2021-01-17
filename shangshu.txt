@@ -658,7 +658,6 @@ CREATE TABLE `score` (
   PRIMARY KEY (`score_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-
 -- ----------------------------
 -- Table structure for `standard_document`
 -- ----------------------------
@@ -692,8 +691,22 @@ CREATE TABLE `paper` (
   PRIMARY KEY (`paper_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-ALTER TABLE participant ADD participant_test_mark varchar(10) DEFAULT '' COMMENT '入门测成绩';
-ALTER TABLE participant ADD participant_test_path varchar(40) DEFAULT '' COMMENT '入门测成绩图片';
+-- ----------------------------
+-- Table structure for `project`
+-- ----------------------------
+DROP TABLE IF EXISTS `project`;
+CREATE TABLE `project` (
+  `project_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `project_name` varchar(50) NOT NULL,
+  `project_subject` int(10) unsigned NOT NULL,
+  `project_grade` int(10) unsigned NOT NULL,
+  `project_semester` varchar(10) NOT NULL,
+  `project_document` varchar(50) NOT NULL,
+  `project_answer` varchar(50) NOT NULL,
+  `project_create_user` char(8) NOT NULL,
+  `project_create_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`project_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Initial Records

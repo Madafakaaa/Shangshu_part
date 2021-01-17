@@ -262,6 +262,14 @@
                     </a>
                   </li>
                 @endif
+                @if(in_array("/file/project", Session::get('user_accesses')))
+                  <li class="nav-item">
+                    <a href="/file/project" class="nav-link" id="fileProject">
+                      <i class="fa fa-file-word text-info"></i>
+                      <span class="nav-link-text">教学计划</span>
+                    </a>
+                  </li>
+                @endif
                 @if(in_array("/file/paper", Session::get('user_accesses')))
                   <li class="nav-item">
                     <a href="/file/paper" class="nav-link" id="filePaper">

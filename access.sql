@@ -209,6 +209,15 @@ CREATE TABLE `access` (
 	VALUES ('文档资料', '标准教案', '修改', 'File\StandardDocumentController', 'standardDocumentEdit', '/file/standardDocument/edit');
 	INSERT INTO `access`(access_category, access_page, access_feature, access_controller, access_function, access_url) 
 	VALUES ('文档资料', '标准教案', '删除', 'File\StandardDocumentController', 'standardDocumentDelete', '/file/standardDocument/delete');
+	-- 教学计划 --
+	INSERT INTO `access`(access_category, access_page, access_feature, access_controller, access_function, access_url) 
+	VALUES ('文档资料', '教学计划', '查看', 'File\ProjectController', 'project', '/file/project');
+	INSERT INTO `access`(access_category, access_page, access_feature, access_controller, access_function, access_url) 
+	VALUES ('文档资料', '教学计划', '添加', 'File\ProjectController', 'projectCreate', '/file/project/create');
+	INSERT INTO `access`(access_category, access_page, access_feature, access_controller, access_function, access_url) 
+	VALUES ('文档资料', '教学计划', '修改', 'File\ProjectController', 'projectEdit', '/file/project/edit');
+	INSERT INTO `access`(access_category, access_page, access_feature, access_controller, access_function, access_url) 
+	VALUES ('文档资料', '教学计划', '删除', 'File\ProjectController', 'projectDelete', '/file/project/delete');
 	-- 试卷资料 --
 	INSERT INTO `access`(access_category, access_page, access_feature, access_controller, access_function, access_url) 
 	VALUES ('文档资料', '试卷资料', '查看', 'File\PaperController', 'paper', '/file/paper');
@@ -275,5 +284,9 @@ INSERT INTO `dashboard_access`(dashboard_access_name) VALUES ('课时/晚托退�
 INSERT INTO `dashboard_access`(dashboard_access_name) VALUES ('课时/晚托剩余提醒');
 -- 发票申请 --
 INSERT INTO `dashboard_access`(dashboard_access_name) VALUES ('发票申请审批');
+-- 学生生日 --
+INSERT INTO `dashboard_access`(dashboard_access_name) VALUES ('学生生日');
+-- 用户生日 --
+INSERT INTO `dashboard_access`(dashboard_access_name) VALUES ('用户生日');
 	
 	

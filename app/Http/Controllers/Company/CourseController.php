@@ -71,6 +71,7 @@ class CourseController extends Controller
         // 获取表单输入
         $course_name = $request->input('input_course_name');
         $course_quarter = $request->input('input_course_quarter');
+        $course_subject = $request->input('input_course_subject');
         $course_grade = $request->input('input_course_grade');
         $course_unit_price = $request->input('input_course_unit_price');
         $course_type = $request->input('input_course_type');
@@ -80,6 +81,7 @@ class CourseController extends Controller
                 ['course_name' => $course_name,
                  'course_quarter' => $course_quarter,
                  'course_grade' => $course_grade,
+                 'course_subject' => $course_subject,
                  'course_unit_price' => $course_unit_price,
                  'course_type' => $course_type,
                  'course_create_user' => Session::get('user_id'),
@@ -88,6 +90,7 @@ class CourseController extends Controller
         }
         // 捕获异常
         catch(Exception $e){
+            return $e;
             return redirect("/company/course/create")
                    ->with(['notify' => true,
                            'type' => 'danger',

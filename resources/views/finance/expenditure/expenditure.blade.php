@@ -32,6 +32,20 @@
   <div class="row justify-content-center">
     <div class="col-12">
       <div class="card mb-4">
+        <div class="card-header p-0" style="border-bottom:0px;">
+          <div class="row my-3 mx-1">
+            <div class="col-12">
+              <small class="text-muted font-weight-bold px-2">校区：</small>
+              <a href="?@foreach($filters as $key => $value) @if($key!='filter_department') {{$key}}={{$value}}& @endif @endforeach">
+                <button type="button" @if(!isset($filters['filter_department'])) class="btn btn-primary btn-sm" disabled @else class="btn btn-sm" @endif>全部</button>
+              </a>
+              @foreach($filter_departments as $filter_department)
+                <a href="?@foreach($filters as $key => $value) @if($key!='filter_department') {{$key}}={{$value}}& @endif @endforeach &filter_department={{$filter_department->department_id}}"><button type="button" @if($filters['filter_department']==$filter_department->department_id) class="btn btn-primary btn-sm" disabled @else class="btn btn-sm" @endif>{{$filter_department->department_name}}</button></a>
+              @endforeach
+            </div>
+          </div>
+        </div>
+        <hr>
         <div class="table-responsive py-3">
           <table class="table table-hover datatable-basic text-left table-bordered">
             <thead class="thead-light">

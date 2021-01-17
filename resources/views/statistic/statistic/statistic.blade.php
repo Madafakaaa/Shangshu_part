@@ -19,19 +19,17 @@
         <form action="" method="get" onsubmit="submitButtonDisable('submitButton1')">
           <div class="card-header p-3" style="border-bottom:0px;">
             <div class="row">
-              <div class="col-lg-1 col-md-2 col-sm-4 text-center">
+              <div class="col-lg-2 col-md-2 col-sm-4 text-center">
                 <small class="text-muted font-weight-bold px-2">起始月份</small>
               </div>
               <div class="col-lg-2 col-md-4 col-sm-8 mb-1">
                 <input class="form-control form-control-sm monthpicker" name="filter_month_start" type="text" value="{{$filters['filter_month_start']}}" autocomplete="off">
               </div>
-              <div class="col-lg-1 col-md-2 col-sm-4 text-center">
+              <div class="col-lg-2 col-md-2 col-sm-4 text-center">
                 <small class="text-muted font-weight-bold px-2">截止月份</small>
               </div>
               <div class="col-lg-2 col-md-4 col-sm-8 mb-1">
                 <input class="form-control form-control-sm monthpicker" name="filter_month_end" type="text" value="{{$filters['filter_month_end']}}" autocomplete="off">
-              </div>
-              <div class="col-lg-7 col-md-2 col-sm-4">
               </div>
               <div class="col-lg-2 col-md-4 col-sm-8">
                 <input type="submit" id="submitButton1" class="btn btn-sm btn-primary btn-block" value="查询">

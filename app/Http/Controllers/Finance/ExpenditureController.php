@@ -21,16 +21,29 @@ class ExpenditureController extends Controller
         }
         // 获取用户校区权限
         $department_access = Session::get('department_access');
+        // 搜索条件
+        $filters = array(
+                        "filter_department" => null
+                    );
         // 获取数据
         $expenditures = DB::table('expenditure')
                         ->join('department', 'expenditure.expenditure_department', '=', 'department.department_id')
                         ->join('user', 'expenditure.expenditure_create_user', '=', 'user.user_id')
-                        ->whereIn('expenditure_department', $department_access)
-                        ->orderBy('expenditure_date', 'desc')
-                        ->orderBy('expenditure_department', 'asc')
-                        ->get();
+                        ->whereIn('expenditure_department', $department_access);
+        // 校区
+        if ($request->filled('filter_department')) {
+            $expenditures = $expenditures->where('expenditure_department', '=', $request->input("filter_department"));
+            $filters['filter_department']=$request->input("filter_department");
+        }
+        $expenditures = $expenditures->orderBy('expenditure_date', 'desc')
+                                     ->orderBy('expenditure_department', 'asc')
+                                     ->get();
+
+        $filter_departments = DB::table('department')->where('department_is_available', 1)->whereIn('department_id', $department_access)->orderBy('department_id', 'asc')->get();
         // 返回列表视图
-        return view('finance/expenditure/expenditure', ['expenditures' => $expenditures]);
+        return view('finance/expenditure/expenditure', ['expenditures' => $expenditures,
+                                                        'filters' => $filters,
+                                                        'filter_departments' => $filter_departments]);
     }
 
     public function expenditureCreate(){

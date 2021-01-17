@@ -297,6 +297,23 @@ Route::get('/home', 'HomeController@home');
         Route::post('/file/standardDocument/update', 'File\StandardDocumentController@standardDocumentUpdate');
         // 删除标准教案 √
         Route::get('/file/standardDocument/delete', 'File\StandardDocumentController@standardDocumentDelete');
+    // 教学计划
+        // 查看教学计划 √
+        Route::get('/file/project', 'File\ProjectController@project');
+        // 下载教学计划 √
+        Route::get('/file/project/download', 'File\ProjectController@projectDownload');
+        // 下载教学计划答案 √
+        Route::get('/file/project/answer/download', 'File\ProjectController@projectAnswerDownload');
+        // 添加教学计划 √
+        Route::get('/file/project/create', 'File\ProjectController@projectCreate');
+        // 添加教学计划 √
+        Route::post('/file/project/store', 'File\ProjectController@projectStore');
+        // 修改教学计划 √
+        Route::get('/file/project/edit', 'File\ProjectController@projectEdit');
+        // 更新教学计划 √
+        Route::post('/file/project/update', 'File\ProjectController@projectUpdate');
+        // 删除教学计划 √
+        Route::get('/file/project/delete', 'File\ProjectController@projectDelete');
     // 试卷资料
         // 查看试卷资料 √
         Route::get('/file/paper', 'File\PaperController@paper');

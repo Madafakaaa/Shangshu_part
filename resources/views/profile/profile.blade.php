@@ -44,14 +44,14 @@
                 <thead class="thead-light">
                   <tr>
                     <th style='width:35px;'>序号</th>
-                    <th style='width:240px;'>班级</th>
-                    <th style='width:110px;'>上课学生</th>
+                    <th style='width:200px;'>班级</th>
+                    <th style='width:90px;'>上课学生</th>
                     <th style='width:45px;'>年级</th>
                     <th style='width:45px;'>科目</th>
-                    <th style='width:150px;'>时间</th>
-                    <th style='width:80px;'>登记用户</th>
-                    <th style='width:80px;'>课时费</th>
-                    <th style='width:90px;'>操作管理</th>
+                    <th style='width:130px;'>时间</th>
+                    <th style='width:70px;'>登记用户</th>
+                    <th style='width:70px;'>课时费</th>
+                    <th style='width:180px;'>操作管理</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -106,9 +106,6 @@
                                         @endif
                                       </div>
                                       <div class="col-auto">
-                                        @if($participant['participant_test_mark']=="")
-                                          <a href="/education/score/lesson/create?id={{encode($participant['participant_id'], 'participant_id')}}"><button type="button" class="btn btn-outline-primary btn-sm">添加成绩</button></a>
-                                        @endif
                                         <a href="/student?id={{encode($participant['student_id'], 'student_id')}}"><button type="button" class="btn btn-primary btn-sm">学生详情</button></a>
                                       </div>
                                     </div>
@@ -133,6 +130,7 @@
                     </td>
                     <td>{{ $lesson['lesson_teacher_fee'] }} 元</td>
                     <td>
+                      <a href='/education/score/lesson/create?id={{encode($lesson['lesson_id'], 'lesson_id')}}'><button type="button" class="btn btn-outline-primary btn-sm">入门测成绩</button></a>
                       <a href='/file/document/download?id={{encode($lesson['lesson_document'], 'document_id')}}'><button type="button" class="btn btn-primary btn-sm">下载教案</button></a>
                     </td>
                   </tr>

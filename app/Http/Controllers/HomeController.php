@@ -207,6 +207,15 @@ class HomeController extends Controller
                            ->limit(5)
                            ->get();
 
+        // 模块 学生生日 ----------------------------------------------------------------------------------
+        $five_days_after = date('m-d', strtotime ("+5 day", strtotime(date('Y-m-d'))));
+        $student_birthdays = DB::table('student')
+                               ->where('student_birthday', '>=', date('m-d'))
+                               ->where('student_birthday', '<=', $five_days_after)
+                               ->orderBy('student_birthday', 'desc')
+                               ->get();
+        // 模块 员工生日 ----------------------------------------------------------------------------------
+
         return view('/dashboard', ['dashboard' => $dashboard,
                                    'filters' => $filters,
                                    'filter_departments' => $filter_departments,

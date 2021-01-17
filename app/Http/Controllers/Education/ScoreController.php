@@ -200,20 +200,24 @@ class ScoreController extends Controller
         if(!Session::has('login')){
             return loginExpired(); // 未登录，返回登陆视图
         }
-        $participant_id = decode($request->input('id'), 'participant_id');
+        $lesson_id = decode($request->input('id'), 'lesson_id');
 
         // 获取课程数据
-        $db_participant = DB::table('participant')
-                            ->join('lesson', 'participant.participant_lesson', '=', 'lesson.lesson_id')
-                            ->join('student', 'participant.participant_student', '=', 'student.student_id')
-                            ->join('grade', 'student.student_grade', '=', 'grade.grade_id')
-                            ->join('class', 'lesson.lesson_class', '=', 'class.class_id')
-                            ->join('subject', 'class.class_subject', '=', 'subject.subject_id')
-                            ->where('participant_id', $participant_id)
-                            ->first();
+        $db_lesson = DB::table('lesson')
+                        ->join('class', 'lesson.lesson_class', '=', 'class.class_id')
+                        ->join('grade', 'class.class_grade', '=', 'grade.grade_id')
+                        ->join('subject', 'class.class_subject', '=', 'subject.subject_id')
+                        ->where('lesson_id', $lesson_id)
+                        ->first();
+
+        $db_participants = DB::table('lesson')
+                              ->join('participant', 'participant.participant_lesson', '=', 'lesson.lesson_id')
+                              ->join('student', 'participant.participant_student', '=', 'student.student_id')
+                              ->where('lesson_id', $lesson_id)
+                              ->get();
 
         // 返回列表视图
-        return view('education/score/scoreLessonCreate', ['db_participant' => $db_participant]);
+        return view('education/score/scoreLessonCreate', ['db_lesson' => $db_lesson,'db_participants' => $db_participants]);
     }
 
     public function scoreLessonStore(Request $request){
@@ -222,62 +226,69 @@ class ScoreController extends Controller
             return loginExpired(); // 未登录，返回登陆视图
         }
         // 获取表单输入
-        $participant_id = $request->input('input_participant_id');
-        $score_student = $request->input('input_score_student');
+        $input_student_num = $request->input('input_student_num');
         $score_subject = $request->input('input_score_subject');
         $score_test_name = $request->input('input_score_test_name');
         $score_test_type = "入门测";
         $score_test_date = $request->input('input_score_test_date');
-        $score_mark = $request->input('input_score_mark');
-        /*
-         *  文件
-         */
-        if (!$request->hasFile('file')) {
-            $document_path = "";
-        }else{
-            // 获取文件
-            $tmp_file = $request->file('file');
-            // 获取文件扩展名
-            $document_ext = $tmp_file->getClientOriginalExtension();
-            // 生成路径
-            $document_path = "S".date('ymdHis').rand(1000000000,9999999999).".".$document_ext;
-        }
+
 
         DB::beginTransaction();
-        try{
-            // 添加记录
-            DB::table('score')
-              ->insert(['score_student' => $score_student,
-                        'score_subject' => $score_subject,
-                        'score_test_name' => $score_test_name,
-                        'score_test_type' => $score_test_type,
-                        'score_test_date' => $score_test_date,
-                        'score_mark' => $score_mark,
-                        'score_path' => $document_path,
-                        'score_create_user' => Session::get('user_id')]);
-            // 更新上课记录
-            DB::table('participant')
-              ->where('participant_id', $participant_id)
-              ->update(['participant_test_mark' => $score_mark,
-                        'participant_test_path' => $document_path]);
+
+        for($i=1;$i<=$input_student_num;$i++){
+            /*
+             *  文件
+             */
+            if (!$request->hasFile('file_'.$i)) {
+                $document_path = "";
+            }else{
+                // 获取文件
+                $tmp_file = $request->file('file_'.$i);
+                // 获取文件扩展名
+                $document_ext = $tmp_file->getClientOriginalExtension();
+                // 生成路径
+                $document_path = "S".date('ymdHis').rand(1000000000,9999999999).".".$document_ext;
+            }
+            try{
+                // 添加记录
+                DB::table('score')
+                  ->insert(['score_student' => $request->input('input_student_id_'.$i),
+                            'score_subject' => $score_subject,
+                            'score_test_name' => $score_test_name,
+                            'score_test_type' => $score_test_type,
+                            'score_test_date' => $score_test_date,
+                            'score_mark' => $request->input('input_score_mark_'.$i),
+                            'score_path' => $document_path,
+                            'score_create_user' => Session::get('user_id')]);
+                // 更新上课记录
+                DB::table('participant')
+                  ->where('participant_id', $request->input('input_participant_id_'.$i))
+                  ->update(['participant_test_mark' => $request->input('input_score_mark_'.$i),
+                            'participant_test_path' => $document_path]);
+
+                if($document_path != ""){
+                    $tmp_file->move(public_path("/files/score"), $document_path);
+                }
+            }
+            // 捕获异常
+            catch(Exception $e){
+                DB::rollBack();
+                return $e;
+                // 返回第一步
+                return back()
+                       ->with(['notify' => true,
+                               'type' => 'danger',
+                               'title' => '成绩档案添加失败',
+                               'message' => '成绩档案添加失败']);
+            }
         }
-        // 捕获异常
-        catch(Exception $e){
-            DB::rollBack();
-            return $e;
-            // 返回第一步
-            return back()
-                   ->with(['notify' => true,
-                           'type' => 'danger',
-                           'title' => '成绩档案添加失败',
-                           'message' => '成绩档案添加失败']);
-        }
+
         DB::commit();
         // 上传教案文件
         //$tmp_file->move("/files/document", $document_path);
-        if($document_path != ""){
-            $tmp_file->move(public_path("/files/score"), $document_path);
-        }
+        //if($document_path != ""){
+        //    $tmp_file->move(public_path("/files/score"), $document_path);
+        //}
         //$tmp_file->storeAs('document', $document_path);
         // 返回我的上课记录视图
         return redirect("/profile")
