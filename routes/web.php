@@ -147,6 +147,13 @@ Route::get('/home', 'HomeController@home');
         Route::post('/education/student/daycare/store', 'Education\StudentController@studentDaycareStore');
         // 学生购晚托成功
         Route::get('/education/student/daycare/create/success', 'Education\StudentController@studentDaycareCreateSuccess');
+    // 离校学生
+        // 查看离校学生 √
+        Route::get('/education/deletedStudent', 'Education\DeletedStudentController@deletedStudent');
+        // 导出学生名单 √
+        Route::get('/education/deletedStudent/export', 'Education\DeletedStudentController@deletedStudentExport');
+        // 恢复离校学生 √
+        Route::get('/education/deletedStudent/restore', 'Education\DeletedStudentController@deletedStudentRestore');
     // 学生课时
         // 查看学生课时 √
         Route::get('/education/hour', 'Education\HourController@hour');

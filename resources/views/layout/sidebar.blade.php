@@ -168,6 +168,14 @@
                   </a>
                 </li>
               @endif
+              @if(in_array("/education/deletedStudent", Session::get('user_accesses')))
+                <li class="nav-item">
+                  <a href="/education/deletedStudent" class="nav-link" id="educationDeletedStudent">
+                    <i class="fa fa-user text-warning"></i>
+                    <span class="nav-link-text">离校学生</span>
+                  </a>
+                </li>
+              @endif
               <!-- <li class="nav-item">
                 <a href="/education/schedule" class="nav-link" id="educationSchedule">
                   <i class="ni ni-calendar-grid-58 text-warning"></i>

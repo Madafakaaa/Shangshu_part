@@ -29,22 +29,43 @@
       </button>
     </div>
   </div>
-  <div class="row justify-content-center">
+  <div class="row">
     <div class="col-12">
       <div class="card mb-4">
-        <div class="card-header p-0" style="border-bottom:0px;">
-          <div class="row my-3 mx-1">
-            <div class="col-12">
-              <small class="text-muted font-weight-bold px-2">校区：</small>
-              <a href="?@foreach($filters as $key => $value) @if($key!='filter_department') {{$key}}={{$value}}& @endif @endforeach">
-                <button type="button" @if(!isset($filters['filter_department'])) class="btn btn-primary btn-sm" disabled @else class="btn btn-sm" @endif>全部</button>
-              </a>
-              @foreach($filter_departments as $filter_department)
-                <a href="?@foreach($filters as $key => $value) @if($key!='filter_department') {{$key}}={{$value}}& @endif @endforeach &filter_department={{$filter_department->department_id}}"><button type="button" @if($filters['filter_department']==$filter_department->department_id) class="btn btn-primary btn-sm" disabled @else class="btn btn-sm" @endif>{{$filter_department->department_name}}</button></a>
-              @endforeach
+        <form action="" method="get" onsubmit="submitButtonDisable('submitButton1')">
+          <div class="card-header p-3" style="border-bottom:0px;">
+            <div class="row">
+              <div class="col-1 text-center">
+                <small class="text-muted font-weight-bold px-2">起始日期</small>
+              </div>
+              <div class="col-2">
+                <input class="form-control form-control-sm datepicker" name="filter_date_start" type="text" value="{{$filters['filter_date_start']}}" autocomplete="off">
+              </div>
+              <div class="col-1 text-center">
+                <small class="text-muted font-weight-bold px-2">截止日期</small>
+              </div>
+              <div class="col-2">
+                <input class="form-control form-control-sm datepicker" name="filter_date_end" type="text" value="{{$filters['filter_date_end']}}" autocomplete="off">
+              </div>
+              <div class="col-1 text-center">
+                <small class="text-muted font-weight-bold px-2">校区</small>
+              </div>
+              <div class="col-2">
+                <select class="form-control form-control-sm" name="filter_department" data-toggle="select">
+                  <option value=''>全部校区</option>
+                  @foreach ($filter_departments as $department)
+                    <option value="{{ $department->department_id }}" @if($filters['filter_department']==$department->department_id) selected @endif>{{ $department->department_name }}</option>
+                  @endforeach
+                </select>
+              </div>
+              <div class="col-1">
+              </div>
+              <div class="col-2">
+                <input type="submit" id="submitButton1" class="btn btn-sm btn-primary btn-block" value="查询">
+              </div>
             </div>
           </div>
-        </div>
+        </form>
         <hr>
         <div class="table-responsive py-3">
           <table class="table table-hover datatable-basic text-left table-bordered">
@@ -98,6 +119,10 @@
                 </td>
               </tr>
               @endforeach
+              <tr>
+                <td colspan="3"><strong>合计</strong></td>
+                <td colspan="6"><strong>{{$expenditure_sum}} 元</strong></td>
+              </tr>
             </tbody>
           </table>
         </div>

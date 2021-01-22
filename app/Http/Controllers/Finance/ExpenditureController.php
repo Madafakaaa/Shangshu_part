@@ -23,12 +23,23 @@ class ExpenditureController extends Controller
         $department_access = Session::get('department_access');
         // 搜索条件
         $filters = array(
-                        "filter_department" => null
+                        "filter_department" => null,
+                        "filter_date_start" => date('Y-m')."-01",
+                        "filter_date_end" => date('Y-m-d'),
                     );
+        // 期限
+        if ($request->filled('filter_date_start')) {
+            $filters['filter_date_start']=$request->input("filter_date_start");
+        }
+        if ($request->filled('filter_date_end')) {
+            $filters['filter_date_end']=$request->input("filter_date_end");
+        }
         // 获取数据
         $expenditures = DB::table('expenditure')
                         ->join('department', 'expenditure.expenditure_department', '=', 'department.department_id')
                         ->join('user', 'expenditure.expenditure_create_user', '=', 'user.user_id')
+                        ->where('expenditure_date', '>=', $filters['filter_date_start'])
+                        ->where('expenditure_date', '<=', $filters['filter_date_end'])
                         ->whereIn('expenditure_department', $department_access);
         // 校区
         if ($request->filled('filter_department')) {
@@ -38,10 +49,14 @@ class ExpenditureController extends Controller
         $expenditures = $expenditures->orderBy('expenditure_date', 'desc')
                                      ->orderBy('expenditure_department', 'asc')
                                      ->get();
-
+        $expenditure_sum = 0;
+        foreach($expenditures as $expenditure){
+            $expenditure_sum += $expenditure->expenditure_fee;
+        }
         $filter_departments = DB::table('department')->where('department_is_available', 1)->whereIn('department_id', $department_access)->orderBy('department_id', 'asc')->get();
         // 返回列表视图
         return view('finance/expenditure/expenditure', ['expenditures' => $expenditures,
+                                                        'expenditure_sum' => $expenditure_sum,
                                                         'filters' => $filters,
                                                         'filter_departments' => $filter_departments]);
     }

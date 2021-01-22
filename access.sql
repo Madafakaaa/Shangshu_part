@@ -105,6 +105,13 @@ CREATE TABLE `access` (
 	VALUES ('教务运营', '学生管理', '购课时', 'Education\StudentController', 'studentPaymentCreate', '/education/student/payment/create');
 	INSERT INTO `access`(access_category, access_page, access_feature, access_controller, access_function, access_url) 
 	VALUES ('教务运营', '学生管理', '购晚托', 'Education\StudentController', 'studentDaycareCreate', '/education/student/daycare/create');
+	-- 离校学生 --
+	INSERT INTO `access`(access_category, access_page, access_feature, access_controller, access_function, access_url) 
+	VALUES ('教务运营', '离校学生', '查看', 'Education\DeletedStudentController', 'deletedStudent', '/education/deletedStudent');
+	INSERT INTO `access`(access_category, access_page, access_feature, access_controller, access_function, access_url) 
+	VALUES ('教务运营', '离校学生', '导出', 'Education\DeletedStudentController', 'deletedStudentExport', '/education/deletedStudent/export');
+	INSERT INTO `access`(access_category, access_page, access_feature, access_controller, access_function, access_url) 
+	VALUES ('教务运营', '离校学生', '恢复', 'Education\DeletedStudentController', 'deletedStudentRestore', '/education/deletedStudent/restore');
 	-- 学生课时 --
 	INSERT INTO `access`(access_category, access_page, access_feature, access_controller, access_function, access_url) 
 	VALUES ('教务运营', '学生课时', '查看', 'Education\HourController', 'hour', '/education/hour');
