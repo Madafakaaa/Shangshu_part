@@ -222,13 +222,17 @@ class LessonController extends Controller
         if(!in_array("/education/lesson/review", Session::get('user_accesses'))){
            return back()->with(['notify' => true,'type' => 'danger','title' => '您的账户没有访问权限']);
         }
+        // 获取用户校区权限
+        $department_access = Session::get('department_access');
         // 复核上课记录
         DB::beginTransaction();
         try{
             // 更新可复核班级上课记录复核信息
             DB::table('lesson')
+              ->join('class', 'lesson.lesson_class', '=', 'class.class_id')
               ->whereNull('lesson_review_user')
               ->where('lesson_create_user', '<>', Session::get('user_id'))
+              ->whereIn('class_department', $department_access)
               ->update(['lesson_review_user' => Session::get('user_id'),
                         'lesson_review_time' => date('Y-m-d H:i:s')]);
         }
