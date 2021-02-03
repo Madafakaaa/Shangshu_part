@@ -56,7 +56,7 @@
                 <th style='width:140px;'>退费课程</th>
                 <th style='width:70px;' class="text-right">退款数量</th>
                 <th style='width:80px;' class="text-right">退款金额</th>
-                <th style='width:180px;'>退费方式</th>
+                <th style='width:260px;'>退费方式</th>
                 <th style='width:90px;'>退费日期</th>
                 <th style='width:70px;'>申请用户</th>
                 <th style='width:80px;'>审核状态</th>

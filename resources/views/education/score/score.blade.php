@@ -57,12 +57,12 @@
                 <th style='width:45px;'>校区</th>
                 <th style='width:70px;'>学生</th>
                 <th style='width:50px;'>年级</th>
-                <th style='width:180px;'>考试</th>
+                <th style='width:280px;'>考试</th>
                 <th style='width:60px;'>科目</th>
                 <th style='width:80px;'>日期</th>
                 <th style='width:60px;'>分数</th>
                 <th style='width:60px;'>登记人</th>
-                <th style='width:100px;'>操作管理</th>
+                <th style='width:180px;'>操作管理</th>
               </tr>
             </thead>
             <tbody>

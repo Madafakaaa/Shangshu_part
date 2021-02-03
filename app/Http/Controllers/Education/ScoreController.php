@@ -99,52 +99,56 @@ class ScoreController extends Controller
         }
         // 获取表单输入
         $score_student = $request->input('input_score_student');
-        $score_subject = $request->input('input_score_subject');
         $score_test_name = $request->input('input_score_test_name');
         $score_test_type = "考试成绩";
         $score_test_date = $request->input('input_score_test_date');
-        $score_mark = $request->input('input_score_mark');
-        /*
-         *  文件
-         */
-        if (!$request->hasFile('file')) {
-            $document_path = "";
-        }else{
-            // 获取文件
-            $tmp_file = $request->file('file');
-            // 获取文件扩展名
-            $document_ext = $tmp_file->getClientOriginalExtension();
-            // 生成路径
-            $document_path = "S".date('ymdHis').rand(1000000000,9999999999).".".$document_ext;
-        }
+        $test_num = $request->input('test_num');
 
-        DB::beginTransaction();
-        try{
-            // 添加记录
-            DB::table('score')->insert(['score_student' => $score_student,
-                                        'score_subject' => $score_subject,
-                                        'score_test_name' => $score_test_name,
-                                        'score_test_type' => $score_test_type,
-                                        'score_test_date' => $score_test_date,
-                                        'score_mark' => $score_mark,
-                                        'score_path' => $document_path,
-                                        'score_create_user' => Session::get('user_id')]);
-        }
-        // 捕获异常
-        catch(Exception $e){
-            DB::rollBack();
-            // 返回第一步
-            return redirect("/education/score/create")
-                   ->with(['notify' => true,
-                           'type' => 'danger',
-                           'title' => '成绩档案添加失败',
-                           'message' => '成绩档案添加失败']);
-        }
-        DB::commit();
-        // 上传教案文件
-        //$tmp_file->move("/files/document", $document_path);
-        if($document_path != ""){
-            $tmp_file->move(public_path("/files/score"), $document_path);
+        for($i=1;$i<=$test_num;$i++){
+            /*
+             *  文件
+             */
+            if (!$request->hasFile('file_'.$i)) {
+                $document_path = "";
+            }else{
+                // 获取文件
+                $tmp_file = $request->file('file_'.$i);
+                // 获取文件扩展名
+                $document_ext = $tmp_file->getClientOriginalExtension();
+                // 生成路径
+                $document_path = "S".date('ymdHis').rand(1000000000,9999999999).".".$document_ext;
+            }
+            $score_subject = $request->input('input_score_subject_'.$i);
+            $score_mark = $request->input('input_score_mark_'.$i);
+
+            DB::beginTransaction();
+            try{
+                // 添加记录
+                DB::table('score')->insert(['score_student' => $score_student,
+                                            'score_subject' => $score_subject,
+                                            'score_test_name' => $score_test_name,
+                                            'score_test_type' => $score_test_type,
+                                            'score_test_date' => $score_test_date,
+                                            'score_mark' => $score_mark,
+                                            'score_path' => $document_path,
+                                            'score_create_user' => Session::get('user_id')]);
+            }
+            // 捕获异常
+            catch(Exception $e){
+                DB::rollBack();
+                // 返回第一步
+                return redirect("/education/score/create")
+                       ->with(['notify' => true,
+                               'type' => 'danger',
+                               'title' => '成绩档案添加失败',
+                               'message' => '成绩档案添加失败']);
+            }
+            DB::commit();
+            // 上传教案文件
+            //$tmp_file->move("/files/document", $document_path);
+            if($document_path != ""){
+                $tmp_file->move(public_path("/files/score"), $document_path);
+            }
         }
         //$tmp_file->storeAs('document', $document_path);
         // 返回我的上课记录视图
