@@ -15,9 +15,13 @@
 <div class="container-fluid mt-3">
   <div class="row mb-3">
     <div class="col-auto">
-      <button type="button" class="btn btn-sm btn-outline-warning btn-round btn-icon" id='review_all_button' onclick="buttonConfirm('review_all_button', '/education/lesson/review/all', '确认复核所有可复核上课记录？')">
+      <!-- <button type="button" class="btn btn-sm btn-outline-warning btn-round btn-icon" id='review_all_button' onclick="buttonConfirm('review_all_button', '/education/lesson/review/all', '确认复核所有可复核上课记录？')">
         <span class="btn-inner--icon"><i class="ni ni-check-bold"></i></span>
         <span class="btn-inner--text">全部复核</span>
+      </button> -->
+      <button class="btn btn-sm btn-outline-warning btn-round btn-icon" data-toggle="tooltip" data-original-title="批量复核" onclick="batchConfirm('/education/lesson/review', 'delete-button', '是否确认复核所勾选记录')">
+        <span class="btn-inner--icon"><i class="ni ni-check-bold"></i></span>
+        <span class="btn-inner--text">批量复核</span>
       </button>
       <button class="btn btn-sm btn-outline-danger btn-round btn-icon" data-toggle="tooltip" data-original-title="批量删除" onclick="batchConfirm('/education/lesson/delete', 'delete-button', '删除后将返还学生所用课时。是否确认删除上课记录')">
         <span class="btn-inner--icon"><i class="fas fa-trash"></i></span>

@@ -15,9 +15,13 @@
 <div class="container-fluid mt-3">
   <div class="row mb-3">
     <div class="col-auto">
-      <button type="button" class="btn btn-sm btn-outline-warning btn-round btn-icon" id='review_all_button' onclick="buttonConfirm('review_all_button', '/finance/payment/review/all', '确认复核所有可复核购课记录？')">
+      <!-- <button type="button" class="btn btn-sm btn-outline-warning btn-round btn-icon" id='review_all_button' onclick="buttonConfirm('review_all_button', '/finance/payment/review/all', '确认复核所有可复核购课记录？')">
         <span class="btn-inner--icon"><i class="ni ni-check-bold"></i></span>
         <span class="btn-inner--text">全部复核</span>
+      </button> -->
+      <button class="btn btn-sm btn-outline-warning btn-round btn-icon" data-toggle="tooltip" data-original-title="批量复核" onclick="batchConfirm('/finance/payment/review', 'delete-button', '是否确认复核所勾选记录')">
+        <span class="btn-inner--icon"><i class="ni ni-check-bold"></i></span>
+        <span class="btn-inner--text">批量复核</span>
       </button>
       <button class="btn btn-sm btn-outline-danger btn-round btn-icon" data-toggle="tooltip" data-original-title="批量删除" onclick="batchConfirm('/finance/payment/delete', 'delete-button', '删除后将扣除学生课时，若学生剩余课时不足将无法扣除。是否确认删除购课记录')">
         <span class="btn-inner--icon"><i class="fas fa-trash"></i></span>

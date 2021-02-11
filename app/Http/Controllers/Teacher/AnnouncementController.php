@@ -66,7 +66,7 @@ class AnnouncementController extends Controller
         // 生成路径
         $announcement_path = "A".date('ymdHis').rand(1000000000,9999999999).".".$announcement_ext;
         // 获取表单输入
-        $announcement_name = $request->input('announcement_name').".".$announcement_ext;
+        $announcement_name = $tmp_file->getClientOriginalName();
         $announcement_level = $request->input('announcement_level');
         // 插入数据库
         DB::beginTransaction();

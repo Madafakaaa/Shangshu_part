@@ -27,14 +27,6 @@
             <div class="row">
               <div class="col-12">
                 <div class="form-group">
-                  <label class="form-control-label">通知标题<span style="color:red">*</span></label>
-                  <input class="form-control" type="text" name="announcement_name" placeholder="请输入名称..." autocomplete='off' required maxlength="5">
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-12">
-                <div class="form-group">
                   <label class="form-control-label">通知范围<span style="color:red">*</span></label>
                   <select class="form-control" name="announcement_level" data-toggle="selectNoFilter" required>
                     <option value=''>请选择通知范围...</option>

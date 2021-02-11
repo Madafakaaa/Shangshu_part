@@ -173,15 +173,27 @@ class ExpenditureController extends Controller
            return back()->with(['notify' => true,'type' => 'danger','title' => '您的账户没有访问权限']);
         }
         // 获取expenditure_id
-        $expenditure_id=decode($request->input('id'), 'expenditure_id');
+        // 获取payment_id
+        $request_ids=$request->input('id');
+        $expenditure_ids = array();
+        if(is_array($request_ids)){
+            foreach ($request_ids as $request_id) {
+                $expenditure_ids[]=decode($request_id, 'expenditure_id');
+            }
+        }else{
+            $expenditure_ids[]=decode($request_ids, 'expenditure_id');
+        }
         // 更新支出记录
         DB::beginTransaction();
         try{
-            // 更新支出记录
-            DB::table('expenditure')
-              ->where('expenditure_id', $expenditure_id)
-              ->update(['expenditure_reviewed_user' => Session::get('user_id'),
-                        'expenditure_reviewed_time' => date('Y-m-d H:i:s')]);
+
+            foreach ($expenditure_ids as $expenditure_id){
+                // 更新支出记录
+                DB::table('expenditure')
+                  ->where('expenditure_id', $expenditure_id)
+                  ->update(['expenditure_reviewed_user' => Session::get('user_id'),
+                            'expenditure_reviewed_time' => date('Y-m-d H:i:s')]);
+            }
         }
         // 捕获异常
         catch(Exception $e){
@@ -237,4 +249,6 @@ class ExpenditureController extends Controller
                        'title' => '支出记录批量审核成功',
                        'message' => '支出记录批量审核成功!']);
     }
+
+
 }

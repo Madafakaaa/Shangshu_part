@@ -19,9 +19,13 @@
         <span class="btn-inner--icon"><i class="fas fa-user-edit"></i></span>
         <span class="btn-inner--text">添加记录</span>
       </a>
-      <button type="button" class="btn btn-sm btn-outline-warning btn-round btn-icon" id='review_all_button' onclick="buttonConfirm('review_all_button', '/finance/expenditure/review/all', '确认复核所有可复核支出记录？')">
+      <!-- <button type="button" class="btn btn-sm btn-outline-warning btn-round btn-icon" id='review_all_button' onclick="buttonConfirm('review_all_button', '/finance/expenditure/review/all', '确认复核所有可复核支出记录？')">
         <span class="btn-inner--icon"><i class="ni ni-check-bold"></i></span>
         <span class="btn-inner--text">全部复核</span>
+      </button> -->
+      <button class="btn btn-sm btn-outline-warning btn-round btn-icon" data-toggle="tooltip" data-original-title="批量复核" onclick="batchConfirm('/finance/expenditure/review', 'delete-button', '是否确认复核所勾选记录')">
+        <span class="btn-inner--icon"><i class="ni ni-check-bold"></i></span>
+        <span class="btn-inner--text">批量复核</span>
       </button>
       <button class="btn btn-sm btn-outline-danger btn-round btn-icon" data-toggle="tooltip" data-original-title="批量删除" onclick="batchConfirm('/finance/expenditure/delete', 'delete-button', '是否确认删除所选支出记录')">
         <span class="btn-inner--icon"><i class="fas fa-trash"></i></span>
