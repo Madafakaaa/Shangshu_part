@@ -196,7 +196,7 @@ class projectController extends Controller
         $document_path2 = "STA".date('ymdHis').rand(1000000000,9999999999).".".$document_ext2;
 
         // 获取表单输入
-        $project_name = $request->input('input_project_name');
+        $project_name = str_replace(strrchr($tmp_file1->getClientOriginalName(), "."),"",$tmp_file1->getClientOriginalName());
         $project_subject = $request->input('input_project_subject');
         $project_grade = $request->input('input_project_grade');
         $project_semester = $request->input('input_project_semester');

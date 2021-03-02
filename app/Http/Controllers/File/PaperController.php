@@ -153,7 +153,7 @@ class paperController extends Controller
         $document_path = "P".date('ymdHis').rand(1000000000,9999999999).".".$document_ext;
 
         // 获取表单输入
-        $paper_name = $request->input('input_paper_name');
+        $paper_name = str_replace(strrchr($tmp_file->getClientOriginalName(), "."),"",$tmp_file->getClientOriginalName());
         $paper_subject = $request->input('input_paper_subject');
         $paper_grade = $request->input('input_paper_grade');
         $paper_semester = $request->input('input_paper_semester');

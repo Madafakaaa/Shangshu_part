@@ -196,7 +196,7 @@ class standardDocumentController extends Controller
         $document_path2 = "STA".date('ymdHis').rand(1000000000,9999999999).".".$document_ext2;
 
         // 获取表单输入
-        $standard_document_name = $request->input('input_standard_document_name');
+        $standard_document_name = str_replace(strrchr($tmp_file1->getClientOriginalName(), "."),"",$tmp_file1->getClientOriginalName());
         $standard_document_subject = $request->input('input_standard_document_subject');
         $standard_document_grade = $request->input('input_standard_document_grade');
         $standard_document_semester = $request->input('input_standard_document_semester');

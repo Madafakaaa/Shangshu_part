@@ -26,12 +26,6 @@
             <div class="row">
               <div class="col-12">
                 <div class="form-group">
-                  <label class="form-control-label">试卷名称<span style="color:red">*</span></label>
-                  <input class="form-control" type="text" name="input_paper_name" placeholder="试卷名称..."  maxlength="40" required autocomplete="off">
-                </div>
-              </div>
-              <div class="col-12">
-                <div class="form-group">
                   <label class="form-control-label">年级<span style="color:red">*</span></label>
                   <select class="form-control" name="input_paper_grade" data-toggle="select" required autocomplete="off">
                     <option value=''>选择年级...</option>

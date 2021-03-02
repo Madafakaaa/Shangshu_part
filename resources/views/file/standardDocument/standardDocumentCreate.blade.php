@@ -26,12 +26,6 @@
             <div class="row">
               <div class="col-12">
                 <div class="form-group">
-                  <label class="form-control-label">教案名称<span style="color:red">*</span></label>
-                  <input class="form-control" type="text" name="input_standard_document_name" placeholder="教案名称..."  maxlength="40" required autocomplete="off">
-                </div>
-              </div>
-              <div class="col-12">
-                <div class="form-group">
                   <label class="form-control-label">年级<span style="color:red">*</span></label>
                   <select class="form-control" name="input_standard_document_grade" data-toggle="select" required autocomplete="off">
                     <option value=''>选择年级...</option>
