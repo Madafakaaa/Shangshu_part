@@ -69,6 +69,7 @@ class PaymentController extends Controller
             $temp['review_user_id'] = $db_payment->user_id;
             $temp['review_user_name'] = $db_payment->user_name;
             $temp['payment_id'] = $db_payment->payment_id;
+            $temp['payment_remark'] = $db_payment->payment_remark;
             $temp['receipt_reviewed_status'] = $db_payment->receipt_reviewed_status;
             // 获取登记用户
             $temp_create_user = DB::table('user')

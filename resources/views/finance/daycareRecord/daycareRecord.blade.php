@@ -77,7 +77,7 @@
             </thead>
             <tbody>
               @foreach ($daycare_records as $daycare_record)
-              <tr>
+              <tr title="{{$daycare_record['daycare_record_remark']}}">
                 <td>
                   @if($daycare_record['review_user_name']=="")
                     <div class="custom-control custom-checkbox">

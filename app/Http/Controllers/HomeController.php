@@ -208,14 +208,19 @@ class HomeController extends Controller
                            ->get();
 
         // 模块 学生生日 ----------------------------------------------------------------------------------
-        $five_days_after = date('m-d', strtotime ("+5 day", strtotime(date('Y-m-d'))));
         $student_birthdays = DB::table('student')
-                               ->where('student_birthday', '>=', date('m-d'))
-                               ->where('student_birthday', '<=', $five_days_after)
-                               ->orderBy('student_birthday', 'desc')
+                               ->join('department', 'student.student_department', '=', 'department.department_id')
+                               ->whereIn('student_department', $department_access)
+                               ->where(DB::raw('MOD(DAYOFYEAR(student_birthday)-DAYOFYEAR(CURRENT_DATE())+365,365)'), '<=', 5)
+                               ->orderBy(DB::raw('MOD(DAYOFYEAR(student_birthday)-DAYOFYEAR(CURRENT_DATE())+365,365)'), 'asc')
                                ->get();
         // 模块 员工生日 ----------------------------------------------------------------------------------
-
+        $user_birthdays = DB::table('user')
+                               ->join('department', 'user.user_department', '=', 'department.department_id')
+                               ->whereIn('user_department', $department_access)
+                               ->where(DB::raw('MOD(DAYOFYEAR(user_birthday)-DAYOFYEAR(CURRENT_DATE())+365,365)'), '<=', 5)
+                               ->orderBy(DB::raw('MOD(DAYOFYEAR(user_birthday)-DAYOFYEAR(CURRENT_DATE())+365,365)'), 'asc')
+                               ->get();
         return view('/dashboard', ['dashboard' => $dashboard,
                                    'filters' => $filters,
                                    'filter_departments' => $filter_departments,
@@ -224,6 +229,8 @@ class HomeController extends Controller
                                    'daycare_refunds' => $daycare_refunds,
                                    'hours' => $hours,
                                    'announcements' => $announcements,
+                                   'student_birthdays' => $student_birthdays,
+                                   'user_birthdays' => $user_birthdays,
                                    'daycare_records' => $daycare_records]);
     }
 

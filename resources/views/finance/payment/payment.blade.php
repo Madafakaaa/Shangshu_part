@@ -79,7 +79,7 @@
             </thead>
             <tbody>
               @foreach ($payments as $payment)
-              <tr>
+              <tr title="{{$payment['payment_remark']}}">
                 <td>
                   @if($payment['review_user_name']=="")
                     <div class="custom-control custom-checkbox">

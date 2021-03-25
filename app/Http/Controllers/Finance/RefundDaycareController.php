@@ -69,6 +69,7 @@ class RefundDaycareController extends Controller
             $temp['review_user_id'] = $db_daycare_refund->user_id;
             $temp['review_user_name'] = $db_daycare_refund->user_name;
             $temp['daycare_refund_id'] = $db_daycare_refund->daycare_refund_id;
+            $temp['daycare_refund_remark'] = $db_daycare_refund->daycare_refund_remark;
             // 获取登记用户
             $temp_create_user = DB::table('user')
                                   ->where('user_id', $db_daycare_refund->daycare_refund_create_user)

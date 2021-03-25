@@ -66,6 +66,7 @@ class DaycareRecordController extends Controller
             $temp['daycare_record_total_price'] = $db_daycare_record->daycare_record_total_price;
             $temp['daycare_record_date'] = $db_daycare_record->daycare_record_date;
             $temp['daycare_record_receipt'] = $db_daycare_record->daycare_record_receipt;
+            $temp['daycare_record_remark'] = $db_daycare_record->daycare_record_remark;
             $temp['receipt_reviewed_status'] = $db_daycare_record->receipt_reviewed_status;
             $temp['review_user_id'] = $db_daycare_record->user_id;
             $temp['review_user_name'] = $db_daycare_record->user_name;

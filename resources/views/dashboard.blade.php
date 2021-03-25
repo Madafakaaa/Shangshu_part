@@ -494,6 +494,85 @@
       </div>
     </div>
   @endif
+  @if(in_array("用户生日", Session::get('user_dashboards')))
+    <div class="row">
+      <div class="col-12">
+        <div class="card mb-3">
+          <div class="card-header p-3">
+            <h4 class="mb-0">用户生日提醒</h4>
+          </div>
+          <div class="table-responsive" style="max-height:220px;">
+            <table class="table table-hover table-bordered">
+              <thead>
+                <tr>
+                  <th style='width:40px;'>序号</th>
+                  <th style='width:60px;'>校区</th>
+                  <th style='width:100px;'>用户</th>
+                  <th style='width:200px;'>生日</th>
+                </tr>
+              </thead>
+              <tbody>
+                @forelse ($user_birthdays as $user_birthday)
+                  <tr>
+                    <td>{{ $loop->iteration }}</td>
+                    <td>{{ $hour->department_name }}</td>
+                    <td>
+                      <a href="/user?id={{encode($user_birthday->user_id, 'user_id')}}">{{ $user_birthday->user_name }}</a>
+                    </td>
+                    <td>{{ $user_birthday->user_birthday }}</td>
+                  </tr>
+                @empty
+                   <tr><td colspan="4" class="text-center text-success"><strong>无</strong></td></tr>
+                @endforelse
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  @endif
+  @if(in_array("学生生日", Session::get('user_dashboards')))
+    <div class="row">
+      <div class="col-12">
+        <div class="card mb-3">
+          <div class="card-header p-3">
+            <h4 class="mb-0">学生生日提醒</h4>
+          </div>
+          <div class="table-responsive" style="max-height:220px;">
+            <table class="table table-hover table-bordered">
+              <thead>
+                <tr>
+                  <th style='width:40px;'>序号</th>
+                  <th style='width:60px;'>校区</th>
+                  <th style='width:100px;'>学生</th>
+                  <th style='width:200px;'>生日</th>
+                </tr>
+              </thead>
+              <tbody>
+                @forelse ($student_birthdays as $student_birthday)
+                  <tr>
+                    <td>{{ $loop->iteration }}</td>
+                    <td>{{ $hour->department_name }}</td>
+                    <td>
+                      @if($student_birthday->student_gender=="男")
+                        <img src="{{ asset(_ASSETS_.'/img/icons/male.png') }}" style="height:20px;">
+                      @else
+                        <img src="{{ asset(_ASSETS_.'/img/icons/female.png') }}" style="height:20px;">
+                      @endif
+                      <a href="/student?id={{encode($student_birthday->student_id, 'student_id')}}">{{ $student_birthday->student_name }}</a>
+                    </td>
+                    <td>{{ $student_birthday->student_birthday }}</td>
+                  </tr>
+                @empty
+                   <tr><td colspan="4" class="text-center text-success"><strong>无</strong></td></tr>
+                @endforelse
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  @endif
 </div>
 @endsection
 

@@ -64,7 +64,7 @@
             </thead>
             <tbody>
               @foreach ($hour_refunds as $hour_refund)
-              <tr>
+              <tr title="{{$hour_refund['hour_refund_remark']}}">
                 <td>
                   @if($hour_refund['review_user_name']=="")
                     <div class="custom-control custom-checkbox">
