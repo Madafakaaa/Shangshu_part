@@ -515,7 +515,7 @@
                 @forelse ($user_birthdays as $user_birthday)
                   <tr>
                     <td>{{ $loop->iteration }}</td>
-                    <td>{{ $hour->department_name }}</td>
+                    <td>{{ $user_birthday->department_name }}</td>
                     <td>
                       <a href="/user?id={{encode($user_birthday->user_id, 'user_id')}}">{{ $user_birthday->user_name }}</a>
                     </td>
@@ -552,7 +552,7 @@
                 @forelse ($student_birthdays as $student_birthday)
                   <tr>
                     <td>{{ $loop->iteration }}</td>
-                    <td>{{ $hour->department_name }}</td>
+                    <td>{{ $student_birthday->department_name }}</td>
                     <td>
                       @if($student_birthday->student_gender=="男")
                         <img src="{{ asset(_ASSETS_.'/img/icons/male.png') }}" style="height:20px;">

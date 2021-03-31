@@ -210,16 +210,20 @@ class HomeController extends Controller
         // 模块 学生生日 ----------------------------------------------------------------------------------
         $student_birthdays = DB::table('student')
                                ->join('department', 'student.student_department', '=', 'department.department_id')
+                               ->where('student_is_available', 1)
                                ->whereIn('student_department', $department_access)
                                ->where(DB::raw('MOD(DAYOFYEAR(student_birthday)-DAYOFYEAR(CURRENT_DATE())+365,365)'), '<=', 5)
-                               ->orderBy(DB::raw('MOD(DAYOFYEAR(student_birthday)-DAYOFYEAR(CURRENT_DATE())+365,365)'), 'asc')
+                               ->orderBy(DB::raw('MONTH(student_birthday)'),"ASC")
+                               ->orderBy(DB::raw('DAY(student_birthday)'),"ASC")
                                ->get();
         // 模块 员工生日 ----------------------------------------------------------------------------------
         $user_birthdays = DB::table('user')
                                ->join('department', 'user.user_department', '=', 'department.department_id')
+                               ->where('user_is_available', 1)
                                ->whereIn('user_department', $department_access)
                                ->where(DB::raw('MOD(DAYOFYEAR(user_birthday)-DAYOFYEAR(CURRENT_DATE())+365,365)'), '<=', 5)
-                               ->orderBy(DB::raw('MOD(DAYOFYEAR(user_birthday)-DAYOFYEAR(CURRENT_DATE())+365,365)'), 'asc')
+                               ->orderBy(DB::raw('MONTH(user_birthday)'),"ASC")
+                               ->orderBy(DB::raw('DAY(user_birthday)'),"ASC")
                                ->get();
         return view('/dashboard', ['dashboard' => $dashboard,
                                    'filters' => $filters,
